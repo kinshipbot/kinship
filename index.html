@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kinship — Your Inner Circle</title>
+    <title class="notranslate">Kinship — Your Inner Circle</title>
     <meta name="description" content="Connect, share memes, catch trends, and vibe with your inner circle.">
     
     <!-- Open Graph / Social Media Meta Tags -->
@@ -39,10 +39,10 @@
 
     <!-- Auth Screen -->
     <div id="auth-screen" class="max-w-sm w-full">
-        <p class="text-xs text-gray-500 uppercase tracking-widest mb-4 smooth-title">Kinship</p>
-        <h1 class="smooth-title text-2xl text-white mb-3 tracking-tight">Welcome!</h1>
+        <p class="text-xs text-gray-500 uppercase tracking-widest mb-4 smooth-title notranslate">Kinship</p>
+        <h1 class="smooth-title text-2xl text-white mb-3 tracking-tight">Добро пожаловать!</h1>
         <p class="smooth-desc text-sm text-gray-400 leading-relaxed mb-8">
-            Where you discover memes, follow trends, chat, share, like, and comment with your circle.
+            Место, где можно находить мемы, следить за трендами, общаться и делиться впечатлениями с близким кругом.
         </p>
 
         <button id="login-btn" class="smooth-btn w-full bg-white text-black p-3.5 rounded-xl text-sm hover:bg-gray-200 transition flex items-center justify-center gap-2.5 cursor-pointer shadow-lg">
@@ -52,7 +52,7 @@
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
             </svg>
-            Continue with Google
+            Войти через Google
         </button>
     </div>
 
@@ -61,22 +61,22 @@
         <img id="user-avatar" src="" alt="Avatar" class="w-16 h-16 rounded-full mx-auto mb-3 border border-gray-700">
         <h2 id="user-name" class="text-lg text-white mb-1"></h2>
         <p id="user-email" class="text-xs text-gray-400 mb-2"></p>
-        <p id="db-status" class="text-xs text-emerald-400 mb-6">Connecting to cloud...</p>
+        <p id="db-status" class="text-xs text-emerald-400 mb-6">Синхронизация с облаком...</p>
         <button id="logout-btn" class="w-full bg-gray-800 text-gray-300 p-3 rounded-xl text-xs hover:bg-gray-700 transition cursor-pointer">
-            Sign out
+            Выйти
         </button>
     </div>
 
     <!-- Minimalist Western-style Footer -->
     <footer class="text-xs text-gray-600 flex flex-col items-center gap-1.5">
         <div class="flex gap-4">
-            <button onclick="openModal('Terms of Service', 'Kinship is currently in private beta. Be respectful, share good vibes, and keep the community safe.')" class="hover:text-gray-400 transition font-normal cursor-pointer">Terms</button>
+            <button onclick="openModal('Условия использования', 'Kinship находится в режиме закрытого бета-тестирования. Будьте уважительны, делитесь хорошим вайбом и берегите сообщество.')" class="hover:text-gray-400 transition font-normal cursor-pointer">Условия</button>
             <span>•</span>
-            <button onclick="openModal('Privacy Policy', 'We only use your Google profile name, email, and avatar to authenticate your account and sync your activity in real time.')" class="hover:text-gray-400 transition font-normal cursor-pointer">Privacy</button>
+            <button onclick="openModal('Политика конфиденциальности', 'Мы используем только ваше имя профиля Google, email и аватарку для авторизации и синхронизации активности в реальном времени.')" class="hover:text-gray-400 transition font-normal cursor-pointer конфиденциальность">Конфиденциальность</button>
             <span>•</span>
-            <a href="mailto:hello@kinship.app" class="hover:text-gray-400 transition font-normal">Contact</a>
+            <a href="mailto:hello@kinship.app" class="hover:text-gray-400 transition font-normal">Контакты</a>
         </div>
-        <p class="text-[11px] text-gray-700 font-normal">© 2026 Kinship Inc. All rights reserved.</p>
+        <p class="text-[11px] text-gray-700 font-normal">&copy; 2026 <span class="notranslate">Kinship</span> Inc. Все права защищены.</p>
     </footer>
 
     <!-- Legal Modal -->
@@ -84,7 +84,7 @@
         <div class="bg-gray-900 border border-gray-800 max-w-xs w-full p-5 rounded-2xl text-left">
             <h3 id="modal-title" class="text-sm font-bold text-white mb-2"></h3>
             <p id="modal-body" class="text-xs text-gray-400 leading-relaxed mb-4"></p>
-            <button onclick="closeModal()" class="w-full bg-white text-black py-2 rounded-lg text-xs cursor-pointer hover:bg-gray-200 transition">Got it</button>
+            <button onclick="closeModal()" class="w-full bg-white text-black py-2 rounded-lg text-xs cursor-pointer hover:bg-gray-200 transition">Понятно</button>
         </div>
     </div>
 
@@ -128,7 +128,7 @@
             try {
                 await signInWithPopup(auth, provider);
             } catch (error) {
-                alert("Sign-in failed: " + error.message);
+                alert("Ошибка входа: " + error.message);
             }
         });
 
@@ -139,7 +139,7 @@
                 authScreen.classList.add('hidden');
                 profileScreen.classList.remove('hidden');
                 document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
-                document.getElementById('user-name').textContent = user.displayName || 'Member';
+                document.getElementById('user-name').textContent = user.displayName || 'Участник';
                 document.getElementById('user-email').textContent = user.email;
 
                 try {
@@ -149,9 +149,9 @@
                         photo: user.photoURL,
                         lastLogin: serverTimestamp()
                     }, { merge: true });
-                    dbStatus.textContent = "Synced with cloud ✓";
+                    dbStatus.textContent = "Синхронизировано с облаком ✓";
                 } catch (e) {
-                    dbStatus.textContent = "Sync error: " + e.message;
+                    dbStatus.textContent = "Ошибка синхронизации: " + e.message;
                     dbStatus.classList.replace('text-emerald-400', 'text-red-400');
                 }
             } else {
@@ -161,5 +161,5 @@
         });
     </script>
 </body>
-  </html>
-  
+</html>
+        
