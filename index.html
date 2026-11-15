@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        *, body, h1, h2, p, button, a {
+        *, body, h1, h2, p, button, a, input, label {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
         }
         h1, h2 { font-weight: 800 !important; }
@@ -38,7 +38,7 @@
     <!-- Top Spacer -->
     <div class="h-4"></div>
 
-    <!-- Auth Screen -->
+    <!-- 1. Auth Screen -->
     <div id="auth-screen" class="max-w-sm w-full">
         <p class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 smooth-title notranslate">Kinship</p>
         <h1 class="smooth-title text-2xl text-gray-950 dark:text-white mb-3 tracking-tight">Welcome!</h1>
@@ -57,14 +57,69 @@
         </button>
     </div>
 
-    <!-- Profile Screen -->
+    <!-- 2. Loading Screen -->
+    <div id="loading-screen" class="hidden max-w-sm w-full">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Проверка данных в облаке...</p>
+    </div>
+
+    <!-- 3. Registration Setup Screen (Дата рождения + Новый пароль) -->
+    <div id="register-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm text-left">
+        <h2 class="text-lg text-gray-950 dark:text-white mb-1 text-center">Завершение регистрации</h2>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-5 text-center">Укажите дату рождения и придумайте пароль</p>
+
+        <div class="space-y-3 mb-5">
+            <div>
+                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Дата рождения</label>
+                <input id="reg-dob" type="date" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Придумайте пароль</label>
+                <input id="reg-pass" type="password" placeholder="Введите пароль" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Повторите пароль</label>
+                <input id="reg-pass-confirm" type="password" placeholder="Повторите пароль" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
+            </div>
+        </div>
+
+        <p id="reg-error" class="hidden text-xs text-red-500 mb-3 text-center"></p>
+
+        <button id="reg-submit-btn" class="w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 p-3 rounded-xl text-sm transition cursor-pointer mb-2">
+            Сохранить и войти
+        </button>
+        <button id="reg-cancel-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-2.5 rounded-xl text-xs transition cursor-pointer">
+            Отмена
+        </button>
+    </div>
+
+    <!-- 4. Password Check Screen (Ввод пароля при повторном входе) -->
+    <div id="password-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm text-left">
+        <h2 class="text-lg text-gray-950 dark:text-white mb-1 text-center">Подтверждение входа</h2>
+        <p id="login-hint-email" class="text-xs text-gray-500 dark:text-gray-400 mb-5 text-center"></p>
+
+        <div class="mb-4">
+            <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Пароль</label>
+            <input id="login-pass" type="password" placeholder="Введите ваш пароль" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
+        </div>
+
+        <p id="login-pass-error" class="hidden text-xs text-red-500 mb-3 text-center"></p>
+
+        <button id="login-pass-btn" class="w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 p-3 rounded-xl text-sm transition cursor-pointer mb-2">
+            Войти
+        </button>
+        <button id="login-pass-logout-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-2.5 rounded-xl text-xs transition cursor-pointer">
+            Выйти из аккаунта
+        </button>
+    </div>
+
+    <!-- 5. Profile Screen -->
     <div id="profile-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm">
         <img id="user-avatar" src="" alt="Avatar" class="w-16 h-16 rounded-full mx-auto mb-3 border border-gray-200 dark:border-gray-700">
-        <h2 id="user-name" class="text-lg text-gray-950 dark:text-white mb-1"></h2>
+        <h2 id="welcome-greeting" class="text-lg text-gray-950 dark:text-white mb-1"></h2>
         <p id="user-email" class="text-xs text-gray-500 dark:text-gray-400 mb-2"></p>
-        <p id="db-status" class="text-xs text-emerald-600 dark:text-emerald-400 mb-6">Connecting to cloud...</p>
+        <p id="db-status" class="text-xs text-emerald-600 dark:text-emerald-400 mb-6">Synced with cloud ✓</p>
         <button id="logout-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-3 rounded-xl text-xs transition cursor-pointer">
-            Sign out
+            Выход
         </button>
     </div>
 
@@ -123,17 +178,27 @@
 
         const MAX_USERS = 100;
 
-        const authScreen = document.getElementById('auth-screen');
-        const profileScreen = document.getElementById('profile-screen');
-        const loginBtn = document.getElementById('login-btn');
-        const logoutBtn = document.getElementById('logout-btn');
-        const dbStatus = document.getElementById('db-status');
+        const screens = {
+            auth: document.getElementById('auth-screen'),
+            loading: document.getElementById('loading-screen'),
+            register: document.getElementById('register-screen'),
+            password: document.getElementById('password-screen'),
+            profile: document.getElementById('profile-screen')
+        };
+
+        function showScreen(name) {
+            Object.values(screens).forEach(el => el.classList.add('hidden'));
+            screens[name].classList.remove('hidden');
+        }
+
+        let currentUser = null;
+        let savedUserData = null;
 
         getRedirectResult(auth).catch((error) => {
             alert("Ошибка возврата после входа: " + error.message);
         });
 
-        loginBtn.addEventListener('click', async () => {
+        document.getElementById('login-btn').addEventListener('click', async () => {
             try {
                 await signInWithPopup(auth, provider);
             } catch (error) {
@@ -145,46 +210,142 @@
             }
         });
 
-        logoutBtn.addEventListener('click', () => signOut(auth));
+        const handleLogout = () => {
+            currentUser = null;
+            savedUserData = null;
+            signOut(auth);
+        };
+
+        document.getElementById('logout-btn').addEventListener('click', handleLogout);
+        document.getElementById('reg-cancel-btn').addEventListener('click', handleLogout);
+        document.getElementById('login-pass-logout-btn').addEventListener('click', handleLogout);
+
+        function openProfile(user, nickname) {
+            document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
+            document.getElementById('welcome-greeting').textContent = `С возвращением, ${nickname}!`;
+            document.getElementById('user-email').textContent = user.email;
+            showScreen('profile');
+        }
+
+        // Сохранение при регистрации (Дата рождения + Пароль)
+        document.getElementById('reg-submit-btn').addEventListener('click', async () => {
+            const dob = document.getElementById('reg-dob').value;
+            const pass = document.getElementById('reg-pass').value;
+            const passConfirm = document.getElementById('reg-pass-confirm').value;
+            const errEl = document.getElementById('reg-error');
+
+            errEl.classList.add('hidden');
+
+            if (!dob) {
+                errEl.textContent = "Укажите дату рождения.";
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if (!pass) {
+                errEl.textContent = "Придумайте пароль.";
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if (pass !== passConfirm) {
+                errEl.textContent = "Пароли не совпадают.";
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                showScreen('loading');
+                const nickname = currentUser.displayName || 'User';
+                const userRef = doc(db, "users", currentUser.uid);
+
+                await setDoc(userRef, {
+                    name: nickname,
+                    email: currentUser.email,
+                    photo: currentUser.photoURL,
+                    dob: dob,
+                    password: pass,
+                    lastLogin: serverTimestamp()
+                });
+
+                openProfile(currentUser, nickname);
+            } catch (e) {
+                showScreen('register');
+                errEl.textContent = "Ошибка облака: " + e.message;
+                errEl.classList.remove('hidden');
+            }
+        });
+
+        // Проверка пароля при повторном входе
+        document.getElementById('login-pass-btn').addEventListener('click', async () => {
+            const enteredPass = document.getElementById('login-pass').value;
+            const errEl = document.getElementById('login-pass-error');
+
+            errEl.classList.add('hidden');
+
+            if (!enteredPass) {
+                errEl.textContent = "Введите пароль.";
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            if (savedUserData && enteredPass === savedUserData.password) {
+                try {
+                    showScreen('loading');
+                    const userRef = doc(db, "users", currentUser.uid);
+                    await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
+                    openProfile(currentUser, savedUserData.name || currentUser.displayName || 'User');
+                } catch (e) {
+                    showScreen('password');
+                    errEl.textContent = "Ошибка облака: " + e.message;
+                    errEl.classList.remove('hidden');
+                }
+            } else {
+                errEl.textContent = "Неверный пароль.";
+                errEl.classList.remove('hidden');
+            }
+        });
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                authScreen.classList.add('hidden');
-                profileScreen.classList.remove('hidden');
-                document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
-                document.getElementById('user-name').textContent = user.displayName || 'Member';
-                document.getElementById('user-email').textContent = user.email;
-                dbStatus.textContent = "Checking cloud limit...";
+                currentUser = user;
+                showScreen('loading');
 
                 try {
                     const userRef = doc(db, "users", user.uid);
                     const userSnap = await getDoc(userRef);
 
                     if (!userSnap.exists()) {
+                        // Новый пользователь — проверяем лимит 100 человек
                         const usersSnapshot = await getDocs(collection(db, "users"));
                         if (usersSnapshot.size >= MAX_USERS) {
                             alert(`Лимит исчерпан: в базе может быть максимум ${MAX_USERS} аккаунтов.`);
-                            await signOut(auth);
+                            handleLogout();
                             return;
                         }
+                        // Очищаем поля и открываем регистрацию
+                        document.getElementById('reg-dob').value = '';
+                        document.getElementById('reg-pass').value = '';
+                        document.getElementById('reg-pass-confirm').value = '';
+                        document.getElementById('reg-error').classList.add('hidden');
+                        showScreen('register');
+                    } else {
+                        // Существующий пользователь — просим ввести пароль
+                        savedUserData = userSnap.data();
+                        if (!savedUserData.password) {
+                            // Если аккаунт был создан до добавления паролей
+                            showScreen('register');
+                        } else {
+                            document.getElementById('login-hint-email').textContent = user.email;
+                            document.getElementById('login-pass').value = '';
+                            document.getElementById('login-pass-error').classList.add('hidden');
+                            showScreen('password');
+                        }
                     }
-
-                    await setDoc(userRef, {
-                        name: user.displayName,
-                        email: user.email,
-                        photo: user.photoURL,
-                        lastLogin: serverTimestamp()
-                    }, { merge: true });
-
-                    dbStatus.textContent = "Synced with cloud ✓";
-                    dbStatus.className = "text-xs text-emerald-600 dark:text-emerald-400 mb-6";
                 } catch (e) {
-                    dbStatus.textContent = "Cloud error: " + e.message;
-                    dbStatus.className = "text-xs text-red-500 mb-6";
+                    alert("Ошибка облачного сервиса: " + e.message);
+                    handleLogout();
                 }
             } else {
-                profileScreen.classList.add('hidden');
-                authScreen.classList.remove('hidden');
+                showScreen('auth');
             }
         });
     </script>
