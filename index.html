@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -104,7 +104,6 @@
             <div>
                 <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Придумайте пароль</label>
                 <input id="reg-pass" type="password" placeholder="Введите пароль" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none mb-1.5">
-                <!-- Индикатор надежности пароля -->
                 <div class="w-full bg-gray-200 dark:bg-gray-800 h-1.5 rounded-full overflow-hidden mb-1">
                     <div id="password-strength-bar" class="h-full w-0 transition-all duration-300"></div>
                 </div>
@@ -147,10 +146,10 @@
         </button>
     </div>
 
-    <!-- 5. Profile Screen -->
+    <!-- 5. Profile Screen (Без надписи "С возвращением") -->
     <div id="profile-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm">
         <img id="user-avatar" src="" alt="Avatar" class="w-16 h-16 rounded-full mx-auto mb-3 border border-gray-200 dark:border-gray-700">
-        <h2 id="profile-greeting" class="text-lg text-gray-950 dark:text-white mb-1"></h2>
+        <h2 id="profile-nickname" class="text-lg text-gray-950 dark:text-white mb-1"></h2>
         <p id="user-email" class="text-xs text-gray-500 dark:text-gray-400 mb-2"></p>
         <p id="db-status" class="text-xs text-emerald-600 dark:text-emerald-400 mb-6">Synced with cloud ✓</p>
         
@@ -164,7 +163,7 @@
         </div>
     </div>
 
-    <!-- Delete Account Warning Modal (Шаг 1) -->
+    <!-- Delete Account Warning Modal (Шаг 1: Предупреждение и галочки) -->
     <div id="delete-warning-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
         <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-left shadow-xl">
             <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2 text-center">Пока вы не ушли, прочтите это очень важно</h3>
@@ -199,7 +198,24 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Final Modal (Шаг 2) -->
+    <!-- Delete Account Select Modal (Шаг 2: Белая кнопка "Подтвердить удаление" для выбора нужного аккаунта) -->
+    <div id="delete-verify-account-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
+        <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-center shadow-xl">
+            <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2">Подтверждение аккаунта</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">
+                Нажмите на белую кнопку ниже и выберите именно тот аккаунт (<span id="target-delete-email" class="font-bold text-gray-800 dark:text-gray-200"></span>), который хотите удалить.
+            </p>
+            <p id="verify-account-error" class="hidden text-xs text-red-500 mb-3"></p>
+            <button id="verify-google-account-btn" class="w-full bg-white text-black border border-gray-300 hover:bg-gray-100 py-3 rounded-xl text-xs cursor-pointer transition font-bold shadow-sm mb-2">
+                Подтвердить удаление
+            </button>
+            <button onclick="closeVerifyAccountModal()" class="w-full bg-transparent text-gray-500 hover:text-gray-800 dark:hover:text-white py-1.5 rounded-lg text-xs cursor-pointer transition">
+                Отмена
+            </button>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Final Modal (Шаг 3: Финальный вопрос "Хотите точно удалить аккаунт?") -->
     <div id="delete-confirm-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
         <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-center shadow-xl">
             <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2">Хотите точно удалить аккаунт?</h3>
@@ -245,11 +261,12 @@
         function closeModal() {
             document.getElementById('legal-modal').classList.add('hidden');
         }
-
         function closeDeleteModal() {
             document.getElementById('delete-warning-modal').classList.add('hidden');
         }
-
+        function closeVerifyAccountModal() {
+            document.getElementById('delete-verify-account-modal').classList.add('hidden');
+        }
         function closeFinalDeleteModal() {
             document.getElementById('delete-confirm-modal').classList.add('hidden');
         }
@@ -277,44 +294,44 @@
         }
 
         function syncSelectsToText() {
-            const d = daySelect.value;
-            const m = monthSelect.value;
-            const y = yearSelect.value;
-            if (d && m && y) {
-                dobText.value = `${d}.${m}.${y}`;
-            }
-        }
-        daySelect.addEventListener('change', syncSelectsToText);
-        monthSelect.addEventListener('change', syncSelectsToText);
-        yearSelect.addEventListener('change', syncSelectsToText);
+    const d = daySelect.value;
+    const m = monthSelect.value;
+    const y = yearSelect.value;
+    if (d && m && y) {
+        dobText.value = `${d}.${m}.${y}`;
+    }
+}
+daySelect.addEventListener('change', syncSelectsToText);
+monthSelect.addEventListener('change', syncSelectsToText);
+yearSelect.addEventListener('change', syncSelectsToText);
 
-        dobText.addEventListener('input', (e) => {
-            let digits = e.target.value.replace(/\D/g, '').slice(0, 8);
-            let formatted = digits;
-            if (digits.length > 4) {
-                formatted = `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4)}`;
-            } else if (digits.length > 2) {
-                formatted = `${digits.slice(0, 2)}.${digits.slice(2)}`;
-            }
-            e.target.value = formatted;
+dobText.addEventListener('input', (e) => {
+    let digits = e.target.value.replace(/\D/g, '').slice(0, 8);
+    let formatted = digits;
+    if (digits.length > 4) {
+        formatted = `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4)}`;
+    } else if (digits.length > 2) {
+        formatted = `${digits.slice(0, 2)}.${digits.slice(2)}`;
+    }
+    e.target.value = formatted;
 
-            if (digits.length === 8) {
-                const d = digits.slice(0, 2);
-                const m = digits.slice(2, 4);
-                const y = digits.slice(4, 8);
-                if ([...daySelect.options].some(o => o.value === d)) daySelect.value = d;
-                if ([...monthSelect.options].some(o => o.value === m)) monthSelect.value = m;
-                if ([...yearSelect.options].some(o => o.value === y)) yearSelect.value = y;
-            }
-        });
+    if (digits.length === 8) {
+        const d = digits.slice(0, 2);
+        const m = digits.slice(2, 4);
+        const y = digits.slice(4, 8);
+        if ([...daySelect.options].some(o => o.value === d)) daySelect.value = d;
+        if ([...monthSelect.options].some(o => o.value === m)) monthSelect.value = m;
+        if ([...yearSelect.options].some(o => o.value === y)) yearSelect.value = y;
+    }
+});
 
-        // Проверка надежности пароля
-        const passInput = document.getElementById('reg-pass');
-        const strengthBar = document.getElementById('password-strength-bar');
-        const strengthText = document.getElementById('password-strength-text');
-        const regSubmitBtn = document.getElementById('reg-submit-btn');
+// Проверка надежности пароля
+const passInput = document.getElementById('reg-pass');
+const strengthBar = document.getElementById('password-strength-bar');
+const strengthText = document.getElementById('password-strength-text');
+const regSubmitBtn = document.getElementById('reg-submit-btn');
 
-        function evaluatePassword(pass) {
+function evaluatePassword(pass) {
     if (!pass) return { level: 'none', text: 'Требования: от 6 символов, 2 цифры, 1 заглавная буква, спецсимволы/подчеркивания (_).', color: 'w-0 bg-transparent' };
 
     const lenOk = pass.length >= 6;
@@ -328,11 +345,9 @@
     if (upperOk) score++;
     if (specialOk) score++;
 
-    // Красная черта: Ненадежный
     if (!lenOk || !digitsCount || !upperOk || !specialOk) {
         return { level: 'red', text: 'Ненадежный (не выполнены все требования)', color: 'w-1/4 bg-red-500' };
     }
-    // Если все базовые правила выполнены, но длина небольшая
     if (score === 4 && pass.length < 8) {
         return { level: 'orange', text: 'Слабый', color: 'w-2/4 bg-orange-500' };
     }
@@ -357,7 +372,7 @@ passInput.addEventListener('input', () => {
 </script>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 import { initializeFirestore, doc, getDoc, setDoc, deleteDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
@@ -424,11 +439,14 @@ document.getElementById('login-pass-logout-btn').addEventListener('click', handl
 
 const deleteAccountBtn = document.getElementById('delete-account-btn');
 const deleteWarningModal = document.getElementById('delete-warning-modal');
+const deleteVerifyAccountModal = document.getElementById('delete-verify-account-modal');
 const deleteConfirmModal = document.getElementById('delete-confirm-modal');
 const chkDownloaded = document.getElementById('chk-downloaded');
 const chkConfirm = document.getElementById('chk-confirm');
 const proceedDeleteBtn = document.getElementById('proceed-delete-btn');
 const downloadDataBtn = document.getElementById('download-data-btn');
+const verifyGoogleAccountBtn = document.getElementById('verify-google-account-btn');
+const verifyAccountError = document.getElementById('verify-account-error');
 const finalDeleteBtn = document.getElementById('final-delete-btn');
 
 deleteAccountBtn.addEventListener('click', () => {
@@ -458,7 +476,7 @@ downloadDataBtn.addEventListener('click', () => {
         email: currentUser.email,
         nickname: savedUserData?.nickname || currentUser.displayName,
         dob: savedUserData?.dob || '',
-        createdAt: new Date().toISOString()
+        exportedAt: new Date().toISOString()
     };
     const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -473,8 +491,40 @@ downloadDataBtn.addEventListener('click', () => {
 
 proceedDeleteBtn.addEventListener('click', () => {
     deleteWarningModal.classList.add('hidden');
-    document.getElementById('delete-confirm-email').textContent = currentUser.email;
-    deleteConfirmModal.classList.remove('hidden');
+    document.getElementById('target-delete-email').textContent = currentUser.email;
+    verifyAccountError.classList.add('hidden');
+    deleteVerifyAccountModal.classList.remove('hidden');
+});
+
+verifyGoogleAccountBtn.addEventListener('click', async () => {
+    if (!currentUser) return;
+    verifyAccountError.classList.add('hidden');
+
+    const verifyApp = initializeApp(firebaseConfig, "verifyApp_" + Date.now());
+    const verifyAuth = getAuth(verifyApp);
+    const verifyProvider = new GoogleAuthProvider();
+    verifyProvider.setCustomParameters({ prompt: 'select_account' });
+
+    try {
+        const res = await signInWithPopup(verifyAuth, verifyProvider);
+        const selectedEmail = res.user.email;
+        const selectedUid = res.user.uid;
+        await signOut(verifyAuth);
+        await deleteApp(verifyApp);
+
+        if (selectedUid === currentUser.uid || selectedEmail === currentUser.email) {
+            deleteVerifyAccountModal.classList.add('hidden');
+            document.getElementById('delete-confirm-email').textContent = currentUser.email;
+            deleteConfirmModal.classList.remove('hidden');
+        } else {
+            verifyAccountError.textContent = `Вы выбрали другой аккаунт (${selectedEmail}). Пожалуйста, нажмите кнопку снова и выберите точный аккаунт: ${currentUser.email}`;
+            verifyAccountError.classList.remove('hidden');
+        }
+    } catch (err) {
+        try { await deleteApp(verifyApp); } catch (_) {}
+        verifyAccountError.textContent = "Не удалось подтвердить аккаунт. Попробуйте выбрать нужный аккаунт ещё раз.";
+        verifyAccountError.classList.remove('hidden');
+    }
 });
 
 finalDeleteBtn.addEventListener('click', async () => {
@@ -492,7 +542,7 @@ finalDeleteBtn.addEventListener('click', async () => {
 
 function openProfile(user, nickname) {
     document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
-    document.getElementById('profile-greeting').textContent = `С возвращением, ${nickname}!`;
+    document.getElementById('profile-nickname').textContent = nickname;
     document.getElementById('user-email').textContent = user.email;
     showScreen('profile');
 }
@@ -552,6 +602,7 @@ document.getElementById('reg-submit-btn').addEventListener('click', async () => 
             lastLogin: serverTimestamp()
         });
 
+        savedUserData = { nickname, email: currentUser.email, dob, password: pass };
         openProfile(currentUser, nickname);
     } catch (e) {
         showScreen('register');
