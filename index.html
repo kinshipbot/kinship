@@ -85,7 +85,7 @@
         <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-left shadow-xl">
             <h3 id="modal-title" class="text-sm font-bold text-gray-950 dark:text-white mb-2"></h3>
             <p id="modal-body" class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-4"></p>
-            <button onclick="closeModal()" class="w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 py-2 rounded-lg text-xs cursor-pointer transition">Got id</button>
+            <button onclick="closeModal()" class="w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 py-2 rounded-lg text-xs cursor-pointer transition">Got it</button>
         </div>
     </div>
 
@@ -102,7 +102,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -125,11 +125,19 @@
         const logoutBtn = document.getElementById('logout-btn');
         const dbStatus = document.getElementById('db-status');
 
+        getRedirectResult(auth).catch((error) => {
+            alert("Ошибка возврата после входа: " + error.message);
+        });
+
         loginBtn.addEventListener('click', async () => {
             try {
                 await signInWithPopup(auth, provider);
             } catch (error) {
-                alert("Sign-in initial error: " + error.message);
+                if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request' || /Mobi|Android/i.test(navigator.userAgent)) {
+                    await signInWithRedirect(auth, provider);
+                } else {
+                    alert("Ошибка входа: " + error.message);
+                }
             }
         });
 
@@ -137,11 +145,17 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                authScreen.classList.add('hidden');
+                profileScreen.classList.remove('hidden');
+                document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
+                document.getElementById('user-name').textContent = user.displayName || 'Member';
+                document.getElementById('user-email').textContent = user.email;
+                dbStatus.textContent = "Checking cloud limit...";
+
                 try {
                     const userRef = doc(db, "users", user.uid);
                     const userSnap = await getDoc(userRef);
 
-                    // Если пользователя еще нет в базе, проверяем лимит в 3 аккаунта
                     if (!userSnap.exists()) {
                         const usersSnapshot = await getDocs(collection(db, "users"));
                         if (usersSnapshot.size >= 3) {
@@ -151,7 +165,6 @@
                         }
                     }
 
-                    // Сохраняем / обновляем аккаунт в облаке
                     await setDoc(userRef, {
                         name: user.displayName,
                         email: user.email,
@@ -159,16 +172,11 @@
                         lastLogin: serverTimestamp()
                     }, { merge: true });
 
-                    authScreen.classList.add('hidden');
-                    profileScreen.classList.remove('hidden');
-                    document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
-                    document.getElementById('user-name').textContent = user.displayName || 'Member';
-                    document.getElementById('user-email').textContent = user.email;
                     dbStatus.textContent = "Synced with cloud ✓";
+                    dbStatus.className = "text-xs text-emerald-600 dark:text-emerald-400 mb-6";
                 } catch (e) {
-                    dbStatus.textContent = "Sync error: " + e.message;
-                    dbStatus.classList.remove('text-emerald-600', 'dark:text-emerald-400');
-                    dbStatus.classList.add('text-red-500');
+                    dbStatus.textContent = "Cloud error: " + e.message;
+                    dbStatus.className = "text-xs text-red-500 mb-6";
                 }
             } else {
                 profileScreen.classList.add('hidden');
