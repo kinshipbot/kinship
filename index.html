@@ -103,7 +103,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { initializeFirestore, doc, getDoc, setDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
@@ -116,8 +116,12 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
+        const db = initializeFirestore(app, {
+            experimentalForceLongPolling: true
+        });
         const provider = new GoogleAuthProvider();
+
+        const MAX_USERS = 100;
 
         const authScreen = document.getElementById('auth-screen');
         const profileScreen = document.getElementById('profile-screen');
@@ -158,8 +162,8 @@
 
                     if (!userSnap.exists()) {
                         const usersSnapshot = await getDocs(collection(db, "users"));
-                        if (usersSnapshot.size >= 3) {
-                            alert("Лимит исчерпан: в базе может быть максимум 3 аккаунта.");
+                        if (usersSnapshot.size >= MAX_USERS) {
+                            alert(`Лимит исчерпан: в базе может быть максимум ${MAX_USERS} аккаунтов.`);
                             await signOut(auth);
                             return;
                         }
