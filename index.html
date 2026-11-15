@@ -85,7 +85,7 @@
         <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-left shadow-xl">
             <h3 id="modal-title" class="text-sm font-bold text-gray-950 dark:text-white mb-2"></h3>
             <p id="modal-body" class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-4"></p>
-            <button onclick="closeModal()" class="w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 py-2 rounded-lg text-xs cursor-pointer transition">Got it</button>
+            <button onclick="closeModal()" class="w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 py-2 rounded-lg text-xs cursor-pointer transition">Got id</button>
         </div>
     </div>
 
@@ -103,7 +103,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
@@ -129,7 +129,7 @@
             try {
                 await signInWithPopup(auth, provider);
             } catch (error) {
-                alert("Sign-in failed: " + error.message);
+                alert("Sign-in initial error: " + error.message);
             }
         });
 
@@ -137,19 +137,33 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                authScreen.classList.add('hidden');
-                profileScreen.classList.remove('hidden');
-                document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
-                document.getElementById('user-name').textContent = user.displayName || 'Member';
-                document.getElementById('user-email').textContent = user.email;
-
                 try {
-                    await setDoc(doc(db, "users", user.uid), {
+                    const userRef = doc(db, "users", user.uid);
+                    const userSnap = await getDoc(userRef);
+
+                    // Если пользователя еще нет в базе, проверяем лимит в 3 аккаунта
+                    if (!userSnap.exists()) {
+                        const usersSnapshot = await getDocs(collection(db, "users"));
+                        if (usersSnapshot.size >= 3) {
+                            alert("Лимит исчерпан: в базе может быть максимум 3 аккаунта.");
+                            await signOut(auth);
+                            return;
+                        }
+                    }
+
+                    // Сохраняем / обновляем аккаунт в облаке
+                    await setDoc(userRef, {
                         name: user.displayName,
                         email: user.email,
                         photo: user.photoURL,
                         lastLogin: serverTimestamp()
                     }, { merge: true });
+
+                    authScreen.classList.add('hidden');
+                    profileScreen.classList.remove('hidden');
+                    document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
+                    document.getElementById('user-name').textContent = user.displayName || 'Member';
+                    document.getElementById('user-email').textContent = user.email;
                     dbStatus.textContent = "Synced with cloud ✓";
                 } catch (e) {
                     dbStatus.textContent = "Sync error: " + e.message;
