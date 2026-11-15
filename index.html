@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        *, body, h1, h2, p, button, a, input, label {
+        *, body, h1, h2, p, button, a, input, label, select {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
         }
         h1, h2 { font-weight: 800 !important; }
@@ -62,20 +62,50 @@
         <p class="text-sm text-gray-500 dark:text-gray-400">Проверка данных в облаке...</p>
     </div>
 
-    <!-- 3. Registration Setup Screen (Дата рождения + Новый пароль) -->
+    <!-- 3. Registration Setup Screen -->
     <div id="register-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm text-left">
         <h2 class="text-lg text-gray-950 dark:text-white mb-1 text-center">Завершение регистрации</h2>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-5 text-center">Укажите дату рождения и придумайте пароль</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-5 text-center">Заполните данные для создания профиля</p>
 
         <div class="space-y-3 mb-5">
             <div>
-                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Дата рождения</label>
-                <input id="reg-dob" type="date" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
+                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Никнейм</label>
+                <input id="reg-nickname" type="text" placeholder="Ваш никнейм" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
             </div>
+
+            <div>
+                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Дата рождения (введите или выберите)</label>
+                <input id="reg-dob-text" type="text" inputmode="numeric" maxlength="10" placeholder="дд.мм.гггг" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none mb-2">
+                <div class="grid grid-cols-3 gap-2">
+                    <select id="reg-day" class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-xs text-gray-950 dark:text-white outline-none">
+                        <option value="">День</option>
+                    </select>
+                    <select id="reg-month" class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-xs text-gray-950 dark:text-white outline-none">
+                        <option value="">Месяц</option>
+                        <option value="01">Январь</option>
+                        <option value="02">Февраль</option>
+                        <option value="03">Март</option>
+                        <option value="04">Апрель</option>
+                        <option value="05">Май</option>
+                        <option value="06">Июнь</option>
+                        <option value="07">Июль</option>
+                        <option value="08">Август</option>
+                        <option value="09">Сентябрь</option>
+                        <option value="10">Октябрь</option>
+                        <option value="11">Ноябрь</option>
+                        <option value="12">Декабрь</option>
+                    </select>
+                    <select id="reg-year" class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-xs text-gray-950 dark:text-white outline-none">
+                        <option value="">Год</option>
+                    </select>
+                </div>
+            </div>
+
             <div>
                 <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Придумайте пароль</label>
                 <input id="reg-pass" type="password" placeholder="Введите пароль" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
             </div>
+
             <div>
                 <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Повторите пароль</label>
                 <input id="reg-pass-confirm" type="password" placeholder="Повторите пароль" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
@@ -92,7 +122,7 @@
         </button>
     </div>
 
-    <!-- 4. Password Check Screen (Ввод пароля при повторном входе) -->
+    <!-- 4. Password Check Screen -->
     <div id="password-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm text-left">
         <h2 class="text-lg text-gray-950 dark:text-white mb-1 text-center">Подтверждение входа</h2>
         <p id="login-hint-email" class="text-xs text-gray-500 dark:text-gray-400 mb-5 text-center"></p>
@@ -118,9 +148,15 @@
         <h2 id="welcome-greeting" class="text-lg text-gray-950 dark:text-white mb-1"></h2>
         <p id="user-email" class="text-xs text-gray-500 dark:text-gray-400 mb-2"></p>
         <p id="db-status" class="text-xs text-emerald-600 dark:text-emerald-400 mb-6">Synced with cloud ✓</p>
-        <button id="logout-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-3 rounded-xl text-xs transition cursor-pointer">
-            Выход
-        </button>
+        
+        <div class="space-y-2">
+            <button id="logout-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-3 rounded-xl text-xs transition cursor-pointer">
+                Выход
+            </button>
+            <button id="delete-account-btn" class="w-full bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:text-red-400 p-3 rounded-xl text-xs transition cursor-pointer">
+                Удалить аккаунт
+            </button>
+        </div>
     </div>
 
     <!-- Minimalist Western-style Footer -->
@@ -153,12 +189,68 @@
         function closeModal() {
             document.getElementById('legal-modal').classList.add('hidden');
         }
+
+        // Заполнение выпадающих списков дня и года
+        const daySelect = document.getElementById('reg-day');
+        const monthSelect = document.getElementById('reg-month');
+        const yearSelect = document.getElementById('reg-year');
+        const dobText = document.getElementById('reg-dob-text');
+
+        for (let d = 1; d <= 31; d++) {
+            const val = String(d).padStart(2, '0');
+            const opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = d;
+            daySelect.appendChild(opt);
+        }
+
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear; y >= 1920; y--) {
+            const opt = document.createElement('option');
+            opt.value = String(y);
+            opt.textContent = y;
+            yearSelect.appendChild(opt);
+        }
+
+        // Синхронизация выпадающих списков -> текстовое поле дд.мм.гггг
+        function syncSelectsToText() {
+            const d = daySelect.value;
+            const m = monthSelect.value;
+            const y = yearSelect.value;
+            if (d && m && y) {
+                dobText.value = `${d}.${m}.${y}`;
+            }
+        }
+        daySelect.addEventListener('change', syncSelectsToText);
+        monthSelect.addEventListener('change', syncSelectsToText);
+        yearSelect.addEventListener('change', syncSelectsToText);
+
+        // Автоформатирование и синхронизация текстового поля дд.мм.гггг -> выпадающие списки
+        dobText.addEventListener('input', (e) => {
+            let digits = e.target.value.replace(/\D/g, '').slice(0, 8);
+            let formatted = digits;
+            if (digits.length > 4) {
+                formatted = `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4)}`;
+            } else if (digits.length > 2) {
+                formatted = `${digits.slice(0, 2)}.${digits.slice(2)}`;
+            }
+            e.target.value = formatted;
+
+            if (digits.length === 8) {
+                const d = digits.slice(0, 2);
+                const m = digits.slice(2, 4);
+                const y = digits.slice(4, 8);
+                if ([...daySelect.options].some(o => o.value === d)) daySelect.value = d;
+                if ([...monthSelect.options].some(o => o.value === m)) monthSelect.value = m;
+                if ([...yearSelect.options].some(o => o.value === y)) yearSelect.value = y;
+            }
+        });
     </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { initializeFirestore, doc, getDoc, setDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { initializeFirestore, doc, getDoc, setDoc, deleteDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
@@ -220,6 +312,22 @@
         document.getElementById('reg-cancel-btn').addEventListener('click', handleLogout);
         document.getElementById('login-pass-logout-btn').addEventListener('click', handleLogout);
 
+        // Удаление аккаунта из базы данных и освобождение места в лимите
+        document.getElementById('delete-account-btn').addEventListener('click', async () => {
+            if (!currentUser) return;
+            if (!confirm("Вы уверены, что хотите удалить аккаунт? Все ваши данные будут удалены, и место на сервере освободится.")) {
+                return;
+            }
+            try {
+                showScreen('loading');
+                await deleteDoc(doc(db, "users", currentUser.uid));
+                handleLogout();
+            } catch (e) {
+                showScreen('profile');
+                alert("Ошибка при удалении аккаунта: " + e.message);
+            }
+        });
+
         function openProfile(user, nickname) {
             document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
             document.getElementById('welcome-greeting').textContent = `С возвращением, ${nickname}!`;
@@ -227,127 +335,145 @@
             showScreen('profile');
         }
 
-        // Сохранение при регистрации (Дата рождения + Пароль)
+        function isValidDateString(str) {
+            const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(str);
+            if (!match) return false;
+            const day = parseInt(match[1], 10);
+            const month = parseInt(match[2], 10);
+            const year = parseInt(match[3], 10);
+            if (month < 1 || month > 12 || day < 1 || day > 31 || year < 1900 || year > new Date().getFullYear()) return false;
+            const date = new Date(year, month - 1, day);
+            return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+        }
+
+        // Сохранение при регистрации
         document.getElementById('reg-submit-btn').addEventListener('click', async () => {
-            const dob = document.getElementById('reg-dob').value;
-            const pass = document.getElementById('reg-pass').value;
-            const passConfirm = document.getElementById('reg-pass-confirm').value;
-            const errEl = document.getElementById('reg-error');
+    const nickname = document.getElementById('reg-nickname').value.trim();
+    const dob = document.getElementById('reg-dob-text').value.trim();
+    const pass = document.getElementById('reg-pass').value;
+    const passConfirm = document.getElementById('reg-pass-confirm').value;
+    const errEl = document.getElementById('reg-error');
 
-            errEl.classList.add('hidden');
+    errEl.classList.add('hidden');
 
-            if (!dob) {
-                errEl.textContent = "Укажите дату рождения.";
-                errEl.classList.remove('hidden');
-                return;
-            }
-            if (!pass) {
-                errEl.textContent = "Придумайте пароль.";
-                errEl.classList.remove('hidden');
-                return;
-            }
-            if (pass !== passConfirm) {
-                errEl.textContent = "Пароли не совпадают.";
-                errEl.classList.remove('hidden');
-                return;
-            }
+    if (!nickname) {
+        errEl.textContent = "Укажите никнейм.";
+        errEl.classList.remove('hidden');
+        return;
+    }
+    if (!isValidDateString(dob)) {
+        errEl.textContent = "Укажите корректную дату рождения в формате дд.мм.гггг.";
+        errEl.classList.remove('hidden');
+        return;
+    }
+    if (!pass) {
+        errEl.textContent = "Придумайте пароль.";
+        errEl.classList.remove('hidden');
+        return;
+    }
+    if (pass !== passConfirm) {
+        errEl.textContent = "Пароли не совпадают.";
+        errEl.classList.remove('hidden');
+        return;
+    }
 
-            try {
-                showScreen('loading');
-                const nickname = currentUser.displayName || 'User';
-                const userRef = doc(db, "users", currentUser.uid);
+    try {
+        showScreen('loading');
+        const userRef = doc(db, "users", currentUser.uid);
 
-                await setDoc(userRef, {
-                    name: nickname,
-                    email: currentUser.email,
-                    photo: currentUser.photoURL,
-                    dob: dob,
-                    password: pass,
-                    lastLogin: serverTimestamp()
-                });
-
-                openProfile(currentUser, nickname);
-            } catch (e) {
-                showScreen('register');
-                errEl.textContent = "Ошибка облака: " + e.message;
-                errEl.classList.remove('hidden');
-            }
+        await setDoc(userRef, {
+            nickname: nickname,
+            email: currentUser.email,
+            photo: currentUser.photoURL,
+            dob: dob,
+            password: pass,
+            lastLogin: serverTimestamp()
         });
 
-        // Проверка пароля при повторном входе
-        document.getElementById('login-pass-btn').addEventListener('click', async () => {
-            const enteredPass = document.getElementById('login-pass').value;
-            const errEl = document.getElementById('login-pass-error');
+        openProfile(currentUser, nickname);
+    } catch (e) {
+        showScreen('register');
+        errEl.textContent = "Ошибка облака: " + e.message;
+        errEl.classList.remove('hidden');
+    }
+});
 
-            errEl.classList.add('hidden');
+// Проверка пароля при повторном входе
+document.getElementById('login-pass-btn').addEventListener('click', async () => {
+    const enteredPass = document.getElementById('login-pass').value;
+    const errEl = document.getElementById('login-pass-error');
 
-            if (!enteredPass) {
-                errEl.textContent = "Введите пароль.";
-                errEl.classList.remove('hidden');
-                return;
-            }
+    errEl.classList.add('hidden');
 
-            if (savedUserData && enteredPass === savedUserData.password) {
-                try {
-                    showScreen('loading');
-                    const userRef = doc(db, "users", currentUser.uid);
-                    await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
-                    openProfile(currentUser, savedUserData.name || currentUser.displayName || 'User');
-                } catch (e) {
-                    showScreen('password');
-                    errEl.textContent = "Ошибка облака: " + e.message;
-                    errEl.classList.remove('hidden');
-                }
-            } else {
-                errEl.textContent = "Неверный пароль.";
-                errEl.classList.remove('hidden');
-            }
-        });
+    if (!enteredPass) {
+        errEl.textContent = "Введите пароль.";
+        errEl.classList.remove('hidden');
+        return;
+    }
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                showScreen('loading');
+    if (savedUserData && enteredPass === savedUserData.password) {
+        try {
+            showScreen('loading');
+            const userRef = doc(db, "users", currentUser.uid);
+            await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
+            const nick = savedUserData.nickname || savedUserData.name || currentUser.displayName || 'User';
+            openProfile(currentUser, nick);
+        } catch (e) {
+            showScreen('password');
+            errEl.textContent = "Ошибка облака: " + e.message;
+            errEl.classList.remove('hidden');
+        }
+    } else {
+        errEl.textContent = "Неверный пароль.";
+        errEl.classList.remove('hidden');
+    }
+});
 
-                try {
-                    const userRef = doc(db, "users", user.uid);
-                    const userSnap = await getDoc(userRef);
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        currentUser = user;
+        showScreen('loading');
 
-                    if (!userSnap.exists()) {
-                        // Новый пользователь — проверяем лимит 100 человек
-                        const usersSnapshot = await getDocs(collection(db, "users"));
-                        if (usersSnapshot.size >= MAX_USERS) {
-                            alert(`Лимит исчерпан: в базе может быть максимум ${MAX_USERS} аккаунтов.`);
-                            handleLogout();
-                            return;
-                        }
-                        // Очищаем поля и открываем регистрацию
-                        document.getElementById('reg-dob').value = '';
-                        document.getElementById('reg-pass').value = '';
-                        document.getElementById('reg-pass-confirm').value = '';
-                        document.getElementById('reg-error').classList.add('hidden');
-                        showScreen('register');
-                    } else {
-                        // Существующий пользователь — просим ввести пароль
-                        savedUserData = userSnap.data();
-                        if (!savedUserData.password) {
-                            // Если аккаунт был создан до добавления паролей
-                            showScreen('register');
-                        } else {
-                            document.getElementById('login-hint-email').textContent = user.email;
-                            document.getElementById('login-pass').value = '';
-                            document.getElementById('login-pass-error').classList.add('hidden');
-                            showScreen('password');
-                        }
-                    }
-                } catch (e) {
-                    alert("Ошибка облачного сервиса: " + e.message);
+        try {
+            const userRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userRef);
+
+            if (!userSnap.exists()) {
+                const usersSnapshot = await getDocs(collection(db, "users"));
+                if (usersSnapshot.size >= MAX_USERS) {
+                    alert(`Лимит исчерпан: в базе может быть максимум ${MAX_USERS} аккаунтов.`);
                     handleLogout();
+                    return;
                 }
+                document.getElementById('reg-nickname').value = user.displayName || '';
+                document.getElementById('reg-dob-text').value = '';
+                document.getElementById('reg-day').value = '';
+                document.getElementById('reg-month').value = '';
+                document.getElementById('reg-year').value = '';
+                document.getElementById('reg-pass').value = '';
+                document.getElementById('reg-pass-confirm').value = '';
+                document.getElementById('reg-error').classList.add('hidden');
+                showScreen('register');
             } else {
-                showScreen('auth');
+                savedUserData = userSnap.data();
+                if (!savedUserData.password) {
+                    document.getElementById('reg-nickname').value = savedUserData.nickname || savedUserData.name || user.displayName || '';
+                    showScreen('register');
+                } else {
+                    document.getElementById('login-hint-email').textContent = user.email;
+                    document.getElementById('login-pass').value = '';
+                    document.getElementById('login-pass-error').classList.add('hidden');
+                    showScreen('password');
+                }
             }
-        });
-    </script>
+        } catch (e) {
+            alert("Ошибка облачного сервиса: " + e.message);
+            handleLogout();
+        }
+    } else {
+        showScreen('auth');
+    }
+});
+     </script>
 </body>
 </html>
