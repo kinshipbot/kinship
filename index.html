@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -126,7 +126,7 @@
         </button>
     </div>
 
-    <!-- 4. Password Check Screen -->
+    <!-- 4. Password Check Screen (Приветствие "С возвращением" здесь) -->
     <div id="password-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm text-left">
         <h2 id="login-welcome-greeting" class="text-lg text-gray-950 dark:text-white mb-1 text-center"></h2>
         <p id="login-hint-email" class="text-xs text-gray-500 dark:text-gray-400 mb-5 text-center"></p>
@@ -146,10 +146,11 @@
         </button>
     </div>
 
-    <!-- 5. Profile Screen (Без надписи "С возвращением") -->
+    <!-- 5. Profile Screen (Только никнейм и роли по правилам) -->
     <div id="profile-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm">
         <img id="user-avatar" src="" alt="Avatar" class="w-16 h-16 rounded-full mx-auto mb-3 border border-gray-200 dark:border-gray-700">
         <h2 id="profile-nickname" class="text-lg text-gray-950 dark:text-white mb-1"></h2>
+        <div id="role-badge-container" class="mb-2"></div>
         <p id="user-email" class="text-xs text-gray-500 dark:text-gray-400 mb-2"></p>
         <p id="db-status" class="text-xs text-emerald-600 dark:text-emerald-400 mb-6">Synced with cloud ✓</p>
         
@@ -163,7 +164,7 @@
         </div>
     </div>
 
-    <!-- Delete Account Warning Modal (Шаг 1: Предупреждение и галочки) -->
+    <!-- Delete Account Warning Modal (Шаг 1) -->
     <div id="delete-warning-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
         <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-left shadow-xl">
             <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2 text-center">Пока вы не ушли, прочтите это очень важно</h3>
@@ -198,7 +199,7 @@
         </div>
     </div>
 
-    <!-- Delete Account Select Modal (Шаг 2: Белая кнопка "Подтвердить удаление" для выбора нужного аккаунта) -->
+    <!-- Delete Account Select Modal (Шаг 2: Белая кнопка выбора аккаунта) -->
     <div id="delete-verify-account-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
         <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-center shadow-xl">
             <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2">Подтверждение аккаунта</h3>
@@ -215,7 +216,7 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Final Modal (Шаг 3: Финальный вопрос "Хотите точно удалить аккаунт?") -->
+    <!-- Delete Confirmation Final Modal (Шаг 3) -->
     <div id="delete-confirm-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
         <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-center shadow-xl">
             <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2">Хотите точно удалить аккаунт?</h3>
@@ -271,7 +272,6 @@
             document.getElementById('delete-confirm-modal').classList.add('hidden');
         }
 
-        // Заполнение выпадающих списков дня и года
         const daySelect = document.getElementById('reg-day');
         const monthSelect = document.getElementById('reg-month');
         const yearSelect = document.getElementById('reg-year');
@@ -292,8 +292,8 @@
             opt.textContent = y;
             yearSelect.appendChild(opt);
         }
-
-        function syncSelectsToText() {
+        
+function syncSelectsToText() {
     const d = daySelect.value;
     const m = monthSelect.value;
     const y = yearSelect.value;
@@ -325,7 +325,6 @@ dobText.addEventListener('input', (e) => {
     }
 });
 
-// Проверка надежности пароля
 const passInput = document.getElementById('reg-pass');
 const strengthBar = document.getElementById('password-strength-bar');
 const strengthText = document.getElementById('password-strength-text');
@@ -393,6 +392,7 @@ const db = initializeFirestore(app, {
 const provider = new GoogleAuthProvider();
 
 const MAX_USERS = 100;
+const OWNER_EMAILS = ["danya@gmail.com", "kinshipbot@gmail.com"];
 
 const screens = {
     auth: document.getElementById('auth-screen'),
@@ -475,6 +475,7 @@ downloadDataBtn.addEventListener('click', () => {
         uid: currentUser.uid,
         email: currentUser.email,
         nickname: savedUserData?.nickname || currentUser.displayName,
+        role: savedUserData?.role || 'user',
         dob: savedUserData?.dob || '',
         exportedAt: new Date().toISOString()
     };
@@ -540,10 +541,20 @@ finalDeleteBtn.addEventListener('click', async () => {
     }
 });
 
-function openProfile(user, nickname) {
+function openProfile(user, nickname, viewerRole) {
     document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
     document.getElementById('profile-nickname').textContent = nickname;
     document.getElementById('user-email').textContent = user.email;
+
+    const badgeContainer = document.getElementById('role-badge-container');
+    badgeContainer.innerHTML = '';
+
+    if (viewerRole === 'owner') {
+        badgeContainer.innerHTML = `<span class="inline-block bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[11px] font-bold px-2.5 py-1 rounded-lg">👑 Владелец</span>`;
+    } else if (viewerRole === 'admin') {
+        badgeContainer.innerHTML = `<span class="inline-block bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[11px] font-bold px-2.5 py-1 rounded-lg">🛡️ Администратор</span>`;
+    }
+
     showScreen('profile');
 }
 
@@ -593,17 +604,20 @@ document.getElementById('reg-submit-btn').addEventListener('click', async () => 
         showScreen('loading');
         const userRef = doc(db, "users", currentUser.uid);
 
+        const userRole = OWNER_EMAILS.includes(currentUser.email) ? 'owner' : 'user';
+
         await setDoc(userRef, {
             nickname: nickname,
             email: currentUser.email,
             photo: currentUser.photoURL,
             dob: dob,
             password: pass,
+            role: userRole,
             lastLogin: serverTimestamp()
         });
 
-        savedUserData = { nickname, email: currentUser.email, dob, password: pass };
-        openProfile(currentUser, nickname);
+        savedUserData = { nickname, email: currentUser.email, dob, password: pass, role: userRole };
+        openProfile(currentUser, nickname, userRole);
     } catch (e) {
         showScreen('register');
         errEl.textContent = "Ошибка облака: " + e.message;
@@ -629,7 +643,8 @@ document.getElementById('login-pass-btn').addEventListener('click', async () => 
             const userRef = doc(db, "users", currentUser.uid);
             await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
             const nick = savedUserData.nickname || savedUserData.name || currentUser.displayName || 'User';
-            openProfile(currentUser, nick);
+            const role = savedUserData.role || (OWNER_EMAILS.includes(currentUser.email) ? 'owner' : 'user');
+            openProfile(currentUser, nick, role);
         } catch (e) {
             showScreen('password');
             errEl.textContent = "Ошибка облака: " + e.message;
@@ -670,6 +685,12 @@ onAuthStateChanged(auth, async (user) => {
                 showScreen('register');
             } else {
                 savedUserData = userSnap.data();
+                
+                if (OWNER_EMAILS.includes(user.email) && savedUserData.role !== 'owner') {
+                    savedUserData.role = 'owner';
+                    await setDoc(userRef, { role: 'owner' }, { merge: true });
+                }
+
                 if (!savedUserData.password) {
                     document.getElementById('reg-nickname').value = savedUserData.nickname || savedUserData.name || user.displayName || '';
                     showScreen('register');
@@ -692,4 +713,5 @@ onAuthStateChanged(auth, async (user) => {
 });
 </script>
 </body>
-</html>
+    </html>
+        
