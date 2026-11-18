@@ -272,7 +272,7 @@
         <p class="subtitle">Secure your account</p>
 
         <label>Password</label>
-        <input id="input-pass" type="password" placeholder="Enter password">
+        <input id="input-pass" type="password" placeholder="Enter password (optional)">
         
         <div class="strength-track">
             <div id="strength-bar" class="strength-bar"></div>
@@ -282,6 +282,7 @@
         <p id="err-step3" class="error-msg hidden"></p>
 
         <button id="btn-step3" class="primary-btn">Next</button>
+        <button id="btn-skip-pass" class="secondary-btn" style="background: transparent; border: 1px solid var(--card-border);">Skip (No password)</button>
         <button id="back-step3" class="secondary-btn">Back</button>
     </div>
 
@@ -298,6 +299,21 @@
 
         <button id="btn-register-final" class="primary-btn">Register</button>
         <button id="back-step4" class="secondary-btn">Back</button>
+    </div>
+
+    <!-- Модальное окно предупреждения при пропуске пароля (на английском) -->
+    <div id="modal-skip-warning" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
+        <div class="card" style="max-width: 320px; width: 100%; text-align: left;">
+            <h3 style="font-size: 15px; font-weight: 800; margin-bottom: 10px; text-align: center;">Warning!</h3>
+            <p style="font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 16px;">
+                Are you sure you want to skip setting a password?<br><br>
+                We care about your security and strongly recommend setting a password to protect your account. <strong>The developer is not responsible for your account security.</strong>
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button id="btn-modal-set-pass" class="primary-btn" style="font-size: 12px; padding: 10px;">Set Password</button>
+                <button id="btn-modal-skip-anyway" class="secondary-btn" style="font-size: 12px; padding: 10px; background: rgba(239,68,68,0.1); color: #ef4444; border: none;">Skip Anyway</button>
+            </div>
+        </div>
     </div>
 
     <!-- Экран Входа по паролю -->
@@ -383,7 +399,6 @@
         const passInput = document.getElementById('input-pass');
         const strengthBar = document.getElementById('strength-bar');
         const strengthText = document.getElementById('strength-text');
-        const btnStep3 = document.getElementById('btn-step3');
 
         function evaluatePassword(pass) {
             if (!pass) return { level: 'none', text: 'Requirements: min 6 chars, 2 digits, 1 uppercase letter, special symbols (_).', width: '0%', color: 'transparent' };
@@ -416,13 +431,6 @@
             strengthBar.style.width = res.width;
             strengthBar.style.backgroundColor = res.color;
             strengthText.textContent = res.text;
-            if (res.level === 'red' || res.level === 'none') {
-                btnStep3.style.opacity = '0.5';
-                btnStep3.style.cursor = 'not-allowed';
-            } else {
-                btnStep3.style.opacity = '1';
-                btnStep3.style.cursor = 'pointer';
-            }
         });
     </script>
 
@@ -495,7 +503,7 @@
             window.location.href = "index.html";
         };
 
-        document.getElementById('cancel-step1').addEventListener('click', handleLogout);
+                document.getElementById('cancel-step1').addEventListener('click', handleLogout);
         document.getElementById('btn-login-logout').addEventListener('click', handleLogout);
 
         document.getElementById('btn-step1').addEventListener('click', () => {
@@ -513,7 +521,7 @@
 
         document.getElementById('back-step2').addEventListener('click', () => showScreen('step1'));
         
-                function isValidDateString(str) {
+        function isValidDateString(str) {
             const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(str);
             if (!match) return false;
             const day = parseInt(match[1], 10);
@@ -543,29 +551,38 @@
             const pass = document.getElementById('input-pass').value;
             const err = document.getElementById('err-step3');
             err.classList.add('hidden');
-            const res = evaluatePassword(pass);
-            if (res.level === 'red' || res.level === 'none') {
-                err.textContent = "Password does not meet requirements.";
-                err.classList.remove('hidden');
-                return;
+
+            if (pass) {
+                const res = evaluatePassword(pass);
+                if (res.level === 'red' || res.level === 'none') {
+                    err.textContent = "Password does not meet requirements.";
+                    err.classList.remove('hidden');
+                    return;
+                }
+                regData.password = pass;
+                showScreen('step4');
+            } else {
+                document.getElementById('modal-skip-warning').classList.remove('hidden');
             }
-            regData.password = pass;
-            showScreen('step4');
+        });
+
+        document.getElementById('btn-skip-pass').addEventListener('click', () => {
+            document.getElementById('modal-skip-warning').classList.remove('hidden');
+        });
+
+        document.getElementById('btn-modal-set-pass').addEventListener('click', () => {
+            document.getElementById('modal-skip-warning').classList.add('hidden');
+        });
+
+        document.getElementById('btn-modal-skip-anyway').addEventListener('click', async () => {
+            document.getElementById('modal-skip-warning').classList.add('hidden');
+            regData.password = "";
+            await finalizeRegistration();
         });
 
         document.getElementById('back-step4').addEventListener('click', () => showScreen('step3'));
 
-        document.getElementById('btn-register-final').addEventListener('click', async () => {
-            const passConfirm = document.getElementById('input-pass-confirm').value;
-            const err = document.getElementById('err-step4');
-            err.classList.add('hidden');
-
-            if (passConfirm !== regData.password) {
-                err.textContent = "Passwords do not match.";
-                err.classList.remove('hidden');
-                return;
-            }
-
+        async function finalizeRegistration() {
             try {
                 showScreen('creating');
                 const userRef = doc(db, "users", currentUser.uid);
@@ -585,15 +602,45 @@
                 window.location.href = "profile.html";
             } catch (e) {
                 showScreen('step4');
+                const err = document.getElementById('err-step4');
                 err.textContent = "Cloud error: " + e.message;
                 err.classList.remove('hidden');
             }
+        }
+
+        document.getElementById('btn-register-final').addEventListener('click', async () => {
+            const passConfirm = document.getElementById('input-pass-confirm').value;
+            const err = document.getElementById('err-step4');
+            err.classList.add('hidden');
+
+            if (passConfirm !== regData.password) {
+                err.textContent = "Passwords do not match.";
+                err.classList.remove('hidden');
+                return;
+            }
+
+            await finalizeRegistration();
         });
 
         document.getElementById('btn-login-submit').addEventListener('click', async () => {
             const enteredPass = document.getElementById('input-login-pass').value;
             const err = document.getElementById('err-login');
             err.classList.add('hidden');
+
+            if (!savedUserData.password) {
+                try {
+                    showScreen('creating');
+                    const userRef = doc(db, "users", currentUser.uid);
+                    await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
+                    sessionStorage.setItem('kinship_unlocked', currentUser.uid);
+                    window.location.href = "profile.html";
+                } catch (e) {
+                    showScreen('login');
+                    err.textContent = "Cloud error: " + e.message;
+                    err.classList.remove('hidden');
+                }
+                return;
+            }
 
             if (!enteredPass) {
                 err.textContent = "Please enter your password.";
@@ -656,14 +703,14 @@
                             await setDoc(userRef, { role: 'owner' }, { merge: true });
                         }
 
-                        if (!savedUserData.password) {
-                            document.getElementById('input-nickname').value = savedUserData.nickname || user.displayName || '';
-                            showScreen('step1');
-                        } else {
+                        if (savedUserData.password !== undefined && savedUserData.password !== "") {
                             const nick = savedUserData.nickname || user.displayName || 'User';
                             document.getElementById('login-welcome-title').textContent = `Welcome back, ${nick}!`;
                             document.getElementById('login-welcome-email').textContent = user.email;
                             showScreen('login');
+                        } else {
+                            sessionStorage.setItem('kinship_unlocked', user.uid);
+                            window.location.href = "profile.html";
                         }
                     }
                 } catch (e) {
