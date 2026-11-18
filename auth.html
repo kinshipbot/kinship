@@ -7,119 +7,331 @@
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
-        *, body, h1, h2, p, button, a, input, label, select {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        :root {
+            --bg: #f9fafb;
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+            --text: #030712;
+            --muted: #4b5563;
+            --subtle: #9ca3af;
+            --input-bg: #f9fafb;
+            --input-border: #d1d5db;
+            --btn-bg: #030712;
+            --btn-text: #ffffff;
+            --btn-hover: #1f2937;
+            --secondary-btn-bg: #f3f4f6;
+            --secondary-btn-text: #374151;
+            --secondary-btn-hover: #e5e7eb;
         }
-        h2 { font-weight: 800 !important; }
-        p { font-weight: 500 !important; }
-        button { font-weight: 700 !important; }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #030712;
+                --card-bg: #111827;
+                --card-border: #1f2937;
+                --text: #ffffff;
+                --muted: #9ca3af;
+                --subtle: #6b7280;
+                --input-bg: #1f2937;
+                --input-border: #374151;
+                --btn-bg: #ffffff;
+                --btn-text: #000000;
+                --btn-hover: #e5e7eb;
+                --secondary-btn-bg: #1f2937;
+                --secondary-btn-text: #d1d5db;
+                --secondary-btn-hover: #374151;
+            }
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            text-align: center;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .container {
+            max-width: 380px;
+            width: 100%;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: left;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .brand {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        h2 {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            text-align: center;
+            letter-spacing: -0.01em;
+        }
+        .subtitle {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        input, select {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 14px;
+            color: var(--text);
+            outline: none;
+            margin-bottom: 12px;
+        }
+        input:focus, select:focus {
+            border-color: var(--text);
+        }
+        .row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .primary-btn {
+            width: 100%;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            padding: 13px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s ease, opacity 0.2s ease;
+            margin-top: 4px;
+        }
+        .primary-btn:hover {
+            background-color: var(--btn-hover);
+        }
+        .secondary-btn {
+            width: 100%;
+            background-color: var(--secondary-btn-bg);
+            color: var(--secondary-btn-text);
+            border: none;
+            padding: 11px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background-color 0.2s ease;
+        }
+        .secondary-btn:hover {
+            background-color: var(--secondary-btn-hover);
+        }
+        .error-msg {
+            font-size: 11px;
+            color: #ef4444;
+            margin-bottom: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .strength-track {
+            width: 100%;
+            background-color: var(--input-border);
+            height: 6px;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+        .strength-info {
+            font-size: 11px;
+            color: var(--subtle);
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--input-border);
+            border-top-color: var(--text);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        footer {
+            font-size: 11px;
+            color: var(--subtle);
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-white min-h-screen flex flex-col justify-between items-center p-6 m-0 text-center transition-colors duration-300">
+<body>
 
-    <div class="h-4"></div>
+    <div style="height: 16px;"></div>
 
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="max-w-sm w-full">
-        <p class="text-sm text-gray-500 dark:text-gray-400">Checking cloud data...</p>
+    <!-- Загрузка / Проверка сессии -->
+    <div id="screen-loading" class="container">
+        <p class="brand notranslate">Kinship</p>
+        <div class="spinner"></div>
+        <p class="subtitle" style="margin-bottom: 0;">Checking cloud data...</p>
     </div>
 
-    <!-- Register Screen -->
-    <div id="register-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm text-left">
-        <h2 class="text-lg text-gray-950 dark:text-white mb-1 text-center">Complete Registration</h2>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-5 text-center">Fill in details to set up your profile</p>
+    <!-- ШАГ 1: Ввод никнейма -->
+    <div id="screen-step1" class="container card hidden">
+        <p class="brand notranslate">Kinship</p>
+        <h2>What's your nickname?</h2>
+        <p class="subtitle">Choose a unique name for your profile</p>
 
-        <div class="space-y-3 mb-5">
-            <div>
-                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Nickname</label>
-                <input id="reg-nickname" type="text" placeholder="Your nickname" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
-            </div>
+        <label>Nickname</label>
+        <input id="input-nickname" type="text" placeholder="Your nickname">
 
-            <div>
-                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Date of Birth</label>
-                <input id="reg-dob-text" type="text" inputmode="numeric" maxlength="10" placeholder="DD.MM.YYYY" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none mb-2">
-                <div class="grid grid-cols-3 gap-2">
-                    <select id="reg-day" class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-xs text-gray-950 dark:text-white outline-none">
-                        <option value="">Day</option>
-                    </select>
-                    <select id="reg-month" class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-xs text-gray-950 dark:text-white outline-none">
-                        <option value="">Month</option>
-                        <option value="01">January</option>
-                        <option value="02">February</option>
-                        <option value="03">March</option>
-                        <option value="04">April</option>
-                        <option value="05">May</option>
-                        <option value="06">June</option>
-                        <option value="07">July</option>
-                        <option value="08">August</option>
-                        <option value="09">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
-                    </select>
-                    <select id="reg-year" class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-xs text-gray-950 dark:text-white outline-none">
-                        <option value="">Year</option>
-                    </select>
-                </div>
-            </div>
+        <p id="err-step1" class="error-msg hidden"></p>
 
-            <div>
-                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Create Password</label>
-                <input id="reg-pass" type="password" placeholder="Enter password" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none mb-1.5">
-                <div class="w-full bg-gray-200 dark:bg-gray-800 h-1.5 rounded-full overflow-hidden mb-1">
-                    <div id="password-strength-bar" class="h-full w-0 transition-all duration-300"></div>
-                </div>
-                <p id="password-strength-text" class="text-[11px] text-gray-400 mb-2">Requirements: min 6 chars, 2 digits, 1 uppercase letter, special symbols/underscores (_).</p>
-            </div>
+        <button id="btn-step1" class="primary-btn">Next</button>
+        <button id="cancel-step1" class="secondary-btn">Log Out</button>
+    </div>
 
-            <div>
-                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Confirm Password</label>
-                <input id="reg-pass-confirm" type="password" placeholder="Repeat password" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
-            </div>
+    <!-- ШАГ 2: Дата рождения -->
+    <div id="screen-step2" class="container card hidden">
+        <p class="brand notranslate">Kinship</p>
+        <h2>Date of Birth</h2>
+        <p class="subtitle">When is your birthday?</p>
+
+        <label>Date (DD.MM.YYYY)</label>
+        <input id="input-dob-text" type="text" inputmode="numeric" maxlength="10" placeholder="DD.MM.YYYY">
+        
+        <div class="row-3">
+            <select id="select-day">
+                <option value="">Day</option>
+            </select>
+            <select id="select-month">
+                <option value="">Month</option>
+                <option value="01">Jan</option>
+                <option value="02">Feb</option>
+                <option value="03">Mar</option>
+                <option value="04">Apr</option>
+                <option value="05">May</option>
+                <option value="06">Jun</option>
+                <option value="07">Jul</option>
+                <option value="08">Aug</option>
+                <option value="09">Sep</option>
+                <option value="10">Oct</option>
+                <option value="11">Nov</option>
+                <option value="12">Dec</option>
+            </select>
+            <select id="select-year">
+                <option value="">Year</option>
+            </select>
         </div>
 
-        <p id="reg-error" class="hidden text-xs text-red-500 mb-3 text-center"></p>
+        <p id="err-step2" class="error-msg hidden"></p>
 
-        <button id="reg-submit-btn" class="w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 p-3 rounded-xl text-sm transition cursor-pointer mb-2">
-            Save and Continue
-        </button>
-        <button id="reg-cancel-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-2.5 rounded-xl text-xs transition cursor-pointer">
-            Cancel
-        </button>
+        <button id="btn-step2" class="primary-btn">Next</button>
+        <button id="back-step2" class="secondary-btn">Back</button>
     </div>
 
-    <!-- Password Screen -->
-    <div id="password-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm text-left">
-        <h2 id="login-welcome-greeting" class="text-lg text-gray-950 dark:text-white mb-1 text-center"></h2>
-        <p id="login-hint-email" class="text-xs text-gray-500 dark:text-gray-400 mb-5 text-center"></p>
+    <!-- ШАГ 3: Создание пароля -->
+    <div id="screen-step3" class="container card hidden">
+        <p class="brand notranslate">Kinship</p>
+        <h2>Create Password</h2>
+        <p class="subtitle">Secure your account</p>
 
-        <div class="mb-4">
-            <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Password</label>
-            <input id="login-pass" type="password" placeholder="Enter your password" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
+        <label>Password</label>
+        <input id="input-pass" type="password" placeholder="Enter password">
+        
+        <div class="strength-track">
+            <div id="strength-bar" class="strength-bar"></div>
         </div>
+        <p id="strength-text" class="strength-info">Requirements: min 6 chars, 2 digits, 1 uppercase letter, special symbols (_).</p>
 
-        <p id="login-pass-error" class="hidden text-xs text-red-500 mb-3 text-center"></p>
+        <p id="err-step3" class="error-msg hidden"></p>
 
-        <button id="login-pass-btn" class="w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 p-3 rounded-xl text-sm transition cursor-pointer mb-2">
-            Sign In
-        </button>
-        <button id="login-pass-logout-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-2.5 rounded-xl text-xs transition cursor-pointer">
-            Log Out
-        </button>
+        <button id="btn-step3" class="primary-btn">Next</button>
+        <button id="back-step3" class="secondary-btn">Back</button>
     </div>
 
-    <footer class="text-xs text-gray-500 dark:text-gray-600 flex flex-col items-center gap-1.5">
-        <p class="text-[11px] text-gray-400 dark:text-gray-700 font-normal">&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
+    <!-- ШАГ 4: Повторение пароля и финальная регистрация -->
+    <div id="screen-step4" class="container card hidden">
+        <p class="brand notranslate">Kinship</p>
+        <h2>Confirm Password</h2>
+        <p class="subtitle">Re-enter your password to finish</p>
+
+        <label>Repeat Password</label>
+        <input id="input-pass-confirm" type="password" placeholder="Repeat password">
+
+        <p id="err-step4" class="error-msg hidden"></p>
+
+        <button id="btn-register-final" class="primary-btn">Register</button>
+        <button id="back-step4" class="secondary-btn">Back</button>
+    </div>
+
+    <!-- Экран Входа по паролю (если пользователь уже зарегистрирован) -->
+    <div id="screen-login" class="container card hidden">
+        <p class="brand notranslate">Kinship</p>
+        <h2 id="login-welcome-title">Welcome back!</h2>
+        <p id="login-welcome-email" class="subtitle"></p>
+
+        <label>Password</label>
+        <input id="input-login-pass" type="password" placeholder="Enter your password">
+
+        <p id="err-login" class="error-msg hidden"></p>
+
+        <button id="btn-login-submit" class="primary-btn">Sign In</button>
+        <button id="btn-login-logout" class="secondary-btn">Log Out</button>
+    </div>
+
+    <!-- Экран создания аккаунта в реальном времени (финальная загрузка) -->
+    <div id="screen-creating" class="container hidden">
+        <p class="brand notranslate">Kinship</p>
+        <div class="spinner"></div>
+        <p class="subtitle" style="margin-bottom: 0;">Creating your account in the cloud...</p>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
     </footer>
 
+    <!-- Скрипты календаря и валидации пароля -->
     <script>
-        const daySelect = document.getElementById('reg-day');
-        const monthSelect = document.getElementById('reg-month');
-        const yearSelect = document.getElementById('reg-year');
-        const dobText = document.getElementById('reg-dob-text');
+        const daySelect = document.getElementById('select-day');
+        const monthSelect = document.getElementById('select-month');
+        const yearSelect = document.getElementById('select-year');
+        const dobText = document.getElementById('input-dob-text');
 
         for (let d = 1; d <= 31; d++) {
             const val = String(d).padStart(2, '0');
@@ -169,13 +381,13 @@
             }
         });
 
-        const passInput = document.getElementById('reg-pass');
-        const strengthBar = document.getElementById('password-strength-bar');
-        const strengthText = document.getElementById('password-strength-text');
-        const regSubmitBtn = document.getElementById('reg-submit-btn');
+        const passInput = document.getElementById('input-pass');
+        const strengthBar = document.getElementById('strength-bar');
+        const strengthText = document.getElementById('strength-text');
+        const btnStep3 = document.getElementById('btn-step3');
 
         function evaluatePassword(pass) {
-            if (!pass) return { level: 'none', text: 'Requirements: min 6 chars, 2 digits, 1 uppercase letter, special symbols/underscores (_).', color: 'w-0 bg-transparent' };
+            if (!pass) return { level: 'none', text: 'Requirements: min 6 chars, 2 digits, 1 uppercase letter, special symbols (_).', width: '0%', color: 'transparent' };
 
             const lenOk = pass.length >= 6;
             const digitsCount = (pass.match(/\d/g) || []).length >= 2;
@@ -189,31 +401,33 @@
             if (specialOk) score++;
 
             if (!lenOk || !digitsCount || !upperOk || !specialOk) {
-                return { level: 'red', text: 'Weak (requirements not met)', color: 'w-1/4 bg-red-500' };
+                return { level: 'red', text: 'Weak (requirements not met)', width: '25%', color: '#ef4444' };
             }
             if (score === 4 && pass.length < 8) {
-                return { level: 'orange', text: 'Fair', color: 'w-2/4 bg-orange-500' };
+                return { level: 'orange', text: 'Fair', width: '50%', color: '#f97316' };
             }
             if (score === 4 && pass.length >= 8 && pass.length < 12) {
-                return { level: 'yellow', text: 'Good', color: 'w-3/4 bg-yellow-500' };
+                return { level: 'yellow', text: 'Good', width: '75%', color: '#eab308' };
             }
-            return { level: 'green', text: 'Strong', color: 'w-full bg-emerald-500' };
+            return { level: 'green', text: 'Strong', width: '100%', color: '#10b981' };
         }
 
         passInput.addEventListener('input', () => {
             const res = evaluatePassword(passInput.value);
-            strengthBar.className = `h-full transition-all duration-300 ${res.color}`;
+            strengthBar.style.width = res.width;
+            strengthBar.style.backgroundColor = res.color;
             strengthText.textContent = res.text;
             if (res.level === 'red' || res.level === 'none') {
-                regSubmitBtn.style.opacity = '0.5';
-                regSubmitBtn.style.cursor = 'not-allowed';
+                btnStep3.style.opacity = '0.5';
+                btnStep3.style.cursor = 'not-allowed';
             } else {
-                regSubmitBtn.style.opacity = '1';
-                regSubmitBtn.style.cursor = 'pointer';
+                btnStep3.style.opacity = '1';
+                btnStep3.style.cursor = 'pointer';
             }
         });
     </script>
 
+    <!-- Основная логика Firebase и переключения экранов -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
@@ -236,9 +450,13 @@
         const OWNER_EMAILS = ["danya@gmail.com", "kinshipbot@gmail.com"];
 
         const screens = {
-            loading: document.getElementById('loading-screen'),
-            register: document.getElementById('register-screen'),
-            password: document.getElementById('password-screen')
+            loading: document.getElementById('screen-loading'),
+            step1: document.getElementById('screen-step1'),
+            step2: document.getElementById('screen-step2'),
+            step3: document.getElementById('screen-step3'),
+            step4: document.getElementById('screen-step4'),
+            login: document.getElementById('screen-login'),
+            creating: document.getElementById('screen-creating')
         };
 
         function showScreen(name) {
@@ -248,6 +466,7 @@
 
         let currentUser = null;
         let savedUserData = null;
+        let regData = { nickname: '', dob: '', password: '' };
 
         const handleLogout = async () => {
             sessionStorage.removeItem('kinship_unlocked');
@@ -255,9 +474,25 @@
             window.location.href = "index.html";
         };
 
-        document.getElementById('reg-cancel-btn').addEventListener('click', handleLogout);
-        document.getElementById('login-pass-logout-btn').addEventListener('click', handleLogout);
+        document.getElementById('cancel-step1').addEventListener('click', handleLogout);
+        document.getElementById('btn-login-logout').addEventListener('click', handleLogout);
 
+        // Навигация по шагам регистрации
+        document.getElementById('btn-step1').addEventListener('click', () => {
+            const nick = document.getElementById('input-nickname').value.trim();
+            const err = document.getElementById('err-step1');
+            err.classList.add('hidden');
+            if (!nick) {
+                err.textContent = "Please enter a nickname.";
+                err.classList.remove('hidden');
+                return;
+            }
+            regData.nickname = nick;
+            showScreen('step2');
+        });
+
+        document.getElementById('back-step2').addEventListener('click', () => showScreen('step1'));
+        
         function isValidDateString(str) {
             const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(str);
             if (!match) return false;
@@ -269,140 +504,153 @@
             return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
         }
 
-        document.getElementById('reg-submit-btn').addEventListener('click', async () => {
-            const nickname = document.getElementById('reg-nickname').value.trim();
-            const dob = document.getElementById('reg-dob-text').value.trim();
-            const pass = document.getElementById('reg-pass').value;
-            const passConfirm = document.getElementById('reg-pass-confirm').value;
-            const errEl = document.getElementById('reg-error');
-
-            errEl.classList.add('hidden');
-
-            const strengthRes = evaluatePassword(pass);
-            if (strengthRes.level === 'red' || strengthRes.level === 'none') {
-                errEl.textContent = "Password is weak or does not meet requirements.";
-                errEl.classList.remove('hidden');
-                return;
-            }
-            if (!nickname) {
-                errEl.textContent = "Please enter a nickname.";
-                errEl.classList.remove('hidden');
-                return;
-            }
+        document.getElementById('btn-step2').addEventListener('click', () => {
+            const dob = document.getElementById('input-dob-text').value.trim();
+            const err = document.getElementById('err-step2');
+            err.classList.add('hidden');
             if (!isValidDateString(dob)) {
-                errEl.textContent = "Please enter a valid date of birth in DD.MM.YYYY format.";
-                errEl.classList.remove('hidden');
+                err.textContent = "Please enter a valid date of birth (DD.MM.YYYY).";
+                err.classList.remove('hidden');
                 return;
             }
-            if (pass !== passConfirm) {
-                errEl.textContent = "Passwords do not match.";
-                errEl.classList.remove('hidden');
-                return;
-            }
-
-            try {
-                showScreen('loading');
-                const userRef = doc(db, "users", currentUser.uid);
-                const userRole = OWNER_EMAILS.includes(currentUser.email) ? 'owner' : 'user';
-
-                await setDoc(userRef, {
-                    nickname: nickname,
-                    email: currentUser.email,
-                    photo: currentUser.photoURL,
-                    dob: dob,
-                    password: pass,
-                    role: userRole,
-                    lastLogin: serverTimestamp()
-                });
-
-                sessionStorage.setItem('kinship_unlocked', currentUser.uid);
-                window.location.href = "profile.html";
-            } catch (e) {
-                showScreen('register');
-                errEl.textContent = "Cloud error: " + e.message;
-                errEl.classList.remove('hidden');
-            }
+            regData.dob = dob;
+            showScreen('step3');
         });
 
-        document.getElementById('login-pass-btn').addEventListener('click', async () => {
-            const enteredPass = document.getElementById('login-pass').value;
-            const errEl = document.getElementById('login-pass-error');
+        document.getElementById('back-step3').addEventListener('click', () => showScreen('step2'));
 
-            errEl.classList.add('hidden');
+        document.getElementById('btn-step3').addEventListener('click', () => {
+    const pass = document.getElementById('input-pass').value;
+    const err = document.getElementById('err-step3');
+    err.classList.add('hidden');
+    const res = evaluatePassword(pass);
+    if (res.level === 'red' || res.level === 'none') {
+        err.textContent = "Password does not meet requirements.";
+        err.classList.remove('hidden');
+        return;
+    }
+    regData.password = pass;
+    showScreen('step4');
+});
 
-            if (!enteredPass) {
-                errEl.textContent = "Please enter your password.";
-                errEl.classList.remove('hidden');
-                return;
-            }
+document.getElementById('back-step4').addEventListener('click', () => showScreen('step3'));
 
-            if (savedUserData && enteredPass === savedUserData.password) {
-                try {
-                    showScreen('loading');
-                    const userRef = doc(db, "users", currentUser.uid);
-                    await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
-                    sessionStorage.setItem('kinship_unlocked', currentUser.uid);
-                    window.location.href = "profile.html";
-                } catch (e) {
-                    showScreen('password');
-                    errEl.textContent = "Cloud error: " + e.message;
-                    errEl.classList.remove('hidden');
-                }
-            } else {
-                errEl.textContent = "Incorrect password.";
-                errEl.classList.remove('hidden');
-            }
+// Финальная регистрация и сохранение в базу с реальным экраном загрузки
+document.getElementById('btn-register-final').addEventListener('click', async () => {
+    const passConfirm = document.getElementById('input-pass-confirm').value;
+    const err = document.getElementById('err-step4');
+    err.classList.add('hidden');
+
+    if (passConfirm !== regData.password) {
+        err.textContent = "Passwords do not match.";
+        err.classList.remove('hidden');
+        return;
+    }
+
+    try {
+        showScreen('creating'); // Показываем реальный экран создания аккаунта
+        const userRef = doc(db, "users", currentUser.uid);
+        const userRole = OWNER_EMAILS.includes(currentUser.email) ? 'owner' : 'user';
+
+        await setDoc(userRef, {
+            nickname: regData.nickname,
+            email: currentUser.email,
+            photo: currentUser.photoURL,
+            dob: regData.dob,
+            password: regData.password,
+            role: userRole,
+            lastLogin: serverTimestamp()
         });
 
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = "index.html";
-                return;
-            }
+        sessionStorage.setItem('kinship_unlocked', currentUser.uid);
+        window.location.href = "profile.html";
+    } catch (e) {
+        showScreen('step4');
+        err.textContent = "Cloud error: " + e.message;
+        err.classList.remove('hidden');
+    }
+});
 
-            currentUser = user;
+// Вход по паролю
+document.getElementById('btn-login-submit').addEventListener('click', async () => {
+    const enteredPass = document.getElementById('input-login-pass').value;
+    const err = document.getElementById('err-login');
+    err.classList.add('hidden');
 
-            if (sessionStorage.getItem('kinship_unlocked') === user.uid) {
-                window.location.href = "profile.html";
-                return;
-            }
+    if (!enteredPass) {
+        err.textContent = "Please enter your password.";
+        err.classList.remove('hidden');
+        return;
+    }
 
-            try {
-                const userRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userRef);
+    if (savedUserData && enteredPass === savedUserData.password) {
+        try {
+            showScreen('creating');
+            const userRef = doc(db, "users", currentUser.uid);
+            await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
+            sessionStorage.setItem('kinship_unlocked', currentUser.uid);
+            window.location.href = "profile.html";
+        } catch (e) {
+            showScreen('login');
+            err.textContent = "Cloud error: " + e.message;
+            err.classList.remove('hidden');
+        }
+    } else {
+        err.textContent = "Incorrect password.";
+        err.classList.remove('hidden');
+    }
+});
 
-                if (!userSnap.exists()) {
-                    const usersSnapshot = await getDocs(collection(db, "users"));
-                    if (usersSnapshot.size >= MAX_USERS) {
-                        alert(`Limit reached: maximum ${MAX_USERS} accounts allowed.`);
-                        handleLogout();
-                        return;
-                    }
-                    document.getElementById('reg-nickname').value = user.displayName || '';
-                    showScreen('register');
-                } else {
-                    savedUserData = userSnap.data();
+// Проверка авторизации при открытии страницы
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.href = "index.html";
+        return;
+    }
 
-                    if (OWNER_EMAILS.includes(user.email) && savedUserData.role !== 'owner') {
-                        savedUserData.role = 'owner';
-                        await setDoc(userRef, { role: 'owner' }, { merge: true });
-                    }
+    currentUser = user;
 
-                                        if (!savedUserData.password) {
-                        document.getElementById('reg-nickname').value = savedUserData.nickname || user.displayName || '';
-                        showScreen('register');
-                    } else {
-                        const nick = savedUserData.nickname || user.displayName || 'User';
-                        document.getElementById('login-welcome-greeting').textContent = `Welcome back, ${nick}!`;
-                        document.getElementById('login-hint-email').textContent = user.email;
-                        showScreen('password');
-                    }
-                }
-            } catch (e) {
-                alert("Cloud service error: " + e.message);
+    if (sessionStorage.getItem('kinship_unlocked') === user.uid) {
+        window.location.href = "profile.html";
+        return;
+    }
+
+    try {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+            const usersSnapshot = await getDocs(collection(db, "users"));
+            if (usersSnapshot.size >= MAX_USERS) {
+                alert(`Limit reached: maximum ${MAX_USERS} accounts allowed.`);
                 handleLogout();
+                return;
             }
-        });
-    </script>
+            document.getElementById('input-nickname').value = user.displayName || '';
+            showScreen('step1');
+        } else {
+            savedUserData = userSnap.data();
+
+            if (OWNER_EMAILS.includes(user.email) && savedUserData.role !== 'owner') {
+                savedUserData.role = 'owner';
+                await setDoc(userRef, { role: 'owner' }, { merge: true });
+            }
+
+            if (!savedUserData.password) {
+                document.getElementById('input-nickname').value = savedUserData.nickname || user.displayName || '';
+                showScreen('step1');
+            } else {
+                const nick = savedUserData.nickname || user.displayName || 'User';
+                document.getElementById('login-welcome-title').textContent = `Welcome back, ${nick}!`;
+                document.getElementById('login-welcome-email').textContent = user.email;
+                showScreen('login');
+            }
+        }
+    } catch (e) {
+        alert("Cloud service error: " + e.message);
+        handleLogout();
+    }
+});
+     </script>
 </body>
 </html>
