@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,33 +50,14 @@
 
     <footer class="text-xs text-gray-500 dark:text-gray-600 flex flex-col items-center gap-1.5">
         <div class="flex gap-4">
-            <button onclick="openModal('Terms of Service', 'Kinship is currently in private beta. Be respectful, share good vibes, and keep the community safe.')" class="hover:text-gray-800 dark:hover:text-gray-400 transition font-normal cursor-pointer">Terms</button>
+            <a href="legal.html?tab=terms" class="hover:text-gray-800 dark:hover:text-gray-400 transition font-normal">Terms</a>
             <span>•</span>
-            <button onclick="openModal('Privacy Policy', 'We only use your Google profile name, email, and avatar to authenticate your account and sync your activity in real time.')" class="hover:text-gray-800 dark:hover:text-gray-400 transition font-normal cursor-pointer">Privacy</button>
+            <a href="legal.html?tab=privacy" class="hover:text-gray-800 dark:hover:text-gray-400 transition font-normal">Privacy</a>
             <span>•</span>
-            <a href="mailto:hello@kinship.app" class="hover:text-gray-800 dark:hover:text-gray-400 transition font-normal">Contact</a>
+            <a href="legal.html?tab=contact" class="hover:text-gray-800 dark:hover:text-gray-400 transition font-normal">Contact</a>
         </div>
         <p class="text-[11px] text-gray-400 dark:text-gray-700 font-normal">&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
     </footer>
-
-    <div id="legal-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
-        <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-left shadow-xl">
-            <h3 id="modal-title" class="text-sm font-bold text-gray-950 dark:text-white mb-2"></h3>
-            <p id="modal-body" class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-4"></p>
-            <button onclick="closeModal()" class="w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 py-2 rounded-lg text-xs cursor-pointer transition">Got it</button>
-        </div>
-    </div>
-
-    <script>
-        function openModal(title, text) {
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-body').textContent = text;
-            document.getElementById('legal-modal').classList.remove('hidden');
-        }
-        function closeModal() {
-            document.getElementById('legal-modal').classList.add('hidden');
-        }
-    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -95,16 +76,14 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        // Обработка возврата после редиректа на мобильных
         getRedirectResult(auth).then((result) => {
             if (result && result.user) {
                 window.location.href = "auth.html";
             }
         }).catch((error) => {
-            alert("Ошибка входа: " + error.message);
+            alert("Auth error: " + error.message);
         });
 
-        // Если сессия уже активна, сразу перекидываем на страницу проверки/пароля
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 window.location.href = "auth.html";
@@ -119,7 +98,7 @@
                 if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request' || /Mobi|Android/i.test(navigator.userAgent)) {
                     await signInWithRedirect(auth, provider);
                 } else {
-                    alert("Ошибка входа: " + error.message);
+                    alert("Auth error: " + error.message);
                 }
             }
         });
