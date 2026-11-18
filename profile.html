@@ -7,16 +7,126 @@
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
-        *, body, h1, h2, h3, p, button, a, input, label {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        :root {
+            --bg: #f9fafb;
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+            --text: #030712;
+            --muted: #4b5563;
+            --subtle: #9ca3af;
+            --secondary-btn-bg: #f3f4f6;
+            --secondary-btn-text: #374151;
+            --secondary-btn-hover: #e5e7eb;
         }
-        h2, h3 { font-weight: 800 !important; }
-        p { font-weight: 500 !important; }
-        button { font-weight: 700 !important; }
-
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #030712;
+                --card-bg: #111827;
+                --card-border: #1f2937;
+                --text: #ffffff;
+                --muted: #9ca3af;
+                --subtle: #6b7280;
+                --secondary-btn-bg: #1f2937;
+                --secondary-btn-text: #d1d5db;
+                --secondary-btn-hover: #374151;
+            }
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            text-align: center;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .container {
+            max-width: 380px;
+            width: 100%;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .brand {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 16px;
+        }
+        h2, h3 {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 auto 12px auto;
+            border: 1px solid var(--card-border);
+            object-fit: cover;
+        }
+        .secondary-btn {
+            width: 100%;
+            background-color: var(--secondary-btn-bg);
+            color: var(--secondary-btn-text);
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .secondary-btn:hover {
+            background-color: var(--secondary-btn-hover);
+        }
+        .danger-btn {
+            width: 100%;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .danger-btn:hover {
+            background-color: rgba(239, 68, 68, 0.2);
+        }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--card-border);
+            border-top-color: var(--text);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
         .premium-diamond-badge {
             display: inline-flex;
             align-items: center;
@@ -29,8 +139,8 @@
             padding: 4px 10px;
             border-radius: 8px;
             box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
+            margin-bottom: 8px;
         }
-
         .diamond-icon {
             width: 12px;
             height: 12px;
@@ -38,117 +148,98 @@
             clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
             display: inline-block;
         }
+        footer {
+            font-size: 11px;
+            color: var(--subtle);
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-white min-h-screen flex flex-col justify-between items-center p-6 m-0 text-center transition-colors duration-300">
+<body>
 
-    <div class="h-4"></div>
+    <div style="height: 16px;"></div>
 
     <!-- Loading Screen -->
-    <div id="loading-screen" class="max-w-sm w-full">
-        <p class="text-sm text-gray-500 dark:text-gray-400">Loading profile...</p>
+    <div id="loading-screen" class="container">
+        <p class="brand notranslate">Kinship</p>
+        <div class="spinner"></div>
+        <p style="font-size: 12px; color: var(--muted);">Checking region & profile...</p>
     </div>
 
     <!-- Profile Screen -->
-    <div id="profile-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm">
-        <img id="user-avatar" src="" alt="Avatar" class="w-16 h-16 rounded-full mx-auto mb-3 border border-gray-200 dark:border-gray-700">
-        <h2 id="profile-nickname" class="text-lg text-gray-950 dark:text-white mb-1"></h2>
-        <div id="role-badge-container" class="mb-2"></div>
-        <p id="user-email" class="text-xs text-gray-500 dark:text-gray-400 mb-2"></p>
-        <p class="text-xs text-emerald-600 dark:text-emerald-400 mb-6">Synced with cloud ✓</p>
+    <div id="profile-screen" class="container card hidden">
+        <img id="user-avatar" src="" alt="Avatar" class="avatar">
+        <h2 id="profile-nickname" style="margin-bottom: 6px;"></h2>
+        <div id="role-badge-container"></div>
+        <p id="user-email" style="font-size: 12px; color: var(--muted); margin-bottom: 8px;"></p>
+        <p style="font-size: 12px; color: #10b981; font-weight: 600; margin-bottom: 24px;">Synced with cloud ✓</p>
         
-        <div class="space-y-2">
-            <button id="logout-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-3 rounded-xl text-xs transition cursor-pointer">
-                Log Out
-            </button>
-            <button id="delete-account-btn" class="w-full bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:text-red-400 p-3 rounded-xl text-xs transition cursor-pointer">
-                Delete Account
-            </button>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button id="logout-btn" class="secondary-btn">Log Out</button>
+            <button id="delete-account-btn" class="danger-btn">Delete Account</button>
         </div>
     </div>
 
     <!-- Delete Modal (Step 1) -->
-    <div id="delete-warning-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
-        <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-left shadow-xl">
-            <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2 text-center">Before you leave, please read this carefully</h3>
-            <p class="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                You are about to delete your Kinship account, which contains your likes, friends, messages, comments, subscriptions, posts, and clips.<br><br>
-                Your account and data cannot be restored, but you can download all your data to your device.<br><br>
-                By clicking "Delete Account", you agree that your account will be permanently deleted and you have downloaded all data.
+    <div id="delete-warning-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
+        <div class="card" style="max-width: 320px; width: 100%; text-align: left;">
+            <h3 style="font-size: 14px; margin-bottom: 10px; text-align: center;">Before you leave</h3>
+            <p style="font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 16px;">
+                Your account, posts, clips, likes, and messages will be permanently deleted and cannot be restored.<br><br>
+                You can download all your personal data before proceeding.
             </p>
 
-            <div class="space-y-2.5 mb-4">
-                <label class="flex items-start gap-2 text-xs text-gray-700 dark:text-gray-300 cursor-pointer">
-                    <input id="chk-downloaded" type="checkbox" class="mt-0.5 rounded accent-gray-900">
-                    <span>I have downloaded all Kinship app data</span>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 11px; color: var(--text); cursor: pointer;">
+                    <input id="chk-downloaded" type="checkbox" style="margin-top: 2px;">
+                    <span>I have downloaded my account data</span>
                 </label>
-                <label class="flex items-start gap-2 text-xs text-gray-700 dark:text-gray-300 cursor-pointer">
-                    <input id="chk-confirm" type="checkbox" class="mt-0.5 rounded accent-gray-900">
-                    <span>I confirm that I want to delete my account permanently</span>
+                <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 11px; color: var(--text); cursor: pointer;">
+                    <input id="chk-confirm" type="checkbox" style="margin-top: 2px;">
+                    <span>I confirm permanent account deletion</span>
                 </label>
             </div>
 
-            <div class="space-y-2">
-                <button id="download-data-btn" class="w-full bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-white py-2.5 rounded-xl text-xs cursor-pointer transition font-bold">
-                    Download Data
-                </button>
-                <button id="proceed-delete-btn" disabled class="w-full bg-red-600 text-white opacity-50 cursor-not-allowed py-2.5 rounded-xl text-xs transition font-bold">
-                    Delete Account
-                </button>
-                <button onclick="closeDeleteModal()" class="w-full bg-transparent text-gray-500 hover:text-gray-800 dark:hover:text-white py-1.5 rounded-lg text-xs cursor-pointer transition">
-                    Cancel
-                </button>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button id="download-data-btn" class="secondary-btn" style="font-size: 11px; padding: 10px;">Download Data</button>
+                <button id="proceed-delete-btn" disabled class="danger-btn" style="opacity: 0.5; cursor: not-allowed; font-size: 11px; padding: 10px;">Delete Account</button>
+                <button onclick="closeDeleteModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px;">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Delete Modal (Step 2: Exact account verification) -->
-    <div id="delete-verify-account-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
-        <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-center shadow-xl">
-            <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2">Account Verification</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">
-                Click the white button below and select the exact account (<span id="target-delete-email" class="font-bold text-gray-800 dark:text-gray-200"></span>) you want to delete.
+    <!-- Delete Modal (Step 2: Verification) -->
+    <div id="delete-verify-account-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
+        <div class="card" style="max-width: 320px; width: 100%; text-align: center;">
+            <h3 style="font-size: 14px; margin-bottom: 8px;">Account Verification</h3>
+            <p style="font-size: 12px; color: var(--muted); margin-bottom: 16px; line-height: 1.4;">
+                Select your account (<span id="target-delete-email" style="font-weight: bold; color: var(--text);"></span>) to confirm deletion.
             </p>
-            <p id="verify-account-error" class="hidden text-xs text-red-500 mb-3"></p>
-            <button id="verify-google-account-btn" class="w-full bg-white text-black border border-gray-300 hover:bg-gray-100 py-3 rounded-xl text-xs cursor-pointer transition font-bold shadow-sm mb-2">
-                Confirm Deletion
-            </button>
-            <button onclick="closeVerifyAccountModal()" class="w-full bg-transparent text-gray-500 hover:text-gray-800 dark:hover:text-white py-1.5 rounded-lg text-xs cursor-pointer transition">
-                Cancel
-            </button>
+            <p id="verify-account-error" class="hidden" style="font-size: 11px; color: #ef4444; margin-bottom: 12px;"></p>
+            <button id="verify-google-account-btn" class="secondary-btn" style="margin-bottom: 8px;">Confirm Deletion</button>
+            <button onclick="closeVerifyAccountModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px;">Cancel</button>
         </div>
     </div>
 
     <!-- Delete Modal (Step 3: Final confirmation) -->
-    <div id="delete-confirm-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
-        <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-center shadow-xl">
-            <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2">Are you sure you want to delete your account?</h3>
-            <p id="delete-confirm-email" class="text-xs text-gray-500 dark:text-gray-400 mb-5"></p>
-            <div class="flex gap-2">
-                <button onclick="closeFinalDeleteModal()" class="flex-1 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 py-2.5 rounded-xl text-xs cursor-pointer transition">
-                    Cancel
-                </button>
-                <button id="final-delete-btn" class="flex-1 bg-red-600 text-white hover:bg-red-700 py-2.5 rounded-xl text-xs cursor-pointer transition font-bold">
-                    Delete
-                </button>
+    <div id="delete-confirm-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
+        <div class="card" style="max-width: 320px; width: 100%; text-align: center;">
+            <h3 style="font-size: 14px; margin-bottom: 8px;">Are you absolutely sure?</h3>
+            <p id="delete-confirm-email" style="font-size: 12px; color: var(--muted); margin-bottom: 20px;"></p>
+            <div style="display: flex; gap: 8px;">
+                <button onclick="closeFinalDeleteModal()" class="secondary-btn">Cancel</button>
+                <button id="final-delete-btn" class="danger-btn">Delete</button>
             </div>
         </div>
     </div>
 
-    <footer class="text-xs text-gray-500 dark:text-gray-600 flex flex-col items-center gap-1.5">
-        <p class="text-[11px] text-gray-400 dark:text-gray-700 font-normal">&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
+    <footer>
+        <p>&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
     </footer>
 
     <script>
-        function closeDeleteModal() {
-            document.getElementById('delete-warning-modal').classList.add('hidden');
-        }
-        function closeVerifyAccountModal() {
-            document.getElementById('delete-verify-account-modal').classList.add('hidden');
-        }
-        function closeFinalDeleteModal() {
-            document.getElementById('delete-confirm-modal').classList.add('hidden');
-        }
+        function closeDeleteModal() { document.getElementById('delete-warning-modal').classList.add('hidden'); }
+        function closeVerifyAccountModal() { document.getElementById('delete-verify-account-modal').classList.add('hidden'); }
+        function closeFinalDeleteModal() { document.getElementById('delete-confirm-modal').classList.add('hidden'); }
     </script>
 
     <script type="module">
@@ -170,6 +261,29 @@
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         const OWNER_EMAILS = ["danya@gmail.com", "kinshipbot@gmail.com"];
+        const ruOperators = ['rostelecom', 'mts', 'megafon', 'beeline', 'vimpelcom', 'tele2', 't2', 'dom.ru', 'er-telecom', 'yota', 'ttk', 'transtelecom', 'mgts', 'netbynet', 'sibset', 'akado', 'russia', 'moscow'];
+
+        async function verifyRegionOrKick() {
+            try {
+                const response = await fetch('https://ipwho.is/');
+                const data = await response.json();
+                const countryCode = (data.country_code || '').toUpperCase();
+                const isp = ((data.connection && data.connection.isp) || '').toLowerCase();
+                const org = ((data.connection && data.connection.org) || '').toLowerCase();
+                const isRuOperator = ruOperators.some(op => isp.includes(op) || org.includes(op));
+
+                if (!data.success || countryCode !== 'US' || isRuOperator) {
+                    sessionStorage.removeItem('kinship_unlocked');
+                    await signOut(auth);
+                    window.location.replace("unavailable.html");
+                    return false;
+                }
+                return true;
+            } catch (err) {
+                window.location.replace("unavailable.html");
+                return false;
+            }
+        }
 
         let currentUser = null;
         let savedUserData = null;
@@ -198,17 +312,20 @@
             chkDownloaded.checked = false;
             chkConfirm.checked = false;
             proceedDeleteBtn.disabled = true;
-            proceedDeleteBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            proceedDeleteBtn.style.opacity = '0.5';
+            proceedDeleteBtn.style.cursor = 'not-allowed';
             deleteWarningModal.classList.remove('hidden');
         });
 
         function updateDeleteButtonState() {
             if (chkDownloaded.checked && chkConfirm.checked) {
                 proceedDeleteBtn.disabled = false;
-                proceedDeleteBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                proceedDeleteBtn.style.opacity = '1';
+                proceedDeleteBtn.style.cursor = 'pointer';
             } else {
                 proceedDeleteBtn.disabled = true;
-                proceedDeleteBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                proceedDeleteBtn.style.opacity = '0.5';
+                proceedDeleteBtn.style.cursor = 'not-allowed';
             }
         }
         chkDownloaded.addEventListener('change', updateDeleteButtonState);
@@ -263,12 +380,12 @@
                     document.getElementById('delete-confirm-email').textContent = currentUser.email;
                     deleteConfirmModal.classList.remove('hidden');
                 } else {
-                    verifyAccountError.textContent = `You selected a different account (${selectedEmail}). Please click the button again and select the exact account: ${currentUser.email}`;
+                    verifyAccountError.textContent = `You selected a different account (${selectedEmail}). Select: ${currentUser.email}`;
                     verifyAccountError.classList.remove('hidden');
                 }
             } catch (err) {
                 try { await deleteApp(verifyApp); } catch (_) {}
-                verifyAccountError.textContent = "Failed to verify account. Please try selecting the correct account again.";
+                verifyAccountError.textContent = "Verification failed. Please try again.";
                 verifyAccountError.classList.remove('hidden');
             }
         });
@@ -288,63 +405,67 @@
             }
         });
 
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = "index.html";
-                return;
-            }
+        verifyRegionOrKick().then(isAllowed => {
+            if (!isAllowed) return;
 
-            if (sessionStorage.getItem('kinship_unlocked') !== user.uid) {
-                window.location.href = "auth.html";
-                return;
-            }
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    window.location.href = "index.html";
+                    return;
+                }
 
-            currentUser = user;
-
-            try {
-                const userRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userRef);
-
-                if (!userSnap.exists()) {
+                if (sessionStorage.getItem('kinship_unlocked') !== user.uid) {
                     window.location.href = "auth.html";
                     return;
                 }
 
-                savedUserData = userSnap.data();
-                const nickname = savedUserData.nickname || user.displayName || 'User';
-                const role = savedUserData.role || (OWNER_EMAILS.includes(user.email) ? 'owner' : 'user');
+                currentUser = user;
 
-                document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
-                document.getElementById('profile-nickname').textContent = nickname;
-                document.getElementById('user-email').textContent = user.email;
+                try {
+                    const userRef = doc(db, "users", user.uid);
+                    const userSnap = await getDoc(userRef);
 
-                const badgeContainer = document.getElementById('role-badge-container');
-                badgeContainer.innerHTML = '';
+                    if (!userSnap.exists()) {
+                        window.location.href = "auth.html";
+                        return;
+                    }
 
-                if (role === 'owner') {
-                    badgeContainer.innerHTML = `
-                        <div class="premium-diamond-badge">
-                            <span class="diamond-icon"></span>
-                            <span>Owner</span>
-                        </div>
-                    `;
-                } else if (role === 'premium') {
-                    badgeContainer.innerHTML = `
-                        <div class="premium-diamond-badge">
-                            <span class="diamond-icon"></span>
-                            <span>Premium</span>
-                        </div>
-                    `;
-                } else if (role === 'admin') {
-                    badgeContainer.innerHTML = `<span class="inline-block bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[11px] font-bold px-2.5 py-1 rounded-lg">🛡️ Admin</span>`;
+                    savedUserData = userSnap.data();
+                    const nickname = savedUserData.nickname || user.displayName || 'User';
+                    const role = savedUserData.role || (OWNER_EMAILS.includes(user.email) ? 'owner' : 'user');
+
+                                        document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
+                    document.getElementById('profile-nickname').textContent = nickname;
+                    document.getElementById('user-email').textContent = user.email;
+
+                    const badgeContainer = document.getElementById('role-badge-container');
+                    badgeContainer.innerHTML = '';
+
+                    if (role === 'owner') {
+                        badgeContainer.innerHTML = `
+                            <div class="premium-diamond-badge">
+                                <span class="diamond-icon"></span>
+                                <span>Owner</span>
+                            </div>
+                        `;
+                    } else if (role === 'premium') {
+                        badgeContainer.innerHTML = `
+                            <div class="premium-diamond-badge">
+                                <span class="diamond-icon"></span>
+                                <span>Premium</span>
+                            </div>
+                        `;
+                    } else if (role === 'admin') {
+                        badgeContainer.innerHTML = `<span style="display:inline-block; background:rgba(59,130,246,0.1); color:#3b82f6; font-size:11px; font-weight:bold; padding:4px 10px; border-radius:8px; margin-bottom:8px;">🛡️ Admin</span>`;
+                    }
+
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    document.getElementById('profile-screen').classList.remove('hidden');
+                } catch (e) {
+                    alert("Error loading profile: " + e.message);
+                    handleLogout();
                 }
-
-                document.getElementById('loading-screen').classList.add('hidden');
-                document.getElementById('profile-screen').classList.remove('hidden');
-            } catch (e) {
-                alert("Error loading profile: " + e.message);
-                handleLogout();
-            }
+            });
         });
     </script>
 </body>
