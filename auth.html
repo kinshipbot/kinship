@@ -1,1 +1,409 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title class="notranslate">Kinship — Проверка аккаунта</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        *, body, h1, h2, p, button, a, input, label, select {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        }
+        h2 { font-weight: 800 !important; }
+        p { font-weight: 500 !important; }
+        button { font-weight: 700 !important; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-white min-h-screen flex flex-col justify-between items-center p-6 m-0 text-center transition-colors duration-300">
 
+    <div class="h-4"></div>
+
+    <!-- Экран загрузки -->
+    <div id="loading-screen" class="max-w-sm w-full">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Проверка данных в облаке...</p>
+    </div>
+
+    <!-- Экран регистрации (если аккаунт новый) -->
+    <div id="register-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm text-left">
+        <h2 class="text-lg text-gray-950 dark:text-white mb-1 text-center">Завершение регистрации</h2>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-5 text-center">Заполните данные для создания профиля</p>
+
+        <div class="space-y-3 mb-5">
+            <div>
+                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Никнейм</label>
+                <input id="reg-nickname" type="text" placeholder="Ваш никнейм" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
+            </div>
+
+            <div>
+                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Дата рождения</label>
+                <input id="reg-dob-text" type="text" inputmode="numeric" maxlength="10" placeholder="дд.мм.гггг" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none mb-2">
+                <div class="grid grid-cols-3 gap-2">
+                    <select id="reg-day" class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-xs text-gray-950 dark:text-white outline-none">
+                        <option value="">День</option>
+                    </select>
+                    <select id="reg-month" class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-xs text-gray-950 dark:text-white outline-none">
+                        <option value="">Месяц</option>
+                        <option value="01">Январь</option>
+                        <option value="02">Февраль</option>
+                        <option value="03">Март</option>
+                        <option value="04">Апрель</option>
+                        <option value="05">Май</option>
+                        <option value="06">Июнь</option>
+                        <option value="07">Июль</option>
+                        <option value="08">Август</option>
+                        <option value="09">Сентябрь</option>
+                        <option value="10">Октябрь</option>
+                        <option value="11">Ноябрь</option>
+                        <option value="12">Декабрь</option>
+                    </select>
+                    <select id="reg-year" class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-xs text-gray-950 dark:text-white outline-none">
+                        <option value="">Год</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Придумайте пароль</label>
+                <input id="reg-pass" type="password" placeholder="Введите пароль" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none mb-1.5">
+                <div class="w-full bg-gray-200 dark:bg-gray-800 h-1.5 rounded-full overflow-hidden mb-1">
+                    <div id="password-strength-bar" class="h-full w-0 transition-all duration-300"></div>
+                </div>
+                <p id="password-strength-text" class="text-[11px] text-gray-400 mb-2">Требования: от 6 символов, 2 цифры, 1 заглавная буква, спецсимволы/подчеркивания (_).</p>
+            </div>
+
+            <div>
+                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Повторите пароль</label>
+                <input id="reg-pass-confirm" type="password" placeholder="Повторите пароль" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
+            </div>
+        </div>
+
+        <p id="reg-error" class="hidden text-xs text-red-500 mb-3 text-center"></p>
+
+        <button id="reg-submit-btn" class="w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 p-3 rounded-xl text-sm transition cursor-pointer mb-2">
+            Сохранить и войти
+        </button>
+        <button id="reg-cancel-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-2.5 rounded-xl text-xs transition cursor-pointer">
+            Отмена
+        </button>
+    </div>
+
+    <!-- Экран ввода пароля (если аккаунт уже есть) -->
+    <div id="password-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm text-left">
+        <h2 id="login-welcome-greeting" class="text-lg text-gray-950 dark:text-white mb-1 text-center"></h2>
+        <p id="login-hint-email" class="text-xs text-gray-500 dark:text-gray-400 mb-5 text-center"></p>
+
+        <div class="mb-4">
+            <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Пароль</label>
+            <input id="login-pass" type="password" placeholder="Введите ваш пароль" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
+        </div>
+
+        <p id="login-pass-error" class="hidden text-xs text-red-500 mb-3 text-center"></p>
+
+        <button id="login-pass-btn" class="w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 p-3 rounded-xl text-sm transition cursor-pointer mb-2">
+            Войти
+        </button>
+        <button id="login-pass-logout-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-2.5 rounded-xl text-xs transition cursor-pointer">
+            Выйти из аккаунта
+        </button>
+    </div>
+
+    <footer class="text-xs text-gray-500 dark:text-gray-600 flex flex-col items-center gap-1.5">
+        <p class="text-[11px] text-gray-400 dark:text-gray-700 font-normal">&copy; 2026 <span class="notranslate">Kinship</span> Inc.</p>
+    </footer>
+
+    <script>
+        const daySelect = document.getElementById('reg-day');
+        const monthSelect = document.getElementById('reg-month');
+        const yearSelect = document.getElementById('reg-year');
+        const dobText = document.getElementById('reg-dob-text');
+
+        for (let d = 1; d <= 31; d++) {
+            const val = String(d).padStart(2, '0');
+            const opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = d;
+            daySelect.appendChild(opt);
+        }
+
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear; y >= 1920; y--) {
+            const opt = document.createElement('option');
+            opt.value = String(y);
+            opt.textContent = y;
+            yearSelect.appendChild(opt);
+        }
+
+        function syncSelectsToText() {
+            const d = daySelect.value;
+            const m = monthSelect.value;
+            const y = yearSelect.value;
+            if (d && m && y) {
+                dobText.value = `${d}.${m}.${y}`;
+            }
+        }
+        daySelect.addEventListener('change', syncSelectsToText);
+        monthSelect.addEventListener('change', syncSelectsToText);
+        yearSelect.addEventListener('change', syncSelectsToText);
+
+        dobText.addEventListener('input', (e) => {
+            let digits = e.target.value.replace(/\D/g, '').slice(0, 8);
+            let formatted = digits;
+            if (digits.length > 4) {
+                formatted = `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4)}`;
+            } else if (digits.length > 2) {
+                formatted = `${digits.slice(0, 2)}.${digits.slice(2)}`;
+            }
+            e.target.value = formatted;
+
+            if (digits.length === 8) {
+                const d = digits.slice(0, 2);
+                const m = digits.slice(2, 4);
+                const y = digits.slice(4, 8);
+                if ([...daySelect.options].some(o => o.value === d)) daySelect.value = d;
+                if ([...monthSelect.options].some(o => o.value === m)) monthSelect.value = m;
+                if ([...yearSelect.options].some(o => o.value === y)) yearSelect.value = y;
+            }
+        });
+
+        const passInput = document.getElementById('reg-pass');
+        const strengthBar = document.getElementById('password-strength-bar');
+        const strengthText = document.getElementById('password-strength-text');
+        const regSubmitBtn = document.getElementById('reg-submit-btn');
+
+        function evaluatePassword(pass) {
+            if (!pass) return { level: 'none', text: 'Требования: от 6 символов, 2 цифры, 1 заглавная буква, спецсимволы/подчеркивания (_).', color: 'w-0 bg-transparent' };
+
+            const lenOk = pass.length >= 6;
+            const digitsCount = (pass.match(/\d/g) || []).length >= 2;
+            const upperOk = /[A-ZА-ЯЁ]/.test(pass);
+            const specialOk = /[_!@#$%^&*()\+\-=\[\]{};':"\\|,.<>\/?]/.test(pass);
+
+            let score = 0;
+            if (lenOk) score++;
+            if (digitsCount) score++;
+            if (upperOk) score++;
+            if (specialOk) score++;
+
+            if (!lenOk || !digitsCount || !upperOk || !specialOk) {
+                return { level: 'red', text: 'Ненадежный (не выполнены все требования)', color: 'w-1/4 bg-red-500' };
+            }
+            if (score === 4 && pass.length < 8) {
+                return { level: 'orange', text: 'Слабый', color: 'w-2/4 bg-orange-500' };
+            }
+            if (score === 4 && pass.length >= 8 && pass.length < 12) {
+                return { level: 'yellow', text: 'Надежный', color: 'w-3/4 bg-yellow-500' };
+            }
+            return { level: 'green', text: 'Сильный', color: 'w-full bg-emerald-500' };
+        }
+
+        passInput.addEventListener('input', () => {
+            const res = evaluatePassword(passInput.value);
+            strengthBar.className = `h-full transition-all duration-300 ${res.color}`;
+            strengthText.textContent = res.text;
+            if (res.level === 'red' || res.level === 'none') {
+                regSubmitBtn.style.opacity = '0.5';
+                regSubmitBtn.style.cursor = 'not-allowed';
+            } else {
+                regSubmitBtn.style.opacity = '1';
+                regSubmitBtn.style.cursor = 'pointer';
+            }
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { initializeFirestore, doc, getDoc, setDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
+            authDomain: "kinship-1a33b.firebaseapp.com",
+            projectId: "kinship-1a33b",
+            storageBucket: "kinship-1a33b.firebasestorage.app",
+            messagingSenderId: "530429265638",
+            appId: "1:530429265638:web:45ee33d3f9129f15d6dd27"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+
+        const MAX_USERS = 100;
+        const OWNER_EMAILS = ["danya@gmail.com", "kinshipbot@gmail.com"];
+
+        const screens = {
+            loading: document.getElementById('loading-screen'),
+            register: document.getElementById('register-screen'),
+            password: document.getElementById('password-screen')
+        };
+
+        function showScreen(name) {
+            Object.values(screens).forEach(el => el.classList.add('hidden'));
+            screens[name].classList.remove('hidden');
+        }
+
+        let currentUser = null;
+        let savedUserData = null;
+
+        const handleLogout = async () => {
+            sessionStorage.removeItem('kinship_unlocked');
+            await signOut(auth);
+            window.location.href = "index.html";
+        };
+
+        document.getElementById('reg-cancel-btn').addEventListener('click', handleLogout);
+        document.getElementById('login-pass-logout-btn').addEventListener('click', handleLogout);
+
+        function isValidDateString(str) {
+            const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(str);
+            if (!match) return false;
+            const day = parseInt(match[1], 10);
+            const month = parseInt(match[2], 10);
+            const year = parseInt(match[3], 10);
+            if (month < 1 || month > 12 || day < 1 || day > 31 || year < 1900 || year > new Date().getFullYear()) return false;
+            const date = new Date(year, month - 1, day);
+            return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+        }
+
+        document.getElementById('reg-submit-btn').addEventListener('click', async () => {
+            const nickname = document.getElementById('reg-nickname').value.trim();
+            const dob = document.getElementById('reg-dob-text').value.trim();
+            const pass = document.getElementById('reg-pass').value;
+            const passConfirm = document.getElementById('reg-pass-confirm').value;
+            const errEl = document.getElementById('reg-error');
+
+            errEl.classList.add('hidden');
+
+            const strengthRes = evaluatePassword(pass);
+            if (strengthRes.level === 'red' || strengthRes.level === 'none') {
+                errEl.textContent = "Пароль ненадежный или не соответствует требованиям.";
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if (!nickname) {
+                errEl.textContent = "Укажите никнейм.";
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if (!isValidDateString(dob)) {
+                errEl.textContent = "Укажите корректную дату рождения в формате дд.мм.гггг.";
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if (pass !== passConfirm) {
+                errEl.textContent = "Пароли не совпадают.";
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                showScreen('loading');
+                const userRef = doc(db, "users", currentUser.uid);
+                const userRole = OWNER_EMAILS.includes(currentUser.email) ? 'owner' : 'user';
+
+                await setDoc(userRef, {
+                    nickname: nickname,
+                    email: currentUser.email,
+                    photo: currentUser.photoURL,
+                    dob: dob,
+                    password: pass,
+                    role: userRole,
+                    lastLogin: serverTimestamp()
+                });
+
+                sessionStorage.setItem('kinship_unlocked', currentUser.uid);
+                window.location.href = "profile.html";
+            } catch (e) {
+                showScreen('register');
+                errEl.textContent = "Ошибка облака: " + e.message;
+                errEl.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('login-pass-btn').addEventListener('click', async () => {
+            const enteredPass = document.getElementById('login-pass').value;
+            const errEl = document.getElementById('login-pass-error');
+
+            errEl.classList.add('hidden');
+
+            if (!enteredPass) {
+                errEl.textContent = "Введите пароль.";
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            if (savedUserData && enteredPass === savedUserData.password) {
+                try {
+                    showScreen('loading');
+                    const userRef = doc(db, "users", currentUser.uid);
+                    await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
+                    sessionStorage.setItem('kinship_unlocked', currentUser.uid);
+                    window.location.href = "profile.html";
+                } catch (e) {
+                    showScreen('password');
+                    errEl.textContent = "Ошибка облака: " + e.message;
+                    errEl.classList.remove('hidden');
+                }
+            } else {
+                errEl.textContent = "Неверный пароль.";
+                errEl.classList.remove('hidden');
+            }
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            currentUser = user;
+
+            // Если пароль уже вводился в этой вкладке, сразу идем в профиль
+            if (sessionStorage.getItem('kinship_unlocked') === user.uid) {
+                window.location.href = "profile.html";
+                return;
+            }
+
+            try {
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (!userSnap.exists()) {
+                    const usersSnapshot = await getDocs(collection(db, "users"));
+                    if (usersSnapshot.size >= MAX_USERS) {
+                        alert(`Лимит исчерпан: в базе может быть максимум ${MAX_USERS} аккаунтов.`);
+                        handleLogout();
+                        return;
+                    }
+                    document.getElementById('reg-nickname').value = user.displayName || '';
+                    showScreen('register');
+                } else {
+                    savedUserData = userSnap.data();
+
+                    if (OWNER_EMAILS.includes(user.email) && savedUserData.role !== 'owner') {
+                        savedUserData.role = 'owner';
+                        await setDoc(userRef, { role: 'owner' }, { merge: true });
+                    }
+
+                                        if (!savedUserData.password) {
+                        document.getElementById('reg-nickname').value = savedUserData.nickname || user.displayName || '';
+                        showScreen('register');
+                    } else {
+                        const nick = savedUserData.nickname || user.displayName || 'User';
+                        document.getElementById('login-welcome-greeting').textContent = `С возвращением, ${nick}!`;
+                        document.getElementById('login-hint-email').textContent = user.email;
+                        showScreen('password');
+                    }
+                }
+            } catch (e) {
+                alert("Ошибка облачного сервиса: " + e.message);
+                handleLogout();
+            }
+        });
+    </script>
+</body>
+</html>
