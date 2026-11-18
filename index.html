@@ -5,22 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title class="notranslate">Kinship — Your Inner Circle</title>
     <link rel="icon" type="image/png" href="icon.png">
-    <meta name="description" content="Connect, share memes, catch trends, and vibe with your inner circle.">
-    
-    <!-- Open Graph / Social Media Meta Tags -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Kinship">
-    <meta property="og:description" content="Where you meet memes, trends, chat, share, like, and comment.">
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        *, body, h1, h2, p, button, a, input, label, select {
+        *, body, h1, h2, p, button, a {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
         }
-        h1, h2 { font-weight: 800 !important; }
+        h1 { font-weight: 800 !important; }
         p { font-weight: 500 !important; }
         button { font-weight: 700 !important; }
 
@@ -35,11 +28,9 @@
 </head>
 <body class="bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-white min-h-screen flex flex-col justify-between items-center p-6 m-0 text-center transition-colors duration-300">
 
-    <!-- Top Spacer -->
     <div class="h-4"></div>
 
-    <!-- 1. Auth Screen -->
-    <div id="auth-screen" class="max-w-sm w-full">
+    <div class="max-w-sm w-full">
         <p class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 smooth-title notranslate">Kinship</p>
         <h1 class="smooth-title text-2xl text-gray-950 dark:text-white mb-3 tracking-tight">Welcome!</h1>
         <p class="smooth-desc text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-8">
@@ -57,182 +48,6 @@
         </button>
     </div>
 
-    <!-- 2. Loading Screen -->
-    <div id="loading-screen" class="hidden max-w-sm w-full">
-        <p class="text-sm text-gray-500 dark:text-gray-400">Проверка данных в облаке...</p>
-    </div>
-
-    <!-- 3. Registration Setup Screen -->
-    <div id="register-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm text-left">
-        <h2 class="text-lg text-gray-950 dark:text-white mb-1 text-center">Завершение регистрации</h2>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-5 text-center">Заполните данные для создания профиля</p>
-
-        <div class="space-y-3 mb-5">
-            <div>
-                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Никнейм</label>
-                <input id="reg-nickname" type="text" placeholder="Ваш никнейм" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
-            </div>
-
-            <div>
-                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Дата рождения</label>
-                <input id="reg-dob-text" type="text" inputmode="numeric" maxlength="10" placeholder="дд.мм.гггг" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none mb-2">
-                <div class="grid grid-cols-3 gap-2">
-                    <select id="reg-day" class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-xs text-gray-950 dark:text-white outline-none">
-                        <option value="">День</option>
-                    </select>
-                    <select id="reg-month" class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-xs text-gray-950 dark:text-white outline-none">
-                        <option value="">Месяц</option>
-                        <option value="01">Январь</option>
-                        <option value="02">Февраль</option>
-                        <option value="03">Март</option>
-                        <option value="04">Апрель</option>
-                        <option value="05">Май</option>
-                        <option value="06">Июнь</option>
-                        <option value="07">Июль</option>
-                        <option value="08">Август</option>
-                        <option value="09">Сентябрь</option>
-                        <option value="10">Октябрь</option>
-                        <option value="11">Ноябрь</option>
-                        <option value="12">Декабрь</option>
-                    </select>
-                    <select id="reg-year" class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-xs text-gray-950 dark:text-white outline-none">
-                        <option value="">Год</option>
-                    </select>
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Придумайте пароль</label>
-                <input id="reg-pass" type="password" placeholder="Введите пароль" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none mb-1.5">
-                <div class="w-full bg-gray-200 dark:bg-gray-800 h-1.5 rounded-full overflow-hidden mb-1">
-                    <div id="password-strength-bar" class="h-full w-0 transition-all duration-300"></div>
-                </div>
-                <p id="password-strength-text" class="text-[11px] text-gray-400 mb-2">Требования: от 6 символов, 2 цифры, 1 заглавная буква, спецсимволы/подчеркивания (_).</p>
-            </div>
-
-            <div>
-                <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Повторите пароль</label>
-                <input id="reg-pass-confirm" type="password" placeholder="Повторите пароль" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
-            </div>
-        </div>
-
-        <p id="reg-error" class="hidden text-xs text-red-500 mb-3 text-center"></p>
-
-        <button id="reg-submit-btn" class="w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 p-3 rounded-xl text-sm transition cursor-pointer mb-2">
-            Сохранить и войти
-        </button>
-        <button id="reg-cancel-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-2.5 rounded-xl text-xs transition cursor-pointer">
-            Отмена
-        </button>
-    </div>
-
-    <!-- 4. Password Check Screen (Приветствие "С возвращением" здесь) -->
-    <div id="password-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm text-left">
-        <h2 id="login-welcome-greeting" class="text-lg text-gray-950 dark:text-white mb-1 text-center"></h2>
-        <p id="login-hint-email" class="text-xs text-gray-500 dark:text-gray-400 mb-5 text-center"></p>
-
-        <div class="mb-4">
-            <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Пароль</label>
-            <input id="login-pass" type="password" placeholder="Введите ваш пароль" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-950 dark:text-white outline-none">
-        </div>
-
-        <p id="login-pass-error" class="hidden text-xs text-red-500 mb-3 text-center"></p>
-
-        <button id="login-pass-btn" class="w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 p-3 rounded-xl text-sm transition cursor-pointer mb-2">
-            Войти
-        </button>
-        <button id="login-pass-logout-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-2.5 rounded-xl text-xs transition cursor-pointer">
-            Выйти из аккаунта
-        </button>
-    </div>
-
-    <!-- 5. Profile Screen (Только никнейм и роли по правилам) -->
-    <div id="profile-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm">
-        <img id="user-avatar" src="" alt="Avatar" class="w-16 h-16 rounded-full mx-auto mb-3 border border-gray-200 dark:border-gray-700">
-        <h2 id="profile-nickname" class="text-lg text-gray-950 dark:text-white mb-1"></h2>
-        <div id="role-badge-container" class="mb-2"></div>
-        <p id="user-email" class="text-xs text-gray-500 dark:text-gray-400 mb-2"></p>
-        <p id="db-status" class="text-xs text-emerald-600 dark:text-emerald-400 mb-6">Synced with cloud ✓</p>
-        
-        <div class="space-y-2">
-            <button id="logout-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-3 rounded-xl text-xs transition cursor-pointer">
-                Выход
-            </button>
-            <button id="delete-account-btn" class="w-full bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:text-red-400 p-3 rounded-xl text-xs transition cursor-pointer">
-                Удалить аккаунт
-            </button>
-        </div>
-    </div>
-
-    <!-- Delete Account Warning Modal (Шаг 1) -->
-    <div id="delete-warning-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
-        <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-left shadow-xl">
-            <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2 text-center">Пока вы не ушли, прочтите это очень важно</h3>
-            <p class="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                Вы собираетесь удалить аккаунт в Kinship, где были ваши лайки, друзья, сообщения, комментарии, подписки, ваши посты и клипы.<br><br>
-                Ваш аккаунт и данные нельзя вернуть, но можно скачать все данные и загрузить на устройство.<br><br>
-                Нажимая «Удалить аккаунт», вы соглашаетесь, что ваш аккаунт будет удален безвозвратно и вы загрузили все данные.
-            </p>
-
-            <div class="space-y-2.5 mb-4">
-                <label class="flex items-start gap-2 text-xs text-gray-700 dark:text-gray-300 cursor-pointer">
-                    <input id="chk-downloaded" type="checkbox" class="mt-0.5 rounded accent-gray-900">
-                    <span>Я загрузил(-а) все данные приложения Kinship</span>
-                </label>
-                <label class="flex items-start gap-2 text-xs text-gray-700 dark:text-gray-300 cursor-pointer">
-                    <input id="chk-confirm" type="checkbox" class="mt-0.5 rounded accent-gray-900">
-                    <span>Я подтверждаю что хочу удалить аккаунт безвозвратно</span>
-                </label>
-            </div>
-
-            <div class="space-y-2">
-                <button id="download-data-btn" class="w-full bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-white py-2.5 rounded-xl text-xs cursor-pointer transition font-bold">
-                    Загрузить данные
-                </button>
-                <button id="proceed-delete-btn" disabled class="w-full bg-red-600 text-white opacity-50 cursor-not-allowed py-2.5 rounded-xl text-xs transition font-bold">
-                    Удалить аккаунт
-                </button>
-                <button onclick="closeDeleteModal()" class="w-full bg-transparent text-gray-500 hover:text-gray-800 dark:hover:text-white py-1.5 rounded-lg text-xs cursor-pointer transition">
-                    Отмена
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Account Select Modal (Шаг 2: Белая кнопка выбора аккаунта) -->
-    <div id="delete-verify-account-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
-        <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-center shadow-xl">
-            <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2">Подтверждение аккаунта</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">
-                Нажмите на белую кнопку ниже и выберите именно тот аккаунт (<span id="target-delete-email" class="font-bold text-gray-800 dark:text-gray-200"></span>), который хотите удалить.
-            </p>
-            <p id="verify-account-error" class="hidden text-xs text-red-500 mb-3"></p>
-            <button id="verify-google-account-btn" class="w-full bg-white text-black border border-gray-300 hover:bg-gray-100 py-3 rounded-xl text-xs cursor-pointer transition font-bold shadow-sm mb-2">
-                Подтвердить удаление
-            </button>
-            <button onclick="closeVerifyAccountModal()" class="w-full bg-transparent text-gray-500 hover:text-gray-800 dark:hover:text-white py-1.5 rounded-lg text-xs cursor-pointer transition">
-                Отмена
-            </button>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Final Modal (Шаг 3) -->
-    <div id="delete-confirm-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
-        <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-center shadow-xl">
-            <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2">Хотите точно удалить аккаунт?</h3>
-            <p id="delete-confirm-email" class="text-xs text-gray-500 dark:text-gray-400 mb-5"></p>
-            <div class="flex gap-2">
-                <button onclick="closeFinalDeleteModal()" class="flex-1 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 py-2.5 rounded-xl text-xs cursor-pointer transition">
-                    Отмена
-                </button>
-                <button id="final-delete-btn" class="flex-1 bg-red-600 text-white hover:bg-red-700 py-2.5 rounded-xl text-xs cursor-pointer transition font-bold">
-                    Удалить
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Minimalist Western-style Footer -->
     <footer class="text-xs text-gray-500 dark:text-gray-600 flex flex-col items-center gap-1.5">
         <div class="flex gap-4">
             <button onclick="openModal('Terms of Service', 'Kinship is currently in private beta. Be respectful, share good vibes, and keep the community safe.')" class="hover:text-gray-800 dark:hover:text-gray-400 transition font-normal cursor-pointer">Terms</button>
@@ -244,7 +59,6 @@
         <p class="text-[11px] text-gray-400 dark:text-gray-700 font-normal">&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
     </footer>
 
-    <!-- Legal Modal -->
     <div id="legal-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
         <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-left shadow-xl">
             <h3 id="modal-title" class="text-sm font-bold text-gray-950 dark:text-white mb-2"></h3>
@@ -262,456 +76,53 @@
         function closeModal() {
             document.getElementById('legal-modal').classList.add('hidden');
         }
-        function closeDeleteModal() {
-            document.getElementById('delete-warning-modal').classList.add('hidden');
-        }
-        function closeVerifyAccountModal() {
-            document.getElementById('delete-verify-account-modal').classList.add('hidden');
-        }
-        function closeFinalDeleteModal() {
-            document.getElementById('delete-confirm-modal').classList.add('hidden');
-        }
+    </script>
 
-        const daySelect = document.getElementById('reg-day');
-        const monthSelect = document.getElementById('reg-month');
-        const yearSelect = document.getElementById('reg-year');
-        const dobText = document.getElementById('reg-dob-text');
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-        for (let d = 1; d <= 31; d++) {
-            const val = String(d).padStart(2, '0');
-            const opt = document.createElement('option');
-            opt.value = val;
-            opt.textContent = d;
-            daySelect.appendChild(opt);
-        }
+        const firebaseConfig = {
+            apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
+            authDomain: "kinship-1a33b.firebaseapp.com",
+            projectId: "kinship-1a33b",
+            storageBucket: "kinship-1a33b.firebasestorage.app",
+            messagingSenderId: "530429265638",
+            appId: "1:530429265638:web:45ee33d3f9129f15d6dd27"
+        };
 
-        const currentYear = new Date().getFullYear();
-        for (let y = currentYear; y >= 1920; y--) {
-            const opt = document.createElement('option');
-            opt.value = String(y);
-            opt.textContent = y;
-            yearSelect.appendChild(opt);
-        }
-        
-function syncSelectsToText() {
-    const d = daySelect.value;
-    const m = monthSelect.value;
-    const y = yearSelect.value;
-    if (d && m && y) {
-        dobText.value = `${d}.${m}.${y}`;
-    }
-}
-daySelect.addEventListener('change', syncSelectsToText);
-monthSelect.addEventListener('change', syncSelectsToText);
-yearSelect.addEventListener('change', syncSelectsToText);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
 
-dobText.addEventListener('input', (e) => {
-    let digits = e.target.value.replace(/\D/g, '').slice(0, 8);
-    let formatted = digits;
-    if (digits.length > 4) {
-        formatted = `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4)}`;
-    } else if (digits.length > 2) {
-        formatted = `${digits.slice(0, 2)}.${digits.slice(2)}`;
-    }
-    e.target.value = formatted;
-
-    if (digits.length === 8) {
-        const d = digits.slice(0, 2);
-        const m = digits.slice(2, 4);
-        const y = digits.slice(4, 8);
-        if ([...daySelect.options].some(o => o.value === d)) daySelect.value = d;
-        if ([...monthSelect.options].some(o => o.value === m)) monthSelect.value = m;
-        if ([...yearSelect.options].some(o => o.value === y)) yearSelect.value = y;
-    }
-});
-
-const passInput = document.getElementById('reg-pass');
-const strengthBar = document.getElementById('password-strength-bar');
-const strengthText = document.getElementById('password-strength-text');
-const regSubmitBtn = document.getElementById('reg-submit-btn');
-
-function evaluatePassword(pass) {
-    if (!pass) return { level: 'none', text: 'Требования: от 6 символов, 2 цифры, 1 заглавная буква, спецсимволы/подчеркивания (_).', color: 'w-0 bg-transparent' };
-
-    const lenOk = pass.length >= 6;
-    const digitsCount = (pass.match(/\d/g) || []).length >= 2;
-    const upperOk = /[A-ZА-ЯЁ]/.test(pass);
-    const specialOk = /[_!@#$%^&*()\+\-=\[\]{};':"\\|,.<>\/?]/.test(pass);
-
-    let score = 0;
-    if (lenOk) score++;
-    if (digitsCount) score++;
-    if (upperOk) score++;
-    if (specialOk) score++;
-
-    if (!lenOk || !digitsCount || !upperOk || !specialOk) {
-        return { level: 'red', text: 'Ненадежный (не выполнены все требования)', color: 'w-1/4 bg-red-500' };
-    }
-    if (score === 4 && pass.length < 8) {
-        return { level: 'orange', text: 'Слабый', color: 'w-2/4 bg-orange-500' };
-    }
-    if (score === 4 && pass.length >= 8 && pass.length < 12) {
-        return { level: 'yellow', text: 'Надежный', color: 'w-3/4 bg-yellow-500' };
-    }
-    return { level: 'green', text: 'Сильный', color: 'w-full bg-emerald-500' };
-}
-
-passInput.addEventListener('input', () => {
-    const res = evaluatePassword(passInput.value);
-    strengthBar.className = `h-full transition-all duration-300 ${res.color}`;
-    strengthText.textContent = res.text;
-    if (res.level === 'red' || res.level === 'none') {
-        regSubmitBtn.style.opacity = '0.5';
-        regSubmitBtn.style.cursor = 'not-allowed';
-    } else {
-        regSubmitBtn.style.opacity = '1';
-        regSubmitBtn.style.cursor = 'pointer';
-    }
-});
-</script>
-
-<script type="module">
-import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { initializeFirestore, doc, getDoc, setDoc, deleteDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
-    authDomain: "kinship-1a33b.firebaseapp.com",
-    projectId: "kinship-1a33b",
-    storageBucket: "kinship-1a33b.firebasestorage.app",
-    messagingSenderId: "530429265638",
-    appId: "1:530429265638:web:45ee33d3f9129f15d6dd27"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = initializeFirestore(app, {
-    experimentalForceLongPolling: true
-});
-const provider = new GoogleAuthProvider();
-
-const MAX_USERS = 100;
-const OWNER_EMAILS = ["danya@gmail.com", "kinshipbot@gmail.com"];
-
-const screens = {
-    auth: document.getElementById('auth-screen'),
-    loading: document.getElementById('loading-screen'),
-    register: document.getElementById('register-screen'),
-    password: document.getElementById('password-screen'),
-    profile: document.getElementById('profile-screen')
-};
-
-function showScreen(name) {
-    Object.values(screens).forEach(el => el.classList.add('hidden'));
-    screens[name].classList.remove('hidden');
-}
-
-let currentUser = null;
-let savedUserData = null;
-
-getRedirectResult(auth).catch((error) => {
-    alert("Ошибка возврата после входа: " + error.message);
-});
-
-document.getElementById('login-btn').addEventListener('click', async () => {
-    try {
-        await signInWithPopup(auth, provider);
-    } catch (error) {
-        if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request' || /Mobi|Android/i.test(navigator.userAgent)) {
-            await signInWithRedirect(auth, provider);
-        } else {
+        // Обработка возврата после редиректа на мобильных
+        getRedirectResult(auth).then((result) => {
+            if (result && result.user) {
+                window.location.href = "auth.html";
+            }
+        }).catch((error) => {
             alert("Ошибка входа: " + error.message);
-        }
-    }
-});
-
-const handleLogout = () => {
-    currentUser = null;
-    savedUserData = null;
-    signOut(auth);
-    showScreen('auth');
-};
-
-document.getElementById('logout-btn').addEventListener('click', handleLogout);
-document.getElementById('reg-cancel-btn').addEventListener('click', handleLogout);
-document.getElementById('login-pass-logout-btn').addEventListener('click', handleLogout);
-
-const deleteAccountBtn = document.getElementById('delete-account-btn');
-const deleteWarningModal = document.getElementById('delete-warning-modal');
-const deleteVerifyAccountModal = document.getElementById('delete-verify-account-modal');
-const deleteConfirmModal = document.getElementById('delete-confirm-modal');
-const chkDownloaded = document.getElementById('chk-downloaded');
-const chkConfirm = document.getElementById('chk-confirm');
-const proceedDeleteBtn = document.getElementById('proceed-delete-btn');
-const downloadDataBtn = document.getElementById('download-data-btn');
-const verifyGoogleAccountBtn = document.getElementById('verify-google-account-btn');
-const verifyAccountError = document.getElementById('verify-account-error');
-const finalDeleteBtn = document.getElementById('final-delete-btn');
-
-deleteAccountBtn.addEventListener('click', () => {
-    chkDownloaded.checked = false;
-    chkConfirm.checked = false;
-    proceedDeleteBtn.disabled = true;
-    proceedDeleteBtn.classList.add('opacity-50', 'cursor-not-allowed');
-    deleteWarningModal.classList.remove('hidden');
-});
-
-function updateDeleteButtonState() {
-    if (chkDownloaded.checked && chkConfirm.checked) {
-        proceedDeleteBtn.disabled = false;
-        proceedDeleteBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-    } else {
-        proceedDeleteBtn.disabled = true;
-        proceedDeleteBtn.classList.add('opacity-50', 'cursor-not-allowed');
-    }
-}
-chkDownloaded.addEventListener('change', updateDeleteButtonState);
-chkConfirm.addEventListener('change', updateDeleteButtonState);
-
-downloadDataBtn.addEventListener('click', () => {
-    if (!savedUserData && !currentUser) return;
-    const dataToExport = {
-        uid: currentUser.uid,
-        email: currentUser.email,
-        nickname: savedUserData?.nickname || currentUser.displayName,
-        role: savedUserData?.role || 'user',
-        dob: savedUserData?.dob || '',
-        exportedAt: new Date().toISOString()
-    };
-    const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'kinship-account-data.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-});
-
-proceedDeleteBtn.addEventListener('click', () => {
-    deleteWarningModal.classList.add('hidden');
-    document.getElementById('target-delete-email').textContent = currentUser.email;
-    verifyAccountError.classList.add('hidden');
-    deleteVerifyAccountModal.classList.remove('hidden');
-});
-
-verifyGoogleAccountBtn.addEventListener('click', async () => {
-    if (!currentUser) return;
-    verifyAccountError.classList.add('hidden');
-
-    const verifyApp = initializeApp(firebaseConfig, "verifyApp_" + Date.now());
-    const verifyAuth = getAuth(verifyApp);
-    const verifyProvider = new GoogleAuthProvider();
-    verifyProvider.setCustomParameters({ prompt: 'select_account' });
-
-    try {
-        const res = await signInWithPopup(verifyAuth, verifyProvider);
-        const selectedEmail = res.user.email;
-        const selectedUid = res.user.uid;
-        await signOut(verifyAuth);
-        await deleteApp(verifyApp);
-
-        if (selectedUid === currentUser.uid || selectedEmail === currentUser.email) {
-            deleteVerifyAccountModal.classList.add('hidden');
-            document.getElementById('delete-confirm-email').textContent = currentUser.email;
-            deleteConfirmModal.classList.remove('hidden');
-        } else {
-            verifyAccountError.textContent = `Вы выбрали другой аккаунт (${selectedEmail}). Пожалуйста, нажмите кнопку снова и выберите точный аккаунт: ${currentUser.email}`;
-            verifyAccountError.classList.remove('hidden');
-        }
-    } catch (err) {
-        try { await deleteApp(verifyApp); } catch (_) {}
-        verifyAccountError.textContent = "Не удалось подтвердить аккаунт. Попробуйте выбрать нужный аккаунт ещё раз.";
-        verifyAccountError.classList.remove('hidden');
-    }
-});
-
-finalDeleteBtn.addEventListener('click', async () => {
-    if (!currentUser) return;
-    try {
-        deleteConfirmModal.classList.add('hidden');
-        showScreen('loading');
-        await deleteDoc(doc(db, "users", currentUser.uid));
-        handleLogout();
-    } catch (e) {
-        showScreen('profile');
-        alert("Ошибка при удалении аккаунта: " + e.message);
-    }
-});
-
-function openProfile(user, nickname, viewerRole) {
-    document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
-    document.getElementById('profile-nickname').textContent = nickname;
-    document.getElementById('user-email').textContent = user.email;
-
-    const badgeContainer = document.getElementById('role-badge-container');
-    badgeContainer.innerHTML = '';
-
-    if (viewerRole === 'owner') {
-        badgeContainer.innerHTML = `<span class="inline-block bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[11px] font-bold px-2.5 py-1 rounded-lg">👑 Владелец</span>`;
-    } else if (viewerRole === 'admin') {
-        badgeContainer.innerHTML = `<span class="inline-block bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[11px] font-bold px-2.5 py-1 rounded-lg">🛡️ Администратор</span>`;
-    }
-
-    showScreen('profile');
-}
-
-function isValidDateString(str) {
-    const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(str);
-    if (!match) return false;
-    const day = parseInt(match[1], 10);
-    const month = parseInt(match[2], 10);
-    const year = parseInt(match[3], 10);
-    if (month < 1 || month > 12 || day < 1 || day > 31 || year < 1900 || year > new Date().getFullYear()) return false;
-    const date = new Date(year, month - 1, day);
-    return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
-}
-
-document.getElementById('reg-submit-btn').addEventListener('click', async () => {
-    const nickname = document.getElementById('reg-nickname').value.trim();
-    const dob = document.getElementById('reg-dob-text').value.trim();
-    const pass = document.getElementById('reg-pass').value;
-    const passConfirm = document.getElementById('reg-pass-confirm').value;
-    const errEl = document.getElementById('reg-error');
-
-    errEl.classList.add('hidden');
-
-    const strengthRes = evaluatePassword(pass);
-    if (strengthRes.level === 'red' || strengthRes.level === 'none') {
-        errEl.textContent = "Пароль ненадежный или не соответствует требованиям.";
-        errEl.classList.remove('hidden');
-        return;
-    }
-    if (!nickname) {
-        errEl.textContent = "Укажите никнейм.";
-        errEl.classList.remove('hidden');
-        return;
-    }
-    if (!isValidDateString(dob)) {
-        errEl.textContent = "Укажите корректную дату рождения в формате дд.мм.гггг.";
-        errEl.classList.remove('hidden');
-        return;
-    }
-    if (pass !== passConfirm) {
-        errEl.textContent = "Пароли не совпадают.";
-        errEl.classList.remove('hidden');
-        return;
-    }
-
-    try {
-        showScreen('loading');
-        const userRef = doc(db, "users", currentUser.uid);
-
-        const userRole = OWNER_EMAILS.includes(currentUser.email) ? 'owner' : 'user';
-
-        await setDoc(userRef, {
-            nickname: nickname,
-            email: currentUser.email,
-            photo: currentUser.photoURL,
-            dob: dob,
-            password: pass,
-            role: userRole,
-            lastLogin: serverTimestamp()
         });
 
-        savedUserData = { nickname, email: currentUser.email, dob, password: pass, role: userRole };
-        openProfile(currentUser, nickname, userRole);
-    } catch (e) {
-        showScreen('register');
-        errEl.textContent = "Ошибка облака: " + e.message;
-        errEl.classList.remove('hidden');
-    }
-});
+        // Если сессия уже активна, сразу перекидываем на страницу проверки/пароля
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = "auth.html";
+            }
+        });
 
-document.getElementById('login-pass-btn').addEventListener('click', async () => {
-    const enteredPass = document.getElementById('login-pass').value;
-    const errEl = document.getElementById('login-pass-error');
-
-    errEl.classList.add('hidden');
-
-    if (!enteredPass) {
-        errEl.textContent = "Введите пароль.";
-        errEl.classList.remove('hidden');
-        return;
-    }
-
-    if (savedUserData && enteredPass === savedUserData.password) {
-        try {
-            showScreen('loading');
-            const userRef = doc(db, "users", currentUser.uid);
-            await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
-            const nick = savedUserData.nickname || savedUserData.name || currentUser.displayName || 'User';
-            const role = savedUserData.role || (OWNER_EMAILS.includes(currentUser.email) ? 'owner' : 'user');
-            openProfile(currentUser, nick, role);
-        } catch (e) {
-            showScreen('password');
-            errEl.textContent = "Ошибка облака: " + e.message;
-            errEl.classList.remove('hidden');
-        }
-    } else {
-        errEl.textContent = "Неверный пароль.";
-        errEl.classList.remove('hidden');
-    }
-});
-
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        currentUser = user;
-        showScreen('loading');
-
-        try {
-            const userRef = doc(db, "users", user.uid);
-            const userSnap = await getDoc(userRef);
-
-            if (!userSnap.exists()) {
-                const usersSnapshot = await getDocs(collection(db, "users"));
-                if (usersSnapshot.size >= MAX_USERS) {
-                    alert(`Лимит исчерпан: в базе может быть максимум ${MAX_USERS} аккаунтов.`);
-                    handleLogout();
-                    return;
-                }
-                document.getElementById('reg-nickname').value = user.displayName || '';
-                document.getElementById('reg-dob-text').value = '';
-                document.getElementById('reg-day').value = '';
-                document.getElementById('reg-month').value = '';
-                document.getElementById('reg-year').value = '';
-                document.getElementById('reg-pass').value = '';
-                document.getElementById('reg-pass-confirm').value = '';
-                document.getElementById('password-strength-bar').className = 'h-full w-0 transition-all duration-300';
-                document.getElementById('password-strength-text').textContent = 'Требования: от 6 символов, 2 цифры, 1 заглавная буква, спецсимволы/подчеркивания (_).';
-                document.getElementById('reg-error').classList.add('hidden');
-                showScreen('register');
-            } else {
-                savedUserData = userSnap.data();
-                
-                if (OWNER_EMAILS.includes(user.email) && savedUserData.role !== 'owner') {
-                    savedUserData.role = 'owner';
-                    await setDoc(userRef, { role: 'owner' }, { merge: true });
-                }
-
-                if (!savedUserData.password) {
-                    document.getElementById('reg-nickname').value = savedUserData.nickname || savedUserData.name || user.displayName || '';
-                    showScreen('register');
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            try {
+                await signInWithPopup(auth, provider);
+                window.location.href = "auth.html";
+            } catch (error) {
+                if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request' || /Mobi|Android/i.test(navigator.userAgent)) {
+                    await signInWithRedirect(auth, provider);
                 } else {
-                    const nick = savedUserData.nickname || savedUserData.name || user.displayName || 'User';
-                    document.getElementById('login-welcome-greeting').textContent = `С возвращением, ${nick}!`;
-                    document.getElementById('login-hint-email').textContent = user.email;
-                    document.getElementById('login-pass').value = '';
-                    document.getElementById('login-pass-error').classList.add('hidden');
-                    showScreen('password');
+                    alert("Ошибка входа: " + error.message);
                 }
             }
-        } catch (e) {
-            alert("Ошибка облачного сервиса: " + e.message);
-            handleLogout();
-        }
-    } else {
-        showScreen('auth');
-    }
-});
-</script>
+        });
+    </script>
 </body>
-    </html>
-        
+</html>
