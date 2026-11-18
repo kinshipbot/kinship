@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title class="notranslate">Kinship — Профиль</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        *, body, h1, h2, h3, p, button, a, input, label {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        }
+        h2, h3 { font-weight: 800 !important; }
+        p { font-weight: 500 !important; }
+        button { font-weight: 700 !important; }
+
+        /* Элитный HTML-значок алмаза */
+        .premium-diamond-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(168, 85, 247, 0.15));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: #a855f7;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
+        }
+
+        .diamond-icon {
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-white min-h-screen flex flex-col justify-between items-center p-6 m-0 text-center transition-colors duration-300">
+
+    <div class="h-4"></div>
+
+    <!-- Экран загрузки -->
+    <div id="loading-screen" class="max-w-sm w-full">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Загрузка профиля...</p>
+    </div>
+
+    <!-- Экран профиля -->
+    <div id="profile-screen" class="hidden max-w-sm w-full bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm">
+        <img id="user-avatar" src="" alt="Avatar" class="w-16 h-16 rounded-full mx-auto mb-3 border border-gray-200 dark:border-gray-700">
+        <h2 id="profile-nickname" class="text-lg text-gray-950 dark:text-white mb-1"></h2>
+        <div id="role-badge-container" class="mb-2"></div>
+        <p id="user-email" class="text-xs text-gray-500 dark:text-gray-400 mb-2"></p>
+        <p class="text-xs text-emerald-600 dark:text-emerald-400 mb-6">Synced with cloud ✓</p>
+        
+        <div class="space-y-2">
+            <button id="logout-btn" class="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 p-3 rounded-xl text-xs transition cursor-pointer">
+                Выход
+            </button>
+            <button id="delete-account-btn" class="w-full bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:text-red-400 p-3 rounded-xl text-xs transition cursor-pointer">
+                Удалить аккаунт
+            </button>
+        </div>
+    </div>
+
+    <!-- Модалка удаления (Шаг 1) -->
+    <div id="delete-warning-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
+        <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-left shadow-xl">
+            <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2 text-center">Пока вы не ушли, прочтите это очень важно</h3>
+            <p class="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+                Вы собираетесь удалить аккаунт в Kinship, где были ваши лайки, друзья, сообщения, комментарии, подписки, ваши посты и клипы.<br><br>
+                Ваш аккаунт и данные нельзя вернуть, но можно скачать все данные и загрузить на устройство.<br><br>
+                Нажимая «Удалить аккаунт», вы соглашаетесь, что ваш аккаунт будет удален безвозвратно и вы загрузили все данные.
+            </p>
+
+            <div class="space-y-2.5 mb-4">
+                <label class="flex items-start gap-2 text-xs text-gray-700 dark:text-gray-300 cursor-pointer">
+                    <input id="chk-downloaded" type="checkbox" class="mt-0.5 rounded accent-gray-900">
+                    <span>Я загрузил(-а) все данные приложения Kinship</span>
+                </label>
+                <label class="flex items-start gap-2 text-xs text-gray-700 dark:text-gray-300 cursor-pointer">
+                    <input id="chk-confirm" type="checkbox" class="mt-0.5 rounded accent-gray-900">
+                    <span>Я подтверждаю что хочу удалить аккаунт безвозвратно</span>
+                </label>
+            </div>
+
+            <div class="space-y-2">
+                <button id="download-data-btn" class="w-full bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-white py-2.5 rounded-xl text-xs cursor-pointer transition font-bold">
+                    Загрузить данные
+                </button>
+                <button id="proceed-delete-btn" disabled class="w-full bg-red-600 text-white opacity-50 cursor-not-allowed py-2.5 rounded-xl text-xs transition font-bold">
+                    Удалить аккаунт
+                </button>
+                <button onclick="closeDeleteModal()" class="w-full bg-transparent text-gray-500 hover:text-gray-800 dark:hover:text-white py-1.5 rounded-lg text-xs cursor-pointer transition">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка удаления (Шаг 2: Выбор точного аккаунта) -->
+    <div id="delete-verify-account-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
+        <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-center shadow-xl">
+            <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2">Подтверждение аккаунта</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">
+                Нажмите на белую кнопку ниже и выберите именно тот аккаунт (<span id="target-delete-email" class="font-bold text-gray-800 dark:text-gray-200"></span>), который хотите удалить.
+            </p>
+            <p id="verify-account-error" class="hidden text-xs text-red-500 mb-3"></p>
+            <button id="verify-google-account-btn" class="w-full bg-white text-black border border-gray-300 hover:bg-gray-100 py-3 rounded-xl text-xs cursor-pointer transition font-bold shadow-sm mb-2">
+                Подтвердить удаление
+            </button>
+            <button onclick="closeVerifyAccountModal()" class="w-full bg-transparent text-gray-500 hover:text-gray-800 dark:hover:text-white py-1.5 rounded-lg text-xs cursor-pointer transition">
+                Отмена
+            </button>
+        </div>
+    </div>
+
+    <!-- Модалка удаления (Шаг 3: Финальное подтверждение) -->
+    <div id="delete-confirm-modal" class="hidden fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 z-50">
+        <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 max-w-xs w-full p-5 rounded-2xl text-center shadow-xl">
+            <h3 class="text-sm font-bold text-gray-950 dark:text-white mb-2">Хотите точно удалить аккаунт?</h3>
+            <p id="delete-confirm-email" class="text-xs text-gray-500 dark:text-gray-400 mb-5"></p>
+            <div class="flex gap-2">
+                <button onclick="closeFinalDeleteModal()" class="flex-1 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 py-2.5 rounded-xl text-xs cursor-pointer transition">
+                    Отмена
+                </button>
+                <button id="final-delete-btn" class="flex-1 bg-red-600 text-white hover:bg-red-700 py-2.5 rounded-xl text-xs cursor-pointer transition font-bold">
+                    Удалить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-xs text-gray-500 dark:text-gray-600 flex flex-col items-center gap-1.5">
+        <p class="text-[11px] text-gray-400 dark:text-gray-700 font-normal">&copy; 2026 <span class="notranslate">Kinship</span> Inc.</p>
+    </footer>
+
+    <script>
+        function closeDeleteModal() {
+            document.getElementById('delete-warning-modal').classList.add('hidden');
+        }
+        function closeVerifyAccountModal() {
+            document.getElementById('delete-verify-account-modal').classList.add('hidden');
+        }
+        function closeFinalDeleteModal() {
+            document.getElementById('delete-confirm-modal').classList.add('hidden');
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { initializeFirestore, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
+            authDomain: "kinship-1a33b.firebaseapp.com",
+            projectId: "kinship-1a33b",
+            storageBucket: "kinship-1a33b.firebasestorage.app",
+            messagingSenderId: "530429265638",
+            appId: "1:530429265638:web:45ee33d3f9129f15d6dd27"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+
+        const OWNER_EMAILS = ["danya@gmail.com", "kinshipbot@gmail.com"];
+
+        let currentUser = null;
+        let savedUserData = null;
+
+        const handleLogout = async () => {
+            sessionStorage.removeItem('kinship_unlocked');
+            await signOut(auth);
+            window.location.href = "index.html";
+        };
+
+        document.getElementById('logout-btn').addEventListener('click', handleLogout);
+
+        const deleteAccountBtn = document.getElementById('delete-account-btn');
+        const deleteWarningModal = document.getElementById('delete-warning-modal');
+        const deleteVerifyAccountModal = document.getElementById('delete-verify-account-modal');
+        const deleteConfirmModal = document.getElementById('delete-confirm-modal');
+        const chkDownloaded = document.getElementById('chk-downloaded');
+        const chkConfirm = document.getElementById('chk-confirm');
+        const proceedDeleteBtn = document.getElementById('proceed-delete-btn');
+        const downloadDataBtn = document.getElementById('download-data-btn');
+        const verifyGoogleAccountBtn = document.getElementById('verify-google-account-btn');
+        const verifyAccountError = document.getElementById('verify-account-error');
+        const finalDeleteBtn = document.getElementById('final-delete-btn');
+
+        deleteAccountBtn.addEventListener('click', () => {
+            chkDownloaded.checked = false;
+            chkConfirm.checked = false;
+            proceedDeleteBtn.disabled = true;
+            proceedDeleteBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            deleteWarningModal.classList.remove('hidden');
+        });
+
+        function updateDeleteButtonState() {
+            if (chkDownloaded.checked && chkConfirm.checked) {
+                proceedDeleteBtn.disabled = false;
+                proceedDeleteBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                proceedDeleteBtn.disabled = true;
+                proceedDeleteBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+        chkDownloaded.addEventListener('change', updateDeleteButtonState);
+        chkConfirm.addEventListener('change', updateDeleteButtonState);
+
+        downloadDataBtn.addEventListener('click', () => {
+            if (!savedUserData && !currentUser) return;
+            const dataToExport = {
+                uid: currentUser.uid,
+                email: currentUser.email,
+                nickname: savedUserData?.nickname || currentUser.displayName,
+                role: savedUserData?.role || 'user',
+                dob: savedUserData?.dob || '',
+                exportedAt: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'kinship-account-data.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        proceedDeleteBtn.addEventListener('click', () => {
+            deleteWarningModal.classList.add('hidden');
+            document.getElementById('target-delete-email').textContent = currentUser.email;
+            verifyAccountError.classList.add('hidden');
+            deleteVerifyAccountModal.classList.remove('hidden');
+        });
+
+        verifyGoogleAccountBtn.addEventListener('click', async () => {
+            if (!currentUser) return;
+            verifyAccountError.classList.add('hidden');
+
+            const verifyApp = initializeApp(firebaseConfig, "verifyApp_" + Date.now());
+            const verifyAuth = getAuth(verifyApp);
+            const verifyProvider = new GoogleAuthProvider();
+            verifyProvider.setCustomParameters({ prompt: 'select_account' });
+
+            try {
+                const res = await signInWithPopup(verifyAuth, verifyProvider);
+                const selectedEmail = res.user.email;
+                const selectedUid = res.user.uid;
+                await signOut(verifyAuth);
+                await deleteApp(verifyApp);
+
+                if (selectedUid === currentUser.uid || selectedEmail === currentUser.email) {
+                    deleteVerifyAccountModal.classList.add('hidden');
+                    document.getElementById('delete-confirm-email').textContent = currentUser.email;
+                    deleteConfirmModal.classList.remove('hidden');
+                } else {
+                    verifyAccountError.textContent = `Вы выбрали другой аккаунт (${selectedEmail}). Пожалуйста, нажмите кнопку снова и выберите точный аккаунт: ${currentUser.email}`;
+                    verifyAccountError.classList.remove('hidden');
+                }
+            } catch (err) {
+                try { await deleteApp(verifyApp); } catch (_) {}
+                verifyAccountError.textContent = "Не удалось подтвердить аккаунт. Попробуйте выбрать нужный аккаунт ещё раз.";
+                verifyAccountError.classList.remove('hidden');
+            }
+        });
+
+        finalDeleteBtn.addEventListener('click', async () => {
+            if (!currentUser) return;
+            try {
+                deleteConfirmModal.classList.add('hidden');
+                document.getElementById('profile-screen').classList.add('hidden');
+                document.getElementById('loading-screen').classList.remove('hidden');
+                await deleteDoc(doc(db, "users", currentUser.uid));
+                handleLogout();
+            } catch (e) {
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('profile-screen').classList.remove('hidden');
+                alert("Ошибка при удалении аккаунта: " + e.message);
+            }
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            // Защита от прямого захода по ссылке без ввода пароля
+            if (sessionStorage.getItem('kinship_unlocked') !== user.uid) {
+                window.location.href = "auth.html";
+                return;
+            }
+
+            currentUser = user;
+
+            try {
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (!userSnap.exists()) {
+                    window.location.href = "auth.html";
+                    return;
+                }
+
+                savedUserData = userSnap.data();
+                const nickname = savedUserData.nickname || user.displayName || 'User';
+                const role = savedUserData.role || (OWNER_EMAILS.includes(user.email) ? 'owner' : 'user');
+
+                document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
+                document.getElementById('profile-nickname').textContent = nickname;
+                document.getElementById('user-email').textContent = user.email;
+
+                const badgeContainer = document.getElementById('role-badge-container');
+                badgeContainer.innerHTML = '';
+
+                if (role === 'owner') {
+                    badgeContainer.innerHTML = `
+                        <div class="premium-diamond-badge">
+                            <span class="diamond-icon"></span>
+                            <span>Владелец</span>
+                        </div>
+                    `;
+                } else if (role === 'premium') {
+                    badgeContainer.innerHTML = `
+                        <div class="premium-diamond-badge">
+                            <span class="diamond-icon"></span>
+                            <span>Premium</span>
+                        </div>
+                    `;
+                } else if (role === 'admin') {
+                    badgeContainer.innerHTML = `<span class="inline-block bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[11px] font-bold px-2.5 py-1 rounded-lg">🛡️ Администратор</span>`;
+                }
+
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('profile-screen').classList.remove('hidden');
+            } catch (e) {
+                alert("Ошибка загрузки профиля: " + e.message);
+                handleLogout();
+            }
+        });
+    </script>
+</body>
+</html>
+                                                                              
