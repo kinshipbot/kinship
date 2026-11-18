@@ -7,64 +7,153 @@
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
-        *, body, h1, h2, p, button, a {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        :root {
+            --bg: #f9fafb;
+            --text: #030712;
+            --muted: #4b5563;
+            --subtle: #9ca3af;
+            --btn-bg: #030712;
+            --btn-text: #ffffff;
+            --btn-hover: #1f2937;
         }
-        h1 { font-weight: 800 !important; }
-        p { font-weight: 500 !important; }
-        button { font-weight: 700 !important; }
-
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #030712;
+                --text: #ffffff;
+                --muted: #9ca3af;
+                --subtle: #6b7280;
+                --btn-bg: #ffffff;
+                --btn-text: #000000;
+                --btn-hover: #e5e7eb;
+            }
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            text-align: center;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .container {
+            max-width: 380px;
+            width: 100%;
+        }
+        .brand {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 16px;
+        }
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+        .desc {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        .google-btn {
+            width: 100%;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+            transition: transform 0.15s ease, background-color 0.2s ease;
+        }
+        .google-btn:hover {
+            background-color: var(--btn-hover);
+        }
+        .google-btn:active {
+            transform: scale(0.98);
+        }
+        .google-btn svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        footer {
+            font-size: 12px;
+            color: var(--subtle);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .footer-links {
+            display: flex;
+            gap: 14px;
+        }
+        .footer-links a {
+            color: var(--subtle);
+            text-decoration: none;
+        }
+        .footer-links a:hover {
+            color: var(--text);
+        }
+        .copy {
+            font-size: 11px;
+            opacity: 0.7;
+        }
         @keyframes fadeUp {
-            0% { opacity: 0; transform: translateY(16px); }
+            0% { opacity: 0; transform: translateY(14px); }
             100% { opacity: 1; transform: translateY(0); }
         }
-        .smooth-title { opacity: 0; animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-        .smooth-desc { opacity: 0; animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards; }
-        .smooth-btn { opacity: 0; animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards; }
+        .anim-1 { opacity: 0; animation: fadeUp 0.7s ease forwards; }
+        .anim-2 { opacity: 0; animation: fadeUp 0.7s ease 0.15s forwards; }
+        .anim-3 { opacity: 0; animation: fadeUp 0.7s ease 0.3s forwards; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-white min-h-screen flex flex-col justify-between items-center p-6 m-0 text-center transition-colors duration-300">
+<body>
 
-    <div class="h-4"></div>
+    <div style="height: 16px;"></div>
 
     <!-- Экран проверки региона -->
-    <div id="geo-loading-screen" class="max-w-sm w-full">
-        <p class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3 notranslate">Kinship</p>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Checking region availability...</p>
+    <div id="geo-loading" class="container">
+        <p class="brand notranslate">Kinship</p>
+        <p class="desc" style="margin-bottom: 0;">Checking region availability...</p>
     </div>
 
-    <!-- Экран блокировки региона (если не США / РФ) -->
-    <div id="geo-blocked-screen" class="hidden max-w-sm w-full">
-        <p class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 smooth-title notranslate">Kinship</p>
-        <h1 class="smooth-title text-2xl text-gray-950 dark:text-white mb-3 tracking-tight">
-            Ваша лучшая соцсеть для поиска друзей!
-        </h1>
-        <p class="smooth-desc text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-            Играйтесь, общайтесь, комментируйте, смотрите и лайкайте.
-        </p>
-        <div class="smooth-btn bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-4 rounded-2xl shadow-sm">
-            <p class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed mb-2">
-                <span class="notranslate font-bold">Kinship</span> пока не работает в вашем регионе, мы всё делаем для того, чтобы он был доступен для всех!
-            </p>
-            <p class="text-xs text-gray-500 dark:text-gray-400">
-                Спасибо, что посетили сайт.
-            </p>
-        </div>
-    </div>
-
-    <!-- Основной экран входа (доступен только для США) -->
-    <div id="main-welcome-screen" class="hidden max-w-sm w-full">
-        <p class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 smooth-title notranslate">Kinship</p>
-        <h1 class="smooth-title text-2xl text-gray-950 dark:text-white mb-3 tracking-tight">Welcome!</h1>
-        <p class="smooth-desc text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-8">
+    <!-- Основной экран входа (только США) -->
+    <div id="main-welcome" class="container hidden">
+        <p class="brand anim-1 notranslate">Kinship</p>
+        <h1 class="anim-1">Welcome!</h1>
+        <p class="desc anim-2">
             Where you discover memes, follow trends, chat, share, like, and comment with your circle.
         </p>
 
-        <button id="login-btn" class="smooth-btn w-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 p-3.5 rounded-xl text-sm transition flex items-center justify-center gap-2.5 cursor-pointer shadow-lg">
-            <svg class="w-5 h-5" viewBox="0 0 24 24">
+        <button id="login-btn" class="google-btn anim-3">
+            <svg viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
@@ -74,15 +163,15 @@
         </button>
     </div>
 
-    <footer class="text-xs text-gray-500 dark:text-gray-600 flex flex-col items-center gap-1.5">
-        <div class="flex gap-4">
-            <a href="legal.html?tab=terms" class="hover:text-gray-800 dark:hover:text-gray-400 transition font-normal">Terms</a>
+    <footer>
+        <div class="footer-links">
+            <a href="legal.html?tab=terms">Terms</a>
             <span>•</span>
-            <a href="legal.html?tab=privacy" class="hover:text-gray-800 dark:hover:text-gray-400 transition font-normal">Privacy</a>
+            <a href="legal.html?tab=privacy">Privacy</a>
             <span>•</span>
-            <a href="legal.html?tab=contact" class="hover:text-gray-800 dark:hover:text-gray-400 transition font-normal">Contact</a>
+            <a href="legal.html?tab=contact">Contact</a>
         </div>
-        <p class="text-[11px] text-gray-400 dark:text-gray-700 font-normal">&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
+        <p class="copy">&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
     </footer>
 
     <script type="module">
@@ -102,18 +191,11 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        const geoLoading = document.getElementById('geo-loading-screen');
-        const geoBlocked = document.getElementById('geo-blocked-screen');
-        const mainWelcome = document.getElementById('main-welcome-screen');
-
+        const ruOperators = ['rostelecom', 'mts', 'megafon', 'beeline', 'vimpelcom', 'tele2', 't2', 'dom.ru', 'er-telecom', 'yota', 'ttk', 'transtelecom', 'mgts', 'netbynet', 'sibset', 'akado', 'russia', 'moscow'];
         let isAllowedRegion = false;
-
-        // Список ключевых слов российских операторов для дополнительной проверки ISP
-        const ruOperators = ['rostelecom', 'mts', 'megafon', 'beeline', 'vimpelcom', 'tele2', 't2', 'dom.ru', 'er-telecom', 'yota', 'ttk', 'transTeleCom', 'mgts', 'netbynet', 'sibset', 'akado', 'russia', 'moscow'];
 
         async function checkRegion() {
             try {
-                // Используем ipwho.is (поддерживает HTTPS, не требует API-ключа и отдает страну + провайдера)
                 const response = await fetch('https://ipwho.is/');
                 const data = await response.json();
 
@@ -123,22 +205,16 @@
 
                 const isRuOperator = ruOperators.some(op => isp.includes(op) || org.includes(op));
 
-                // Разрешаем вход ТОЛЬКО если страна US и оператор не российский
                 if (data.success && countryCode === 'US' && !isRuOperator) {
                     isAllowedRegion = true;
-                    geoLoading.classList.add('hidden');
-                    mainWelcome.classList.remove('hidden');
+                    document.getElementById('geo-loading').classList.add('hidden');
+                    document.getElementById('main-welcome').classList.remove('hidden');
                     initAuthFlow();
                 } else {
-                    isAllowedRegion = false;
-                    geoLoading.classList.add('hidden');
-                    geoBlocked.classList.remove('hidden');
+                    window.location.replace("unavailable.html");
                 }
             } catch (err) {
-                // Если сервис геолокации заблокирован или недоступен, в целях безопасности закрываем доступ
-                isAllowedRegion = false;
-                geoLoading.classList.add('hidden');
-                geoBlocked.classList.remove('hidden');
+                window.location.replace("unavailable.html");
             }
         }
 
@@ -174,7 +250,6 @@
             }
         });
 
-        // Запускаем проверку IP при загрузке страницы
         checkRegion();
     </script>
 </body>
