@@ -201,7 +201,7 @@
         <div id="role-badge-container"></div>
         <p id="user-email" style="font-size: 12px; color: var(--muted); margin-bottom: 8px;"></p>
         <p style="font-size: 12px; color: #10b981; font-weight: 600; margin-bottom: 24px;">Synced with cloud ✓</p>
-        
+
         <div style="display: flex; flex-direction: column; gap: 10px; text-align: left;">
             <button id="set-password-btn" class="secondary-btn" style="display: none;">Set Password</button>
             <button id="logout-btn" class="secondary-btn">Log Out</button>
@@ -230,7 +230,7 @@
         </div>
     </div>
 
-    <!-- Delete Modal (Step 1) с твоим подробным сообщением -->
+    <!-- Delete Modal (Step 1) -->
     <div id="delete-warning-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
         <div class="card" style="max-width: 320px; width: 100%;">
             <h3 style="font-size: 14px; margin-bottom: 10px;">Delete Account</h3>
@@ -325,7 +325,7 @@
                 const isRuOperator = ruOperators.some(op => isp.includes(op) || org.includes(op));
 
                 if (!data.success || countryCode !== 'US' || isRuOperator) {
-                    sessionStorage.removeItem('kinship_unlocked');
+                    localStorage.removeItem('kinship_unlocked');
                     await signOut(auth);
                     window.location.replace("unavailable.html");
                     return false;
@@ -341,14 +341,13 @@
         let savedUserData = null;
 
         const handleLogout = async () => {
-            sessionStorage.removeItem('kinship_unlocked');
+            localStorage.removeItem('kinship_unlocked');
             await signOut(auth);
             window.location.href = "index.html";
         };
 
         document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
-        // Кнопка установки пароля в профиле
         const setPasswordBtn = document.getElementById('set-password-btn');
         const setPasswordModal = document.getElementById('set-password-modal');
         const savePasswordBtn = document.getElementById('save-password-btn');
@@ -382,7 +381,7 @@
                 await setDoc(userRef, { password: p1 }, { merge: true });
                 savedUserData.password = p1;
                 setPasswordModal.classList.add('hidden');
-                setPasswordBtn.style.display = 'none'; // Скрываем кнопку после установки
+                setPasswordBtn.style.display = 'none';
                 alert("Password successfully set!");
             } catch (e) {
                 setPassError.textContent = "Error: " + e.message;
@@ -402,14 +401,14 @@
         const verifyAccountError = document.getElementById('verify-account-error');
         const finalDeleteBtn = document.getElementById('final-delete-btn');
 
-        deleteAccountBtn.addEventListener('click', () => {
+                deleteAccountBtn.addEventListener('click', () => {
             chkDownloaded.checked = false;
             chkConfirm.checked = false;
             proceedDeleteBtn.disabled = true;
             proceedDeleteBtn.style.opacity = '0.5';
             proceedDeleteBtn.style.cursor = 'not-allowed';
             deleteWarningModal.classList.remove('hidden');
-                });
+        });
 
         function updateDeleteButtonState() {
             if (chkDownloaded.checked && chkConfirm.checked) {
@@ -508,7 +507,7 @@
                     return;
                 }
 
-                if (sessionStorage.getItem('kinship_unlocked') !== user.uid) {
+                if (localStorage.getItem('kinship_unlocked') !== user.uid) {
                     window.location.href = "auth.html";
                     return;
                 }
@@ -532,7 +531,6 @@
                     document.getElementById('profile-nickname').textContent = nickname;
                     document.getElementById('user-email').textContent = user.email;
 
-                    // Если у пользователя еще нет пароля, показываем кнопку установки пароля в профиле
                     if (!savedUserData.password) {
                         setPasswordBtn.style.display = 'block';
                     } else {
