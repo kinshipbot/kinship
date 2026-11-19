@@ -16,6 +16,8 @@
             --text: #030712;
             --muted: #4b5563;
             --subtle: #9ca3af;
+            --input-bg: #f9fafb;
+            --input-border: #d1d5db;
             --secondary-btn-bg: #f3f4f6;
             --secondary-btn-text: #374151;
             --secondary-btn-hover: #e5e7eb;
@@ -28,6 +30,8 @@
                 --text: #ffffff;
                 --muted: #9ca3af;
                 --subtle: #6b7280;
+                --input-bg: #1f2937;
+                --input-border: #374151;
                 --secondary-btn-bg: #1f2937;
                 --secondary-btn-text: #d1d5db;
                 --secondary-btn-hover: #374151;
@@ -63,6 +67,7 @@
             border-radius: 20px;
             padding: 24px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            text-align: left;
         }
         .brand {
             font-size: 12px;
@@ -71,11 +76,13 @@
             text-transform: uppercase;
             letter-spacing: 0.12em;
             margin-bottom: 16px;
+            text-align: center;
         }
         h2, h3 {
             font-size: 18px;
             font-weight: 800;
             letter-spacing: -0.01em;
+            text-align: center;
         }
         .avatar {
             width: 64px;
@@ -84,6 +91,28 @@
             margin: 0 auto 12px auto;
             border: 1px solid var(--card-border);
             object-fit: cover;
+            display: block;
+        }
+        input {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 14px;
+            color: var(--text);
+            outline: none;
+            margin-bottom: 12px;
+        }
+        input:focus {
+            border-color: var(--text);
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 6px;
         }
         .secondary-btn {
             width: 100%;
@@ -162,39 +191,61 @@
     <div id="loading-screen" class="container">
         <p class="brand notranslate">Kinship</p>
         <div class="spinner"></div>
-        <p style="font-size: 12px; color: var(--muted);">Checking region & profile...</p>
+        <p style="font-size: 12px; color: var(--muted); text-align: center;">Checking region & profile...</p>
     </div>
 
     <!-- Profile Screen -->
-    <div id="profile-screen" class="container card hidden">
+    <div id="profile-screen" class="container card hidden" style="text-align: center;">
         <img id="user-avatar" src="" alt="Avatar" class="avatar">
         <h2 id="profile-nickname" style="margin-bottom: 6px;"></h2>
         <div id="role-badge-container"></div>
         <p id="user-email" style="font-size: 12px; color: var(--muted); margin-bottom: 8px;"></p>
         <p style="font-size: 12px; color: #10b981; font-weight: 600; margin-bottom: 24px;">Synced with cloud ✓</p>
         
-        <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; flex-direction: column; gap: 10px; text-align: left;">
+            <button id="set-password-btn" class="secondary-btn" style="display: none;">Set Password</button>
             <button id="logout-btn" class="secondary-btn">Log Out</button>
             <button id="delete-account-btn" class="danger-btn">Delete Account</button>
         </div>
     </div>
 
-    <!-- Delete Modal (Step 1) -->
+    <!-- Модальное окно установки пароля -->
+    <div id="set-password-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
+        <div class="card" style="max-width: 320px; width: 100%;">
+            <h3 style="font-size: 15px; margin-bottom: 6px;">Set Password</h3>
+            <p style="font-size: 11px; color: var(--muted); margin-bottom: 16px; text-align: center;">Protect your account with a secure password</p>
+
+            <label>New Password</label>
+            <input id="input-new-pass" type="password" placeholder="Enter password">
+
+            <label>Repeat Password</label>
+            <input id="input-new-pass-confirm" type="password" placeholder="Repeat password">
+
+            <p id="set-pass-error" class="hidden" style="font-size: 11px; color: #ef4444; margin-bottom: 12px; text-align: center; font-weight: 600;"></p>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button id="save-password-btn" class="secondary-btn" style="background: var(--text); color: var(--bg);">Save Password</button>
+                <button onclick="closeSetPasswordModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px; text-align: center; width: 100%;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal (Step 1) с твоим подробным сообщением -->
     <div id="delete-warning-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
-        <div class="card" style="max-width: 320px; width: 100%; text-align: left;">
-            <h3 style="font-size: 14px; margin-bottom: 10px; text-align: center;">Before you leave</h3>
+        <div class="card" style="max-width: 320px; width: 100%;">
+            <h3 style="font-size: 14px; margin-bottom: 10px;">Delete Account</h3>
             <p style="font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 16px;">
-                Your account, posts, clips, likes, and messages will be permanently deleted and cannot be restored.<br><br>
+                Вы собираетесь удалить свой аккаунт в Kinship, который обеспечивает доступ к различным сервисам Kinship, включая друзей, подписки, лайки, комментарии, сообщения и профиль. Вы больше не сможете пользоваться ими, а все данные в вашем аккаунте будут потеряны.<br><br>
                 You can download all your personal data before proceeding.
             </p>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
                 <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 11px; color: var(--text); cursor: pointer;">
-                    <input id="chk-downloaded" type="checkbox" style="margin-top: 2px;">
+                    <input id="chk-downloaded" type="checkbox" style="margin-top: 2px; width: auto;">
                     <span>I have downloaded my account data</span>
                 </label>
                 <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 11px; color: var(--text); cursor: pointer;">
-                    <input id="chk-confirm" type="checkbox" style="margin-top: 2px;">
+                    <input id="chk-confirm" type="checkbox" style="margin-top: 2px; width: auto;">
                     <span>I confirm permanent account deletion</span>
                 </label>
             </div>
@@ -202,7 +253,7 @@
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 <button id="download-data-btn" class="secondary-btn" style="font-size: 11px; padding: 10px;">Download Data</button>
                 <button id="proceed-delete-btn" disabled class="danger-btn" style="opacity: 0.5; cursor: not-allowed; font-size: 11px; padding: 10px;">Delete Account</button>
-                <button onclick="closeDeleteModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px;">Cancel</button>
+                <button onclick="closeDeleteModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px; text-align: center; width: 100%;">Cancel</button>
             </div>
         </div>
     </div>
@@ -240,12 +291,13 @@
         function closeDeleteModal() { document.getElementById('delete-warning-modal').classList.add('hidden'); }
         function closeVerifyAccountModal() { document.getElementById('delete-verify-account-modal').classList.add('hidden'); }
         function closeFinalDeleteModal() { document.getElementById('delete-confirm-modal').classList.add('hidden'); }
+        function closeSetPasswordModal() { document.getElementById('set-password-modal').classList.add('hidden'); }
     </script>
 
     <script type="module">
         import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { initializeFirestore, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { initializeFirestore, doc, getDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
@@ -296,6 +348,48 @@
 
         document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
+        // Кнопка установки пароля в профиле
+        const setPasswordBtn = document.getElementById('set-password-btn');
+        const setPasswordModal = document.getElementById('set-password-modal');
+        const savePasswordBtn = document.getElementById('save-password-btn');
+        const setPassError = document.getElementById('set-pass-error');
+
+        setPasswordBtn.addEventListener('click', () => {
+            document.getElementById('input-new-pass').value = '';
+            document.getElementById('input-new-pass-confirm').value = '';
+            setPassError.classList.add('hidden');
+            setPasswordModal.classList.remove('hidden');
+        });
+
+        savePasswordBtn.addEventListener('click', async () => {
+            const p1 = document.getElementById('input-new-pass').value;
+            const p2 = document.getElementById('input-new-pass-confirm').value;
+            setPassError.classList.add('hidden');
+
+            if (!p1 || p1.length < 6) {
+                setPassError.textContent = "Password must be at least 6 characters.";
+                setPassError.classList.remove('hidden');
+                return;
+            }
+            if (p1 !== p2) {
+                setPassError.textContent = "Passwords do not match.";
+                setPassError.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const userRef = doc(db, "users", currentUser.uid);
+                await setDoc(userRef, { password: p1 }, { merge: true });
+                savedUserData.password = p1;
+                setPasswordModal.classList.add('hidden');
+                setPasswordBtn.style.display = 'none'; // Скрываем кнопку после установки
+                alert("Password successfully set!");
+            } catch (e) {
+                setPassError.textContent = "Error: " + e.message;
+                setPassError.classList.remove('hidden');
+            }
+        });
+
         const deleteAccountBtn = document.getElementById('delete-account-btn');
         const deleteWarningModal = document.getElementById('delete-warning-modal');
         const deleteVerifyAccountModal = document.getElementById('delete-verify-account-modal');
@@ -315,7 +409,7 @@
             proceedDeleteBtn.style.opacity = '0.5';
             proceedDeleteBtn.style.cursor = 'not-allowed';
             deleteWarningModal.classList.remove('hidden');
-        });
+                });
 
         function updateDeleteButtonState() {
             if (chkDownloaded.checked && chkConfirm.checked) {
@@ -434,9 +528,16 @@
                     const nickname = savedUserData.nickname || user.displayName || 'User';
                     const role = savedUserData.role || (OWNER_EMAILS.includes(user.email) ? 'owner' : 'user');
 
-                                        document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
+                    document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
                     document.getElementById('profile-nickname').textContent = nickname;
                     document.getElementById('user-email').textContent = user.email;
+
+                    // Если у пользователя еще нет пароля, показываем кнопку установки пароля в профиле
+                    if (!savedUserData.password) {
+                        setPasswordBtn.style.display = 'block';
+                    } else {
+                        setPasswordBtn.style.display = 'none';
+                    }
 
                     const badgeContainer = document.getElementById('role-badge-container');
                     badgeContainer.innerHTML = '';
