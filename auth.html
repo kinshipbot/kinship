@@ -234,7 +234,7 @@
 
         <label>Date (DD.MM.YYYY)</label>
         <input id="input-dob-text" type="text" inputmode="numeric" maxlength="10" placeholder="DD.MM.YYYY">
-        
+
         <div class="row-3">
             <select id="select-day">
                 <option value="">Day</option>
@@ -273,7 +273,7 @@
 
         <label>Password</label>
         <input id="input-pass" type="password" placeholder="Enter password (optional)">
-        
+
         <div class="strength-track">
             <div id="strength-bar" class="strength-bar"></div>
         </div>
@@ -301,13 +301,14 @@
         <button id="back-step4" class="secondary-btn">Back</button>
     </div>
 
-    <!-- Модальное окно предупреждения при пропуске пароля (на английском) -->
+    <!-- Модальное окно предупреждения при пропуске пароля -->
     <div id="modal-skip-warning" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
         <div class="card" style="max-width: 320px; width: 100%; text-align: left;">
             <h3 style="font-size: 15px; font-weight: 800; margin-bottom: 10px; text-align: center;">Warning!</h3>
             <p style="font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 16px;">
                 Are you sure you want to skip setting a password?<br><br>
-                We care about your security and strongly recommend setting a password to protect your account. <strong>The developer is not responsible for your account security.</strong>
+                We care about your security and strongly recommend setting a password to protect your account. <strong>The developer is not responsible for your account security.</strong><br><br>
+                Вы также в любой момент можете установить пароль.
             </p>
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 <button id="btn-modal-set-pass" class="primary-btn" style="font-size: 12px; padding: 10px;">Set Password</button>
@@ -520,7 +521,7 @@
         });
 
         document.getElementById('back-step2').addEventListener('click', () => showScreen('step1'));
-        
+
         function isValidDateString(str) {
             const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(str);
             if (!match) return false;
