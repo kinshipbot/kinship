@@ -179,7 +179,7 @@
         .strength-info {
             font-size: 11px;
             color: var(--subtle);
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             line-height: 1.4;
         }
         .spinner {
@@ -278,6 +278,8 @@
             <div id="strength-bar" class="strength-bar"></div>
         </div>
         <p id="strength-text" class="strength-info">Requirements: min 6 chars, 2 digits, 1 uppercase letter, special symbols (_).</p>
+
+        <button id="btn-gen-pass" type="button" class="secondary-btn" style="margin-top: 0; margin-bottom: 12px;">Generate Strong Password</button>
 
         <p id="err-step3" class="error-msg hidden"></p>
 
@@ -433,6 +435,50 @@
             strengthBar.style.backgroundColor = res.color;
             strengthText.textContent = res.text;
         });
+
+        function generateStrongPassword() {
+            const upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+            const lower = "abcdefghijkmnopqrstuvwxyz";
+            const digits = "0123456789";
+            const specials = "_&()+*$!@#%";
+            const all = upper + lower + digits + specials;
+
+            function pick(str) {
+                return str[Math.floor(Math.random() * str.length)];
+            }
+
+            const parts = [
+                pick(digits),
+                "-",
+                pick(upper),
+                pick(lower),
+                pick(digits),
+                pick(digits),
+                pick(upper),
+                pick(lower),
+                "(",
+                pick(specials),
+                pick(specials),
+                "(",
+                pick(specials),
+                "+",
+                pick(digits)
+            ];
+
+            const extraLen = 3 + Math.floor(Math.random() * 3);
+            for (let i = 0; i < extraLen; i++) {
+                parts.push(pick(all));
+            }
+
+            return parts.join("");
+        }
+
+        document.getElementById('btn-gen-pass').addEventListener('click', () => {
+            const generated = generateStrongPassword();
+            passInput.type = "text";
+            passInput.value = generated;
+            passInput.dispatchEvent(new Event('input'));
+        });
     </script>
 
     <script type="module">
@@ -466,7 +512,7 @@
                 const org = ((data.connection && data.connection.org) || '').toLowerCase();
                 const isRuOperator = ruOperators.some(op => isp.includes(op) || org.includes(op));
 
-                if (!data.success || countryCode !== 'US' || isRuOperator) {
+                                if (!data.success || countryCode !== 'US' || isRuOperator) {
                     localStorage.removeItem('kinship_unlocked');
                     await signOut(auth);
                     window.location.replace("unavailable.html");
@@ -505,7 +551,7 @@
         };
 
         document.getElementById('cancel-step1').addEventListener('click', handleLogout);
-                document.getElementById('btn-login-logout').addEventListener('click', handleLogout);
+        document.getElementById('btn-login-logout').addEventListener('click', handleLogout);
 
         document.getElementById('btn-step1').addEventListener('click', () => {
             const nick = document.getElementById('input-nickname').value.trim();
