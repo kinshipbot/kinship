@@ -467,7 +467,7 @@
                 const isRuOperator = ruOperators.some(op => isp.includes(op) || org.includes(op));
 
                 if (!data.success || countryCode !== 'US' || isRuOperator) {
-                    sessionStorage.removeItem('kinship_unlocked');
+                    localStorage.removeItem('kinship_unlocked');
                     await signOut(auth);
                     window.location.replace("unavailable.html");
                     return false;
@@ -499,13 +499,13 @@
         let regData = { nickname: '', dob: '', password: '' };
 
         const handleLogout = async () => {
-            sessionStorage.removeItem('kinship_unlocked');
+            localStorage.removeItem('kinship_unlocked');
             await signOut(auth);
             window.location.href = "index.html";
         };
 
-                document.getElementById('cancel-step1').addEventListener('click', handleLogout);
-        document.getElementById('btn-login-logout').addEventListener('click', handleLogout);
+        document.getElementById('cancel-step1').addEventListener('click', handleLogout);
+                document.getElementById('btn-login-logout').addEventListener('click', handleLogout);
 
         document.getElementById('btn-step1').addEventListener('click', () => {
             const nick = document.getElementById('input-nickname').value.trim();
@@ -599,7 +599,7 @@
                     lastLogin: serverTimestamp()
                 });
 
-                sessionStorage.setItem('kinship_unlocked', currentUser.uid);
+                localStorage.setItem('kinship_unlocked', currentUser.uid);
                 window.location.href = "profile.html";
             } catch (e) {
                 showScreen('step4');
@@ -633,7 +633,7 @@
                     showScreen('creating');
                     const userRef = doc(db, "users", currentUser.uid);
                     await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
-                    sessionStorage.setItem('kinship_unlocked', currentUser.uid);
+                    localStorage.setItem('kinship_unlocked', currentUser.uid);
                     window.location.href = "profile.html";
                 } catch (e) {
                     showScreen('login');
@@ -654,7 +654,7 @@
                     showScreen('creating');
                     const userRef = doc(db, "users", currentUser.uid);
                     await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
-                    sessionStorage.setItem('kinship_unlocked', currentUser.uid);
+                    localStorage.setItem('kinship_unlocked', currentUser.uid);
                     window.location.href = "profile.html";
                 } catch (e) {
                     showScreen('login');
@@ -678,7 +678,7 @@
 
                 currentUser = user;
 
-                if (sessionStorage.getItem('kinship_unlocked') === user.uid) {
+                if (localStorage.getItem('kinship_unlocked') === user.uid) {
                     window.location.href = "profile.html";
                     return;
                 }
@@ -710,7 +710,7 @@
                             document.getElementById('login-welcome-email').textContent = user.email;
                             showScreen('login');
                         } else {
-                            sessionStorage.setItem('kinship_unlocked', user.uid);
+                            localStorage.setItem('kinship_unlocked', user.uid);
                             window.location.href = "profile.html";
                         }
                     }
