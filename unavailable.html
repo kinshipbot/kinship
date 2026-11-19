@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title class="notranslate">Kinship — Регион недоступен</title>
+    <title class="notranslate">Kinship — Unavailable</title>
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -127,31 +127,76 @@
 
     <div class="container">
         <p class="brand anim-1 notranslate">Kinship</p>
-        <h1 class="anim-1">Ваша лучшая соцсеть для поиска друзей!</h1>
-        <p class="subtitle anim-2">
-            Играйтесь, общайтесь, комментируйте, смотрите и лайкайте.
+        <h1 id="hero-title" class="anim-1">Your best social network to find friends!</h1>
+        <p id="hero-subtitle" class="subtitle anim-2">
+            Play, chat, comment, watch, and like.
         </p>
 
         <div class="notice-card anim-3">
-            <p class="notice-text">
-                <strong class="notranslate">Kinship</strong> пока не работает в вашем регионе, мы всё делаем для того, чтобы он был доступен для всех!
+            <p id="notice-text" class="notice-text">
+                <strong class="notranslate">Kinship</strong> is not available in your region yet — we are working hard to make it available for everyone!
             </p>
-            <p class="thanks-text">
-                Спасибо, что посетили сайт.
+            <p id="thanks-text" class="thanks-text">
+                Thank you for visiting the site.
             </p>
         </div>
     </div>
 
     <footer>
         <div class="footer-links">
-            <a href="legal.html?tab=terms">Terms</a>
+            <a id="link-terms" href="legal.html?tab=terms">Terms</a>
             <span>•</span>
-            <a href="legal.html?tab=privacy">Privacy</a>
+            <a id="link-privacy" href="legal.html?tab=privacy">Privacy</a>
             <span>•</span>
-            <a href="legal.html?tab=contact">Contact</a>
+            <a id="link-contact" href="legal.html?tab=contact">Contact</a>
         </div>
         <p class="copy">&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
     </footer>
+
+    <script>
+        (function () {
+            const translations = {
+                ru: {
+                    lang: "ru",
+                    title: "Kinship — Регион недоступен",
+                    heroTitle: "Ваша лучшая соцсеть для поиска друзей!",
+                    heroSubtitle: "Играйтесь, общайтесь, комментируйте, смотрите и лайкайте.",
+                    noticeHtml: '<strong class="notranslate">Kinship</strong> пока не работает в вашем регионе, мы всё делаем для того, чтобы он был доступен для всех!',
+                    thanks: "Спасибо, что посетили сайт.",
+                    terms: "Условия",
+                    privacy: "Конфиденциальность",
+                    contact: "Контакты"
+                },
+                en: {
+                    lang: "en",
+                    title: "Kinship — Unavailable",
+                    heroTitle: "Your best social network to find friends!",
+                    heroSubtitle: "Play, chat, comment, watch, and like.",
+                    noticeHtml: '<strong class="notranslate">Kinship</strong> is not available in your region yet — we are working hard to make it available for everyone!',
+                    thanks: "Thank you for visiting the site.",
+                    terms: "Terms",
+                    privacy: "Privacy",
+                    contact: "Contact"
+                }
+            };
+
+            const deviceLangs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"])
+                .map(l => String(l).toLowerCase());
+
+            const isRussian = deviceLangs.some(l => l === "ru" || l.startsWith("ru-"));
+            const t = isRussian ? translations.ru : translations.en;
+
+            document.documentElement.lang = t.lang;
+            document.title = t.title;
+            document.getElementById("hero-title").textContent = t.heroTitle;
+            document.getElementById("hero-subtitle").textContent = t.heroSubtitle;
+            document.getElementById("notice-text").innerHTML = t.noticeHtml;
+            document.getElementById("thanks-text").textContent = t.thanks;
+            document.getElementById("link-terms").textContent = t.terms;
+            document.getElementById("link-privacy").textContent = t.privacy;
+            document.getElementById("link-contact").textContent = t.contact;
+        })();
+    </script>
 
 </body>
 </html>
