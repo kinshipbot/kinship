@@ -3,72 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title class="notranslate">Kinship — Information</title>
+    <title class="notranslate">Kinship — Legal</title>
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
-        *, body, h1, h2, p, button, a {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        :root {
+            --bg: #f9fafb;
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+            --text: #030712;
+            --muted: #4b5563;
+            --subtle: #9ca3af;
+            --tab-bg: #f3f4f6;
+            --tab-active-bg: #030712;
+            --tab-active-text: #ffffff;
         }
-        h2 { font-weight: 800 !important; }
-        p { font-weight: 500 !important; }
-        button, a { font-weight: 700 !important; }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #030712;
+                --card-bg: #111827;
+                --card-border: #1f2937;
+                --text: #ffffff;
+                --muted: #9ca3af;
+                --subtle: #6b7280;
+                --tab-bg: #1f2937;
+                --tab-active-bg: #ffffff;
+                --tab-active-text: #000000;
+            }
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+        }
+        .container {
+            max-width: 440px;
+            width: 100%;
+        }
+        .brand {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .tab-btn {
+            background-color: var(--tab-bg);
+            color: var(--muted);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .tab-btn.active {
+            background-color: var(--tab-active-bg);
+            color: var(--tab-active-text);
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            text-align: left;
+        }
+        h1 {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+        p {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        p:last-child {
+            margin-bottom: 0;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--subtle);
+            text-decoration: none;
+            text-align: center;
+            width: 100%;
+        }
+        .back-link:hover {
+            color: var(--text);
+        }
+        footer {
+            font-size: 11px;
+            color: var(--subtle);
+            margin-top: 24px;
+            text-align: center;
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-white min-h-screen flex flex-col justify-between items-center p-6 m-0 text-center transition-colors duration-300">
+<body>
 
-    <div class="max-w-sm w-full text-left">
-        <!-- Header with Back Button -->
-        <div class="flex items-center justify-between mb-6">
-            <button onclick="window.location.href='index.html'" class="bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-white px-3.5 py-2 rounded-xl text-xs cursor-pointer transition flex items-center gap-1.5 font-bold">
-                ← Back
-            </button>
-            <p class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-widest notranslate">Kinship</p>
+    <div style="height: 8px;"></div>
+
+    <div class="container">
+        <p class="brand notranslate">Kinship</p>
+
+        <div class="tabs">
+            <button id="btn-tab-terms" class="tab-btn active" data-tab="terms">Terms</button>
+            <button id="btn-tab-privacy" class="tab-btn" data-tab="privacy">Privacy</button>
+            <button id="btn-tab-dob-gender" class="tab-btn" data-tab="dob-gender">DOB & Gender</button>
+            <button id="btn-tab-contact" class="tab-btn" data-tab="contact">Contact</button>
         </div>
 
-        <!-- Content Container -->
-        <div class="bg-white border-gray-200 dark:bg-gray-900 border dark:border-gray-800 p-6 rounded-2xl shadow-sm">
-            <h2 id="page-title" class="text-base text-gray-950 dark:text-white mb-3"></h2>
-            <div id="page-content" class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed space-y-3"></div>
+        <div class="card">
+            <div id="tab-terms" class="tab-content">
+                <h1 id="terms-title">Terms of Service</h1>
+                <p id="terms-p1">Welcome to <strong class="notranslate">Kinship</strong>. By accessing or using our service, you agree to follow community guidelines, respect other users, and provide accurate registration details.</p>
+                <p id="terms-p2">Accounts may be suspended or removed if platform rules or applicable laws are violated.</p>
+            </div>
+
+            <div id="tab-privacy" class="tab-content hidden">
+                <h1 id="privacy-title">Privacy Policy</h1>
+                <p id="privacy-p1">Your privacy matters to us. <strong class="notranslate">Kinship</strong> collects only the information necessary to operate your account, sync your profile, and keep the platform secure.</p>
+                <p id="privacy-p2">You can export or permanently delete your account data at any time from your profile settings.</p>
+            </div>
+
+            <div id="tab-dob-gender" class="tab-content hidden">
+                <h1 id="dob-title">Date of Birth & Gender</h1>
+                <p id="dob-p1"></p>
+                <p id="dob-p2"></p>
+                <p id="dob-p3"></p>
+            </div>
+
+            <div id="tab-contact" class="tab-content hidden">
+                <h1 id="contact-title">Contact Us</h1>
+                <p id="contact-p1">Have questions, feedback, or support requests? Reach out to our team at <strong>kinshipbot@gmail.com</strong>.</p>
+                <p id="contact-p2">We review inquiries as quickly as possible.</p>
+            </div>
         </div>
+
+        <a id="back-link" href="javascript:history.back()" class="back-link">&larr; Go Back</a>
     </div>
 
-    <footer class="text-xs text-gray-500 dark:text-gray-600 flex flex-col items-center gap-1.5 mt-6">
-        <p class="text-[11px] text-gray-400 dark:text-gray-700 font-normal">&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
+    <footer>
+        <p>&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
     </footer>
 
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const tab = urlParams.get('tab') || 'terms';
+        const i18nLegal = {
+            en: {
+                lang: "en",
+                tabTerms: "Terms",
+                tabPrivacy: "Privacy",
+                tabDob: "DOB & Gender",
+                tabContact: "Contact",
+                termsTitle: "Terms of Service",
+                termsP1: 'Welcome to <strong class="notranslate">Kinship</strong>. By accessing or using our service, you agree to follow community guidelines, respect other users, and provide accurate registration details.',
+                termsP2: "Accounts may be suspended or removed if platform rules or applicable laws are violated.",
+                privacyTitle: "Privacy Policy",
+                privacyP1: 'Your privacy matters to us. <strong class="notranslate">Kinship</strong> collects only the information necessary to operate your account, sync your profile, and keep the platform secure.',
+                privacyP2: "You can export or permanently delete your account data at any time from your profile settings.",
+                dobTitle: "Date of Birth & Gender",
+                dobP1: "Date of birth is required — Kinship uses it to verify that your age meets access requirements for certain services, as well as for content personalization and parental controls.",
+                dobP2: "Gender is optional — Kinship uses it exclusively to personalize the service.",
+                dobP3: "Please note that gender and date of birth are not shown publicly by default, though privacy settings can be changed so they are visible to everyone.",
+                contactTitle: "Contact Us",
+                contactP1: "Have questions, feedback, or support requests? Reach out to our team at <strong>kinshipbot@gmail.com</strong>.",
+                contactP2: "We review inquiries as quickly as possible.",
+                backLink: "&larr; Go Back"
+            },
+            ru: {
+                lang: "ru",
+                tabTerms: "Условия",
+                tabPrivacy: "Конфиденциальность",
+                tabDob: "Дата и пол",
+                tabContact: "Контакты",
+                termsTitle: "Условия использования",
+                termsP1: 'Добро пожаловать в <strong class="notranslate">Kinship</strong>. Используя сервис, вы соглашаетесь соблюдать правила сообщества, уважать других пользователей и указывать достоверные данные при регистрации.',
+                termsP2: "Аккаунты могут быть заблокированы или удалены при нарушении правил платформы или применимого законодательства.",
+                privacyTitle: "Политика конфиденциальности",
+                privacyP1: 'Ваша конфиденциальность важна для нас. <strong class="notranslate">Kinship</strong> собирает только информацию, необходимую для работы аккаунта, синхронизации профиля и безопасности.',
+                privacyP2: "Вы можете в любой момент экспортировать или безвозвратно удалить данные аккаунта в настройках профиля.",
+                dobTitle: "Дата рождения и пол",
+                dobP1: "Дату рождения должны обязательно указать, сервис Kinship использует его, чтобы убедится, что ваш возраст соответствует требованиям для доступа к опредленным сервисам, также для персонолизации контента и родительского уонтроля.",
+                dobP2: "Пол можно необязательно указывать, его Kinship использует его исключительно для персонолизации сервиса.",
+                dobP3: "Стоит обратить внимание что пол и дата рождения в Kinship не будет показыватся, однако по умолчанию можно изменить настройки чтобы был виден пол и дата рождения для всех.",
+                contactTitle: "Связаться с нами",
+                contactP1: "Есть вопросы, отзывы или запросы в поддержку? Напишите нашей команде на <strong>kinshipbot@gmail.com</strong>.",
+                contactP2: "Мы рассматриваем обращения как можно быстрее.",
+                backLink: "&larr; Назад"
+            },
+            de: {
+                lang: "de",
+                tabTerms: "Nutzungsbedingungen",
+                tabPrivacy: "Datenschutz",
+                tabDob: "Geburtsdatum & Geschlecht",
+                tabContact: "Kontakt",
+                termsTitle: "Nutzungsbedingungen",
+                termsP1: 'Willkommen bei <strong class="notranslate">Kinship</strong>. Mit der Nutzung unseres Dienstes erklärst du dich damit einverstanden, die Community-Richtlinien einzuhalten, andere zu respektieren und genaue Registrierungsangaben zu machen.',
+                termsP2: "Konten können bei Verstößen gegen Plattformregeln oder geltende Gesetze gesperrt oder entfernt werden.",
+                privacyTitle: "Datenschutzerklärung",
+                privacyP1: 'Deine Privatsphäre ist uns wichtig. <strong class="notranslate">Kinship</strong> erfasst nur Informationen, die für den Kontobetrieb, die Profilsynchronisierung und die Sicherheit erforderlich sind.',
+                privacyP2: "Du kannst deine Kontodaten jederzeit in den Profileinstellungen exportieren oder dauerhaft löschen.",
+                dobTitle: "Geburtsdatum & Geschlecht",
+                dobP1: "Das Geburtsdatum ist erforderlich — Kinship nutzt es, um sicherzustellen, dass dein Alter den Zugangsvoraussetzungen für bestimmte Dienste entspricht, sowie zur Inhalts-Personalisierung und Kindersicherung.",
+                dobP2: "Das Geschlecht ist optional — Kinship nutzt es ausschließlich zur Personalisierung des Dienstes.",
+                dobP3: "Bitte beachte, dass Geschlecht und Geburtsdatum standardmäßig nicht öffentlich angezeigt werden, die Einstellungen aber so geändert werden können, dass sie für alle sichtbar sind.",
+                contactTitle: "Kontakt",
+                contactP1: "Hast du Fragen, Feedback oder Support-Anfragen? Schreibe unserem Team an <strong>kinshipbot@gmail.com</strong>.",
+                contactP2: "Wir bearbeiten Anfragen so schnell wie möglich.",
+                backLink: "&larr; Zurück"
+            }
+        };
 
-        const titleEl = document.getElementById('page-title');
-        const contentEl = document.getElementById('page-content');
+        function detectAppLang() {
+            const list = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"])
+                .map(l => String(l).toLowerCase());
+            if (list.some(l => l === "ru" || l.startsWith("ru-"))) return "ru";
+            if (list.some(l => l === "de" || l.startsWith("de-"))) return "de";
+            return "en";
+        }
 
-        if (tab === 'terms') {
-            titleEl.textContent = 'Terms of Service';
-            contentEl.innerHTML = `
-                <p>Kinship is currently in private beta. Be respectful, share good vibes, and keep the community safe.</p>
-                <p>By using our platform, you agree to follow internal rules, respect other members, and not abuse cloud storage limits.</p>
-            `;
-        } else if (tab === 'privacy') {
-            titleEl.textContent = 'Privacy Policy';
-            contentEl.innerHTML = `
-                <p>We care about your data. We only use your Google profile name, email, and avatar exclusively to authenticate your account and sync data in real time.</p>
-                <p>Your passwords are securely encrypted and stored in the cloud database.</p>
-            `;
-        } else if (tab === 'contact') {
-            titleEl.textContent = 'Contact & Support';
-            contentEl.innerHTML = `
-                <p>Have questions about the project, bugs, or premium status?</p>
-                <p>You can always reach out to our support team via email:</p>
-                <p><a href="mailto:hello@kinship.app" class="text-blue-500 hover:underline">hello@kinship.app</a></p>
-            `;
-        } else {
-            titleEl.textContent = 'Kinship Info';
-            contentEl.innerHTML = `<p>Welcome to the Kinship information section.</p>`;
+        const currentLang = detectAppLang();
+        const tLeg = i18nLegal[currentLang];
+        document.documentElement.lang = tLeg.lang;
+
+        document.getElementById("btn-tab-terms").textContent = tLeg.tabTerms;
+        document.getElementById("btn-tab-privacy").textContent = tLeg.tabPrivacy;
+        document.getElementById("btn-tab-dob-gender").textContent = tLeg.tabDob;
+        document.getElementById("btn-tab-contact").textContent = tLeg.tabContact;
+
+        document.getElementById("terms-title").textContent = tLeg.termsTitle;
+        document.getElementById("terms-p1").innerHTML = tLeg.termsP1;
+        document.getElementById("terms-p2").textContent = tLeg.termsP2;
+
+        document.getElementById("privacy-title").textContent = tLeg.privacyTitle;
+        document.getElementById("privacy-p1").innerHTML = tLeg.privacyP1;
+        document.getElementById("privacy-p2").textContent = tLeg.privacyP2;
+
+        document.getElementById("dob-title").textContent = tLeg.dobTitle;
+        document.getElementById("dob-p1").textContent = tLeg.dobP1;
+        document.getElementById("dob-p2").textContent = tLeg.dobP2;
+        document.getElementById("dob-p3").textContent = tLeg.dobP3;
+
+        document.getElementById("contact-title").textContent = tLeg.contactTitle;
+        document.getElementById("contact-p1").innerHTML = tLeg.contactP1;
+        document.getElementById("contact-p2").textContent = tLeg.contactP2;
+        document.getElementById("back-link").innerHTML = tLeg.backLink;
+
+        const buttons = document.querySelectorAll('.tab-btn');
+        const contents = document.querySelectorAll('.tab-content');
+
+        function activateTab(tabName) {
+            buttons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tabName);
+            });
+            contents.forEach(section => {
+                section.classList.toggle('hidden', section.id !== 'tab-' + tabName);
+            });
+        }
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+        });
+
+        const params = new URLSearchParams(window.location.search);
+        const requestedTab = params.get('tab');
+        if (requestedTab && document.getElementById('tab-' + requestedTab)) {
+            activateTab(requestedTab);
         }
     </script>
 </body>
