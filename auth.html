@@ -204,20 +204,18 @@
 
     <div style="height: 16px;"></div>
 
-    <!-- Загрузка / Проверка региона -->
     <div id="screen-loading" class="container">
         <p class="brand notranslate">Kinship</p>
         <div class="spinner"></div>
-        <p class="subtitle" style="margin-bottom: 0;">Checking region & cloud data...</p>
+        <p id="auth-loading-text" class="subtitle" style="margin-bottom: 0;">Checking region & cloud data...</p>
     </div>
 
-    <!-- ШАГ 1: Ввод никнейма -->
     <div id="screen-step1" class="container card hidden">
         <p class="brand notranslate">Kinship</p>
-        <h2>What's your nickname?</h2>
-        <p class="subtitle">Choose a unique name for your profile</p>
+        <h2 id="s1-title">What's your nickname?</h2>
+        <p id="s1-subtitle" class="subtitle">Choose a unique name for your profile</p>
 
-        <label>Nickname</label>
+        <label id="s1-label">Nickname</label>
         <input id="input-nickname" type="text" placeholder="Your nickname">
 
         <p id="err-step1" class="error-msg hidden"></p>
@@ -226,37 +224,31 @@
         <button id="cancel-step1" class="secondary-btn">Log Out</button>
     </div>
 
-    <!-- ШАГ 2: Дата рождения -->
     <div id="screen-step2" class="container card hidden">
         <p class="brand notranslate">Kinship</p>
-        <h2>Date of Birth</h2>
-        <p class="subtitle">When is your birthday?</p>
+        <h2 id="s2-title">Date of Birth & Gender</h2>
+        <p id="s2-subtitle" class="subtitle">Tell us a bit more about yourself</p>
 
-        <label>Date (DD.MM.YYYY)</label>
+        <label id="s2-dob-label">Date (DD.MM.YYYY)</label>
         <input id="input-dob-text" type="text" inputmode="numeric" maxlength="10" placeholder="DD.MM.YYYY">
 
         <div class="row-3">
-            <select id="select-day">
-                <option value="">Day</option>
-            </select>
-            <select id="select-month">
-                <option value="">Month</option>
-                <option value="01">Jan</option>
-                <option value="02">Feb</option>
-                <option value="03">Mar</option>
-                <option value="04">Apr</option>
-                <option value="05">May</option>
-                <option value="06">Jun</option>
-                <option value="07">Jul</option>
-                <option value="08">Aug</option>
-                <option value="09">Sep</option>
-                <option value="10">Oct</option>
-                <option value="11">Nov</option>
-                <option value="12">Dec</option>
-            </select>
-            <select id="select-year">
-                <option value="">Year</option>
-            </select>
+            <select id="select-day"></select>
+            <select id="select-month"></select>
+            <select id="select-year"></select>
+        </div>
+
+        <label id="s2-gender-label">Gender (optional)</label>
+        <select id="select-gender">
+            <option id="opt-gender-not-spec" value="not_specified" selected>Not specified</option>
+            <option id="opt-gender-male" value="male">Male</option>
+            <option id="opt-gender-female" value="female">Female</option>
+        </select>
+
+        <div style="margin-bottom: 12px; text-align: center;">
+            <a id="s2-why-link" href="legal.html?tab=dob-gender" style="font-size: 11px; color: var(--muted); text-decoration: underline;">
+                Why do we ask for gender and date of birth?
+            </a>
         </div>
 
         <p id="err-step2" class="error-msg hidden"></p>
@@ -265,13 +257,12 @@
         <button id="back-step2" class="secondary-btn">Back</button>
     </div>
 
-    <!-- ШАГ 3: Создание пароля -->
     <div id="screen-step3" class="container card hidden">
         <p class="brand notranslate">Kinship</p>
-        <h2>Create Password</h2>
-        <p class="subtitle">Secure your account</p>
+        <h2 id="s3-title">Create Password</h2>
+        <p id="s3-subtitle" class="subtitle">Secure your account</p>
 
-        <label>Password</label>
+        <label id="s3-label">Password</label>
         <input id="input-pass" type="password" placeholder="Enter password (optional)">
 
         <div class="strength-track">
@@ -288,13 +279,12 @@
         <button id="back-step3" class="secondary-btn">Back</button>
     </div>
 
-    <!-- ШАГ 4: Повторение пароля и финальная регистрация -->
     <div id="screen-step4" class="container card hidden">
         <p class="brand notranslate">Kinship</p>
-        <h2>Confirm Password</h2>
-        <p class="subtitle">Re-enter your password to finish</p>
+        <h2 id="s4-title">Confirm Password</h2>
+        <p id="s4-subtitle" class="subtitle">Re-enter your password to finish</p>
 
-        <label>Repeat Password</label>
+        <label id="s4-label">Repeat Password</label>
         <input id="input-pass-confirm" type="password" placeholder="Repeat password">
 
         <p id="err-step4" class="error-msg hidden"></p>
@@ -303,15 +293,10 @@
         <button id="back-step4" class="secondary-btn">Back</button>
     </div>
 
-    <!-- Модальное окно предупреждения при пропуске пароля -->
     <div id="modal-skip-warning" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
         <div class="card" style="max-width: 320px; width: 100%; text-align: left;">
-            <h3 style="font-size: 15px; font-weight: 800; margin-bottom: 10px; text-align: center;">Warning!</h3>
-            <p style="font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 16px;">
-                Are you sure you want to skip setting a password?<br><br>
-                We care about your security and strongly recommend setting a password to protect your account. <strong>The developer is not responsible for your account security.</strong><br><br>
-                Вы также в любой момент можете установить пароль.
-            </p>
+            <h3 id="modal-warn-title" style="font-size: 15px; font-weight: 800; margin-bottom: 10px; text-align: center;">Warning!</h3>
+            <p id="modal-warn-body" style="font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 16px;"></p>
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 <button id="btn-modal-set-pass" class="primary-btn" style="font-size: 12px; padding: 10px;">Set Password</button>
                 <button id="btn-modal-skip-anyway" class="secondary-btn" style="font-size: 12px; padding: 10px; background: rgba(239,68,68,0.1); color: #ef4444; border: none;">Skip Anyway</button>
@@ -319,13 +304,12 @@
         </div>
     </div>
 
-    <!-- Экран Входа по паролю -->
     <div id="screen-login" class="container card hidden">
         <p class="brand notranslate">Kinship</p>
         <h2 id="login-welcome-title">Welcome back!</h2>
         <p id="login-welcome-email" class="subtitle"></p>
 
-        <label>Password</label>
+        <label id="login-pass-label">Password</label>
         <input id="input-login-pass" type="password" placeholder="Enter your password">
 
         <p id="err-login" class="error-msg hidden"></p>
@@ -334,11 +318,10 @@
         <button id="btn-login-logout" class="secondary-btn">Log Out</button>
     </div>
 
-    <!-- Экран создания аккаунта в реальном времени (финальная загрузка) -->
     <div id="screen-creating" class="container hidden">
         <p class="brand notranslate">Kinship</p>
         <div class="spinner"></div>
-        <p class="subtitle" style="margin-bottom: 0;">Creating your account in the cloud...</p>
+        <p id="creating-text" class="subtitle" style="margin-bottom: 0;">Creating your account in the cloud...</p>
     </div>
 
     <footer>
@@ -346,11 +329,204 @@
     </footer>
 
     <script>
+        const i18nAuth = {
+            en: {
+                lang: "en",
+                loading: "Checking region & cloud data...",
+                s1Title: "What's your nickname?",
+                s1Sub: "Choose a unique name for your profile",
+                s1Label: "Nickname",
+                s1Ph: "Your nickname",
+                s1Err: "Please enter a nickname.",
+                next: "Next",
+                back: "Back",
+                logout: "Log Out",
+                s2Title: "Date of Birth & Gender",
+                s2Sub: "Tell us a bit more about yourself",
+                s2DobLabel: "Date (DD.MM.YYYY)",
+                day: "Day",
+                month: "Month",
+                year: "Year",
+                months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                s2GenderLabel: "Gender (optional)",
+                gNotSpec: "Not specified",
+                gMale: "Male",
+                gFemale: "Female",
+                whyLink: "Why do we ask for gender and date of birth?",
+                s2Err: "Please enter a valid date of birth (DD.MM.YYYY).",
+                s3Title: "Create Password",
+                s3Sub: "Secure your account",
+                s3Label: "Password",
+                s3Ph: "Enter password (optional)",
+                passReq: "Requirements: min 6 chars, 2 digits, 1 uppercase letter, special symbols (_).",
+                passWeak: "Weak (requirements not met)",
+                passFair: "Fair",
+                passGood: "Good",
+                passStrong: "Strong",
+                genPass: "Generate Strong Password",
+                s3Err: "Password does not meet requirements.",
+                skipPass: "Skip (No password)",
+                s4Title: "Confirm Password",
+                s4Sub: "Re-enter your password to finish",
+                s4Label: "Repeat Password",
+                s4Ph: "Repeat password",
+                s4Err: "Passwords do not match.",
+                register: "Register",
+                warnTitle: "Warning!",
+                warnBody: "Are you sure you want to skip setting a password?<br><br>We care about your security and strongly recommend setting a password to protect your account. <strong>The developer is not responsible for your account security.</strong><br><br>You can also set a password at any time.",
+                setPass: "Set Password",
+                skipAnyway: "Skip Anyway",
+                loginTitle: "Welcome back!",
+                loginWelcomePrefix: "Welcome back",
+                loginPassLabel: "Password",
+                loginPassPh: "Enter your password",
+                loginEmptyErr: "Please enter your password.",
+                loginWrongErr: "Incorrect password.",
+                signIn: "Sign In",
+                creating: "Creating your account in the cloud...",
+                cloudErr: "Cloud error: ",
+                userPrefix: "User",
+                limitAlert: (max) => `Limit reached: maximum ${max} accounts allowed.`,
+                serviceErr: (msg) => `Cloud service error: ${msg}`
+            },
+            ru: {
+                lang: "ru",
+                loading: "Проверяем регион и облачные данные...",
+                s1Title: "Какой у тебя никнейм?",
+                s1Sub: "Выберите уникальное имя для профиля",
+                s1Label: "Никнейм",
+                s1Ph: "Ваш никнейм",
+                s1Err: "Пожалуйста, введите никнейм.",
+                next: "Далее",
+                back: "Назад",
+                logout: "Выйти",
+                s2Title: "Дата рождения и пол",
+                s2Sub: "Расскажите немного о себе",
+                s2DobLabel: "Дата (ДД.ММ.ГГГГ)",
+                day: "День",
+                month: "Месяц",
+                year: "Год",
+                months: ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"],
+                s2GenderLabel: "Пол (необязательно)",
+                gNotSpec: "Не указан",
+                gMale: "Мужской",
+                gFemale: "Женский",
+                whyLink: "Зачем мы спрашиваем дату рождения и пол?",
+                s2Err: "Введите корректную дату рождения (ДД.ММ.ГГГГ).",
+                s3Title: "Создайте пароль",
+                s3Sub: "Защитите свой аккаунт",
+                s3Label: "Пароль",
+                s3Ph: "Введите пароль (необязательно)",
+                passReq: "Требования: мин. 6 символов, 2 цифры, 1 заглавная буква, спецсимволы (_).",
+                passWeak: "Слабый (не выполнены требования)",
+                passFair: "Средний",
+                passGood: "Хороший",
+                passStrong: "Надёжный",
+                genPass: "Сгенерировать надёжный пароль",
+                s3Err: "Пароль не соответствует требованиям.",
+                skipPass: "Пропустить (без пароля)",
+                s4Title: "Подтвердите пароль",
+                s4Sub: "Повторите пароль для завершения",
+                s4Label: "Повторите пароль",
+                s4Ph: "Повторите пароль",
+                s4Err: "Пароли не совпадают.",
+                register: "Зарегистрироваться",
+                warnTitle: "Внимание!",
+                warnBody: "Вы уверены, что хотите пропустить установку пароля?<br><br>Мы заботимся о вашей безопасности и настоятельно рекомендуем задать пароль. <strong>Разработчик не несёт ответственности за безопасность вашего аккаунта.</strong><br><br>Вы также в любой момент можете установить пароль.",
+                setPass: "Установить пароль",
+                skipAnyway: "Всё равно пропустить",
+                loginTitle: "С возвращением!",
+                loginWelcomePrefix: "С возвращением",
+                loginPassLabel: "Пароль",
+                loginPassPh: "Введите пароль",
+                loginEmptyErr: "Пожалуйста, введите пароль.",
+                loginWrongErr: "Неверный пароль.",
+                signIn: "Войти",
+                creating: "Создаём ваш аккаунт в облаке...",
+                cloudErr: "Ошибка облака: ",
+                userPrefix: "Пользователь",
+                limitAlert: (max) => `Достигнут лимит: разрешено максимум ${max} аккаунтов.`,
+                serviceErr: (msg) => `Ошибка облачного сервиса: ${msg}`
+            },
+            de: {
+                lang: "de",
+                loading: "Region und Cloud-Daten werden geprüft...",
+                s1Title: "Wie lautet dein Spitzname?",
+                s1Sub: "Wähle einen eindeutigen Namen für dein Profil",
+                s1Label: "Spitzname",
+                s1Ph: "Dein Spitzname",
+                s1Err: "Bitte gib einen Spitznamen ein.",
+                next: "Weiter",
+                back: "Zurück",
+                logout: "Abmelden",
+                s2Title: "Geburtsdatum & Geschlecht",
+                s2Sub: "Erzähl uns ein wenig über dich",
+                s2DobLabel: "Datum (TT.MM.JJJJ)",
+                day: "Tag",
+                month: "Monat",
+                year: "Jahr",
+                months: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+                s2GenderLabel: "Geschlecht (optional)",
+                gNotSpec: "Nicht angegeben",
+                gMale: "Männlich",
+                gFemale: "Weiblich",
+                whyLink: "Warum fragen wir nach Geschlecht und Geburtsdatum?",
+                s2Err: "Bitte gib ein gültiges Geburtsdatum ein (TT.MM.JJJJ).",
+                s3Title: "Passwort erstellen",
+                s3Sub: "Schütze dein Konto",
+                s3Label: "Passwort",
+                s3Ph: "Passwort eingeben (optional)",
+                passReq: "Anforderungen: mind. 6 Zeichen, 2 Ziffern, 1 Großbuchstabe, Sonderzeichen (_).",
+                                passWeak: "Schwach (Anforderungen nicht erfüllt)",
+                passFair: "Akzeptabel",
+                passGood: "Gut",
+                passStrong: "Stark",
+                genPass: "Starkes Passwort generieren",
+                s3Err: "Das Passwort erfüllt die Anforderungen nicht.",
+                skipPass: "Überspringen (Kein Passwort)",
+                s4Title: "Passwort bestätigen",
+                s4Sub: "Wiederhole dein Passwort zum Abschluss",
+                s4Label: "Passwort wiederholen",
+                s4Ph: "Passwort wiederholen",
+                s4Err: "Die Passwörter stimmen nicht überein.",
+                register: "Registrieren",
+                warnTitle: "Warnung!",
+                warnBody: "Möchtest du das Festlegen eines Passworts wirklich überspringen?<br><br>Deine Sicherheit ist uns wichtig und wir empfehlen dringend ein Passwort. <strong>Der Entwickler übernimmt keine Verantwortung für die Sicherheit deines Kontos.</strong><br><br>Du kannst jederzeit ein Passwort festlegen.",
+                setPass: "Passwort festlegen",
+                skipAnyway: "Trotzdem überspringen",
+                loginTitle: "Willkommen zurück!",
+                loginWelcomePrefix: "Willkommen zurück",
+                loginPassLabel: "Passwort",
+                loginPassPh: "Passwort eingeben",
+                loginEmptyErr: "Bitte gib dein Passwort ein.",
+                loginWrongErr: "Falsches Passwort.",
+                signIn: "Anmelden",
+                creating: "Dein Konto wird in der Cloud erstellt...",
+                cloudErr: "Cloud-Fehler: ",
+                userPrefix: "Nutzer",
+                limitAlert: (max) => `Limit erreicht: maximal ${max} Konten erlaubt.`,
+                serviceErr: (msg) => `Cloud-Dienstfehler: ${msg}`
+            }
+        };
+
+        function detectAppLang() {
+            const list = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"])
+                .map(l => String(l).toLowerCase());
+            if (list.some(l => l === "ru" || l.startsWith("ru-"))) return "ru";
+            if (list.some(l => l === "de" || l.startsWith("de-"))) return "de";
+            return "en";
+        }
+
+        const currentLang = detectAppLang();
+        const tAuth = i18nAuth[currentLang];
+        document.documentElement.lang = tAuth.lang;
+
         const daySelect = document.getElementById('select-day');
         const monthSelect = document.getElementById('select-month');
         const yearSelect = document.getElementById('select-year');
         const dobText = document.getElementById('input-dob-text');
 
+        daySelect.innerHTML = `<option value="">${tAuth.day}</option>`;
         for (let d = 1; d <= 31; d++) {
             const val = String(d).padStart(2, '0');
             const opt = document.createElement('option');
@@ -359,6 +535,16 @@
             daySelect.appendChild(opt);
         }
 
+        monthSelect.innerHTML = `<option value="">${tAuth.month}</option>`;
+        tAuth.months.forEach((mName, idx) => {
+            const val = String(idx + 1).padStart(2, '0');
+            const opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = mName;
+            monthSelect.appendChild(opt);
+        });
+
+        yearSelect.innerHTML = `<option value="">${tAuth.year}</option>`;
         const currentYear = new Date().getFullYear();
         for (let y = currentYear; y >= 1920; y--) {
             const opt = document.createElement('option');
@@ -366,6 +552,54 @@
             opt.textContent = y;
             yearSelect.appendChild(opt);
         }
+
+        document.getElementById("auth-loading-text").textContent = tAuth.loading;
+        document.getElementById("s1-title").textContent = tAuth.s1Title;
+        document.getElementById("s1-subtitle").textContent = tAuth.s1Sub;
+        document.getElementById("s1-label").textContent = tAuth.s1Label;
+        document.getElementById("input-nickname").placeholder = tAuth.s1Ph;
+        document.getElementById("btn-step1").textContent = tAuth.next;
+        document.getElementById("cancel-step1").textContent = tAuth.logout;
+
+        document.getElementById("s2-title").textContent = tAuth.s2Title;
+        document.getElementById("s2-subtitle").textContent = tAuth.s2Sub;
+        document.getElementById("s2-dob-label").textContent = tAuth.s2DobLabel;
+        document.getElementById("input-dob-text").placeholder = tAuth.s2DobLabel.match(/\(([^)]+)\)/)?.[1] || "DD.MM.YYYY";
+        document.getElementById("s2-gender-label").textContent = tAuth.s2GenderLabel;
+        document.getElementById("opt-gender-not-spec").textContent = tAuth.gNotSpec;
+        document.getElementById("opt-gender-male").textContent = tAuth.gMale;
+        document.getElementById("opt-gender-female").textContent = tAuth.gFemale;
+        document.getElementById("s2-why-link").textContent = tAuth.whyLink;
+        document.getElementById("btn-step2").textContent = tAuth.next;
+        document.getElementById("back-step2").textContent = tAuth.back;
+
+        document.getElementById("s3-title").textContent = tAuth.s3Title;
+        document.getElementById("s3-subtitle").textContent = tAuth.s3Sub;
+        document.getElementById("s3-label").textContent = tAuth.s3Label;
+        document.getElementById("input-pass").placeholder = tAuth.s3Ph;
+        document.getElementById("btn-gen-pass").textContent = tAuth.genPass;
+        document.getElementById("btn-step3").textContent = tAuth.next;
+        document.getElementById("btn-skip-pass").textContent = tAuth.skipPass;
+        document.getElementById("back-step3").textContent = tAuth.back;
+
+        document.getElementById("s4-title").textContent = tAuth.s4Title;
+        document.getElementById("s4-subtitle").textContent = tAuth.s4Sub;
+        document.getElementById("s4-label").textContent = tAuth.s4Label;
+        document.getElementById("input-pass-confirm").placeholder = tAuth.s4Ph;
+        document.getElementById("btn-register-final").textContent = tAuth.register;
+        document.getElementById("back-step4").textContent = tAuth.back;
+
+        document.getElementById("modal-warn-title").textContent = tAuth.warnTitle;
+        document.getElementById("modal-warn-body").innerHTML = tAuth.warnBody;
+        document.getElementById("btn-modal-set-pass").textContent = tAuth.setPass;
+        document.getElementById("btn-modal-skip-anyway").textContent = tAuth.skipAnyway;
+
+        document.getElementById("login-welcome-title").textContent = tAuth.loginTitle;
+        document.getElementById("login-pass-label").textContent = tAuth.loginPassLabel;
+        document.getElementById("input-login-pass").placeholder = tAuth.loginPassPh;
+        document.getElementById("btn-login-submit").textContent = tAuth.signIn;
+        document.getElementById("btn-login-logout").textContent = tAuth.logout;
+        document.getElementById("creating-text").textContent = tAuth.creating;
 
         function syncSelectsToText() {
             const d = daySelect.value;
@@ -402,13 +636,14 @@
         const passInput = document.getElementById('input-pass');
         const strengthBar = document.getElementById('strength-bar');
         const strengthText = document.getElementById('strength-text');
+        strengthText.textContent = tAuth.passReq;
 
         function evaluatePassword(pass) {
-            if (!pass) return { level: 'none', text: 'Requirements: min 6 chars, 2 digits, 1 uppercase letter, special symbols (_).', width: '0%', color: 'transparent' };
+            if (!pass) return { level: 'none', text: tAuth.passReq, width: '0%', color: 'transparent' };
 
             const lenOk = pass.length >= 6;
             const digitsCount = (pass.match(/\d/g) || []).length >= 2;
-            const upperOk = /[A-ZА-ЯЁ]/.test(pass);
+            const upperOk = /[A-ZА-ЯЁÄÖÜ]/.test(pass);
             const specialOk = /[_!@#$%^&*()\+\-=\[\]{};':"\\|,.<>\/?]/.test(pass);
 
             let score = 0;
@@ -418,15 +653,15 @@
             if (specialOk) score++;
 
             if (!lenOk || !digitsCount || !upperOk || !specialOk) {
-                return { level: 'red', text: 'Weak (requirements not met)', width: '25%', color: '#ef4444' };
+                return { level: 'red', text: tAuth.passWeak, width: '25%', color: '#ef4444' };
             }
             if (score === 4 && pass.length < 8) {
-                return { level: 'orange', text: 'Fair', width: '50%', color: '#f97316' };
+                return { level: 'orange', text: tAuth.passFair, width: '50%', color: '#f97316' };
             }
             if (score === 4 && pass.length >= 8 && pass.length < 12) {
-                return { level: 'yellow', text: 'Good', width: '75%', color: '#eab308' };
+                return { level: 'yellow', text: tAuth.passGood, width: '75%', color: '#eab308' };
             }
-            return { level: 'green', text: 'Strong', width: '100%', color: '#10b981' };
+            return { level: 'green', text: tAuth.passStrong, width: '100%', color: '#10b981' };
         }
 
         passInput.addEventListener('input', () => {
@@ -512,7 +747,7 @@
                 const org = ((data.connection && data.connection.org) || '').toLowerCase();
                 const isRuOperator = ruOperators.some(op => isp.includes(op) || org.includes(op));
 
-                                if (!data.success || countryCode !== 'US' || isRuOperator) {
+                if (!data.success || countryCode !== 'US' || isRuOperator) {
                     localStorage.removeItem('kinship_unlocked');
                     await signOut(auth);
                     window.location.replace("unavailable.html");
@@ -542,7 +777,7 @@
 
         let currentUser = null;
         let savedUserData = null;
-        let regData = { nickname: '', dob: '', password: '' };
+        let regData = { nickname: '', dob: '', gender: 'not_specified', password: '' };
 
         const handleLogout = async () => {
             localStorage.removeItem('kinship_unlocked');
@@ -558,7 +793,7 @@
             const err = document.getElementById('err-step1');
             err.classList.add('hidden');
             if (!nick) {
-                err.textContent = "Please enter a nickname.";
+                err.textContent = tAuth.s1Err;
                 err.classList.remove('hidden');
                 return;
             }
@@ -581,14 +816,16 @@
 
         document.getElementById('btn-step2').addEventListener('click', () => {
             const dob = document.getElementById('input-dob-text').value.trim();
+            const gender = document.getElementById('select-gender').value;
             const err = document.getElementById('err-step2');
             err.classList.add('hidden');
             if (!isValidDateString(dob)) {
-                err.textContent = "Please enter a valid date of birth (DD.MM.YYYY).";
+                err.textContent = tAuth.s2Err;
                 err.classList.remove('hidden');
                 return;
             }
             regData.dob = dob;
+            regData.gender = gender;
             showScreen('step3');
         });
 
@@ -602,7 +839,7 @@
             if (pass) {
                 const res = evaluatePassword(pass);
                 if (res.level === 'red' || res.level === 'none') {
-                    err.textContent = "Password does not meet requirements.";
+                    err.textContent = tAuth.s3Err;
                     err.classList.remove('hidden');
                     return;
                 }
@@ -640,6 +877,7 @@
                     email: currentUser.email,
                     photo: currentUser.photoURL,
                     dob: regData.dob,
+                    gender: regData.gender,
                     password: regData.password,
                     role: userRole,
                     lastLogin: serverTimestamp()
@@ -650,7 +888,7 @@
             } catch (e) {
                 showScreen('step4');
                 const err = document.getElementById('err-step4');
-                err.textContent = "Cloud error: " + e.message;
+                err.textContent = tAuth.cloudErr + e.message;
                 err.classList.remove('hidden');
             }
         }
@@ -661,12 +899,10 @@
             err.classList.add('hidden');
 
             if (passConfirm !== regData.password) {
-                err.textContent = "Passwords do not match.";
+                err.textContent = tAuth.s4Err;
                 err.classList.remove('hidden');
                 return;
-            }
-
-            await finalizeRegistration();
+                        await finalizeRegistration();
         });
 
         document.getElementById('btn-login-submit').addEventListener('click', async () => {
@@ -683,14 +919,14 @@
                     window.location.href = "profile.html";
                 } catch (e) {
                     showScreen('login');
-                    err.textContent = "Cloud error: " + e.message;
+                    err.textContent = tAuth.cloudErr + e.message;
                     err.classList.remove('hidden');
                 }
                 return;
             }
 
             if (!enteredPass) {
-                err.textContent = "Please enter your password.";
+                err.textContent = tAuth.loginEmptyErr;
                 err.classList.remove('hidden');
                 return;
             }
@@ -704,11 +940,11 @@
                     window.location.href = "profile.html";
                 } catch (e) {
                     showScreen('login');
-                    err.textContent = "Cloud error: " + e.message;
+                    err.textContent = tAuth.cloudErr + e.message;
                     err.classList.remove('hidden');
                 }
             } else {
-                err.textContent = "Incorrect password.";
+                err.textContent = tAuth.loginWrongErr;
                 err.classList.remove('hidden');
             }
         });
@@ -736,7 +972,7 @@
                     if (!userSnap.exists()) {
                         const usersSnapshot = await getDocs(collection(db, "users"));
                         if (usersSnapshot.size >= MAX_USERS) {
-                            alert(`Limit reached: maximum ${MAX_USERS} accounts allowed.`);
+                            alert(tAuth.limitAlert(MAX_USERS));
                             handleLogout();
                             return;
                         }
@@ -751,8 +987,8 @@
                         }
 
                         if (savedUserData.password !== undefined && savedUserData.password !== "") {
-                            const nick = savedUserData.nickname || user.displayName || 'User';
-                            document.getElementById('login-welcome-title').textContent = `Welcome back, ${nick}!`;
+                            const nick = savedUserData.nickname || user.displayName || tAuth.userPrefix;
+                            document.getElementById('login-welcome-title').textContent = `${tAuth.loginWelcomePrefix}, ${nick}!`;
                             document.getElementById('login-welcome-email').textContent = user.email;
                             showScreen('login');
                         } else {
@@ -761,7 +997,7 @@
                         }
                     }
                 } catch (e) {
-                    alert("Cloud service error: " + e.message);
+                    alert(tAuth.serviceErr(e.message));
                     handleLogout();
                 }
             });
