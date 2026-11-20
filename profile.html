@@ -187,20 +187,18 @@
 
     <div style="height: 16px;"></div>
 
-    <!-- Loading Screen -->
     <div id="loading-screen" class="container">
         <p class="brand notranslate">Kinship</p>
         <div class="spinner"></div>
-        <p style="font-size: 12px; color: var(--muted); text-align: center;">Checking region & profile...</p>
+        <p id="prof-loading-text" style="font-size: 12px; color: var(--muted); text-align: center;">Checking region & profile...</p>
     </div>
 
-    <!-- Profile Screen -->
     <div id="profile-screen" class="container card hidden" style="text-align: center;">
         <img id="user-avatar" src="" alt="Avatar" class="avatar">
         <h2 id="profile-nickname" style="margin-bottom: 6px;"></h2>
         <div id="role-badge-container"></div>
         <p id="user-email" style="font-size: 12px; color: var(--muted); margin-bottom: 8px;"></p>
-        <p style="font-size: 12px; color: #10b981; font-weight: 600; margin-bottom: 24px;">Synced with cloud ✓</p>
+        <p id="prof-synced-text" style="font-size: 12px; color: #10b981; font-weight: 600; margin-bottom: 24px;">Synced with cloud ✓</p>
 
         <div style="display: flex; flex-direction: column; gap: 10px; text-align: left;">
             <button id="set-password-btn" class="secondary-btn" style="display: none;">Set Password</button>
@@ -209,75 +207,66 @@
         </div>
     </div>
 
-    <!-- Модальное окно установки пароля -->
     <div id="set-password-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
         <div class="card" style="max-width: 320px; width: 100%;">
-            <h3 style="font-size: 15px; margin-bottom: 6px;">Set Password</h3>
-            <p style="font-size: 11px; color: var(--muted); margin-bottom: 16px; text-align: center;">Protect your account with a secure password</p>
+            <h3 id="set-pass-title" style="font-size: 15px; margin-bottom: 6px;">Set Password</h3>
+            <p id="set-pass-sub" style="font-size: 11px; color: var(--muted); margin-bottom: 16px; text-align: center;">Protect your account with a secure password</p>
 
-            <label>New Password</label>
+            <label id="new-pass-label">New Password</label>
             <input id="input-new-pass" type="password" placeholder="Enter password">
 
-            <label>Repeat Password</label>
+            <label id="new-pass-confirm-label">Repeat Password</label>
             <input id="input-new-pass-confirm" type="password" placeholder="Repeat password">
 
             <p id="set-pass-error" class="hidden" style="font-size: 11px; color: #ef4444; margin-bottom: 12px; text-align: center; font-weight: 600;"></p>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 <button id="save-password-btn" class="secondary-btn" style="background: var(--text); color: var(--bg);">Save Password</button>
-                <button onclick="closeSetPasswordModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px; text-align: center; width: 100%;">Cancel</button>
+                <button id="cancel-set-pass-btn" onclick="closeSetPasswordModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px; text-align: center; width: 100%;">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Delete Modal (Step 1) -->
     <div id="delete-warning-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
         <div class="card" style="max-width: 320px; width: 100%;">
-            <h3 style="font-size: 14px; margin-bottom: 10px;">Delete Account</h3>
-            <p style="font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 16px;">
-                Вы собираетесь удалить свой аккаунт в Kinship, который обеспечивает доступ к различным сервисам Kinship, включая друзей, подписки, лайки, комментарии, сообщения и профиль. Вы больше не сможете пользоваться ими, а все данные в вашем аккаунте будут потеряны.<br><br>
-                You can download all your personal data before proceeding.
-            </p>
+            <h3 id="del-warn-title" style="font-size: 14px; margin-bottom: 10px;">Delete Account</h3>
+            <p id="del-warn-body" style="font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 16px;"></p>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
                 <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 11px; color: var(--text); cursor: pointer;">
                     <input id="chk-downloaded" type="checkbox" style="margin-top: 2px; width: auto;">
-                    <span>I have downloaded my account data</span>
+                    <span id="chk-downloaded-text">I have downloaded my account data</span>
                 </label>
                 <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 11px; color: var(--text); cursor: pointer;">
                     <input id="chk-confirm" type="checkbox" style="margin-top: 2px; width: auto;">
-                    <span>I confirm permanent account deletion</span>
+                    <span id="chk-confirm-text">I confirm permanent account deletion</span>
                 </label>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 <button id="download-data-btn" class="secondary-btn" style="font-size: 11px; padding: 10px;">Download Data</button>
                 <button id="proceed-delete-btn" disabled class="danger-btn" style="opacity: 0.5; cursor: not-allowed; font-size: 11px; padding: 10px;">Delete Account</button>
-                <button onclick="closeDeleteModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px; text-align: center; width: 100%;">Cancel</button>
+                <button id="cancel-del-warn-btn" onclick="closeDeleteModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px; text-align: center; width: 100%;">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Delete Modal (Step 2: Verification) -->
     <div id="delete-verify-account-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
         <div class="card" style="max-width: 320px; width: 100%; text-align: center;">
-            <h3 style="font-size: 14px; margin-bottom: 8px;">Account Verification</h3>
-            <p style="font-size: 12px; color: var(--muted); margin-bottom: 16px; line-height: 1.4;">
-                Select your account (<span id="target-delete-email" style="font-weight: bold; color: var(--text);"></span>) to confirm deletion.
-            </p>
+            <h3 id="del-verify-title" style="font-size: 14px; margin-bottom: 8px;">Account Verification</h3>
+            <p id="del-verify-body" style="font-size: 12px; color: var(--muted); margin-bottom: 16px; line-height: 1.4;"></p>
             <p id="verify-account-error" class="hidden" style="font-size: 11px; color: #ef4444; margin-bottom: 12px;"></p>
             <button id="verify-google-account-btn" class="secondary-btn" style="margin-bottom: 8px;">Confirm Deletion</button>
-            <button onclick="closeVerifyAccountModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px;">Cancel</button>
+            <button id="cancel-verify-btn" onclick="closeVerifyAccountModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px;">Cancel</button>
         </div>
     </div>
 
-    <!-- Delete Modal (Step 3: Final confirmation) -->
     <div id="delete-confirm-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
         <div class="card" style="max-width: 320px; width: 100%; text-align: center;">
-            <h3 style="font-size: 14px; margin-bottom: 8px;">Are you absolutely sure?</h3>
+            <h3 id="del-final-title" style="font-size: 14px; margin-bottom: 8px;">Are you absolutely sure?</h3>
             <p id="delete-confirm-email" style="font-size: 12px; color: var(--muted); margin-bottom: 20px;"></p>
             <div style="display: flex; gap: 8px;">
-                <button onclick="closeFinalDeleteModal()" class="secondary-btn">Cancel</button>
+                <button id="cancel-final-del-btn" onclick="closeFinalDeleteModal()" class="secondary-btn">Cancel</button>
                 <button id="final-delete-btn" class="danger-btn">Delete</button>
             </div>
         </div>
@@ -288,6 +277,157 @@
     </footer>
 
     <script>
+        const i18nProfile = {
+            en: {
+                lang: "en",
+                loading: "Checking region & profile...",
+                synced: "Synced with cloud ✓",
+                setPassBtn: "Set Password",
+                logoutBtn: "Log Out",
+                delAccBtn: "Delete Account",
+                setPassTitle: "Set Password",
+                setPassSub: "Protect your account with a secure password",
+                newPassLabel: "New Password",
+                newPassPh: "Enter password",
+                newPassConfirmLabel: "Repeat Password",
+                newPassConfirmPh: "Repeat password",
+                savePassBtn: "Save Password",
+                cancel: "Cancel",
+                passMinErr: "Password must be at least 6 characters.",
+                passMismatchErr: "Passwords do not match.",
+                passSetAlert: "Password successfully set!",
+                errPrefix: "Error: ",
+                delWarnTitle: "Delete Account",
+                delWarnBody: "You are about to delete your Kinship account, which provides access to Kinship services including friends, subscriptions, likes, comments, messages, and profile. You will no longer be able to use them, and all data in your account will be lost.<br><br>You can download all your personal data before proceeding.",
+                chkDownloaded: "I have downloaded my account data",
+                chkConfirm: "I confirm permanent account deletion",
+                downloadDataBtn: "Download Data",
+                delVerifyTitle: "Account Verification",
+                delVerifyBody: (email) => `Select your account (<span style="font-weight: bold; color: var(--text);">${email}</span>) to confirm deletion.`,
+                confirmDelBtn: "Confirm Deletion",
+                wrongAccErr: (selected, expected) => `You selected a different account (${selected}). Select: ${expected}`,
+                verifyFailErr: "Verification failed. Please try again.",
+                delFinalTitle: "Are you absolutely sure?",
+                deleteBtn: "Delete",
+                delErrAlert: (msg) => `Error deleting account: ${msg}`,
+                loadErrAlert: (msg) => `Error loading profile: ${msg}`,
+                userFallback: "User"
+            },
+            ru: {
+                lang: "ru",
+                loading: "Проверяем регион и профиль...",
+                synced: "Синхронизировано с облаком ✓",
+                setPassBtn: "Установить пароль",
+                logoutBtn: "Выйти",
+                delAccBtn: "Удалить аккаунт",
+                setPassTitle: "Установка пароля",
+                setPassSub: "Защитите аккаунт надёжным паролем",
+                newPassLabel: "Новый пароль",
+                newPassPh: "Введите пароль",
+                newPassConfirmLabel: "Повторите пароль",
+                newPassConfirmPh: "Повторите пароль",
+                savePassBtn: "Сохранить пароль",
+                cancel: "Отмена",
+                passMinErr: "Пароль должен содержать минимум 6 символов.",
+                passMismatchErr: "Пароли не совпадают.",
+                passSetAlert: "Пароль успешно установлен!",
+                errPrefix: "Ошибка: ",
+                delWarnTitle: "Удаление аккаунта",
+                delWarnBody: "Вы собираетесь удалить свой аккаунт в Kinship, который обеспечивает доступ к различным сервисам Kinship, включая друзей, подписки, лайки, комментарии, сообщения и профиль. Вы больше не сможете пользоваться ими, а все данные в вашем аккаунте будут потеряны.<br><br>Вы можете скачать все свои личные данные перед продолжением.",
+                chkDownloaded: "Я скачал данные своего аккаунта",
+                chkConfirm: "Я подтверждаю безвозвратное удаление аккаунта",
+                downloadDataBtn: "Скачать данные",
+                delVerifyTitle: "Подтверждение аккаунта",
+                delVerifyBody: (email) => `Выберите свой аккаунт (<span style="font-weight: bold; color: var(--text);">${email}</span>), чтобы подтвердить удаление.`,
+                confirmDelBtn: "Подтвердить удаление",
+                wrongAccErr: (selected, expected) => `Вы выбрали другой аккаунт (${selected}). Выберите: ${expected}`,
+                verifyFailErr: "Не удалось выполнить проверку. Попробуйте ещё раз.",
+                delFinalTitle: "Вы абсолютно уверены?",
+                deleteBtn: "Удалить",
+                delErrAlert: (msg) => `Ошибка удаления аккаунта: ${msg}`,
+                loadErrAlert: (msg) => `Ошибка загрузки профиля: ${msg}`,
+                userFallback: "Пользователь"
+            },
+            de: {
+                lang: "de",
+                loading: "Region und Profil werden geprüft...",
+                synced: "Mit der Cloud synchronisiert ✓",
+                setPassBtn: "Passwort festlegen",
+                logoutBtn: "Abmelden",
+                delAccBtn: "Konto löschen",
+                setPassTitle: "Passwort festlegen",
+                setPassSub: "Schütze dein Konto mit einem sicheren Passwort",
+                newPassLabel: "Neues Passwort",
+                newPassPh: "Passwort eingeben",
+                newPassConfirmLabel: "Passwort wiederholen",
+                newPassConfirmPh: "Passwort wiederholen",
+                savePassBtn: "Passwort speichern",
+                cancel: "Abbrechen",
+                passMinErr: "Das Passwort muss mindestens 6 Zeichen lang sein.",
+                passMismatchErr: "Die Passwörter stimmen nicht überein.",
+                passSetAlert: "Passwort erfolgreich festgelegt!",
+                errPrefix: "Fehler: ",
+                delWarnTitle: "Konto löschen",
+                delWarnBody: "Du bist dabei, dein Kinship-Konto zu löschen, das Zugriff auf Kinship-Dienste wie Freunde, Abonnements, Likes, Kommentare, Nachrichten und Profil bietet. Du kannst diese Dienste nicht mehr nutzen und alle Kontodaten gehen verloren.<br><br>Du kannst deine persönlichen Daten vor dem Fortfahren herunterladen.",
+                chkDownloaded: "Ich habe meine Kontodaten heruntergeladen",
+                chkConfirm: "Ich bestätige die endgültige Löschung des Kontos",
+                downloadDataBtn: "Daten herunterladen",
+                delVerifyTitle: "Kontobestätigung",
+                delVerifyBody: (email) => `Wähle dein Konto (<span style="font-weight: bold; color: var(--text);">${email}</span>), um die Löschung zu bestätigen.`,
+                confirmDelBtn: "Löschung bestätigen",
+                wrongAccErr: (selected, expected) => `Du hast ein anderes Konto ausgewählt (${selected}). Wähle: ${expected}`,
+                verifyFailErr: "Überprüfung fehlgeschlagen. Bitte versuche es erneut.",
+                delFinalTitle: "Bist du absolut sicher?",
+                deleteBtn: "Löschen",
+                delErrAlert: (msg) => `Fehler beim Löschen des Kontos: ${msg}`,
+                loadErrAlert: (msg) => `Fehler beim Laden des Profils: ${msg}`,
+                userFallback: "Nutzer"
+            }
+        };
+
+                function detectAppLang() {
+            const list = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"])
+                .map(l => String(l).toLowerCase());
+            if (list.some(l => l === "ru" || l.startsWith("ru-"))) return "ru";
+            if (list.some(l => l === "de" || l.startsWith("de-"))) return "de";
+            return "en";
+        }
+
+        const currentLang = detectAppLang();
+        const tProf = i18nProfile[currentLang];
+        document.documentElement.lang = tProf.lang;
+
+        document.getElementById("prof-loading-text").textContent = tProf.loading;
+        document.getElementById("prof-synced-text").textContent = tProf.synced;
+        document.getElementById("set-password-btn").textContent = tProf.setPassBtn;
+        document.getElementById("logout-btn").textContent = tProf.logoutBtn;
+        document.getElementById("delete-account-btn").textContent = tProf.delAccBtn;
+
+        document.getElementById("set-pass-title").textContent = tProf.setPassTitle;
+        document.getElementById("set-pass-sub").textContent = tProf.setPassSub;
+        document.getElementById("new-pass-label").textContent = tProf.newPassLabel;
+        document.getElementById("input-new-pass").placeholder = tProf.newPassPh;
+        document.getElementById("new-pass-confirm-label").textContent = tProf.newPassConfirmLabel;
+        document.getElementById("input-new-pass-confirm").placeholder = tProf.newPassConfirmPh;
+        document.getElementById("save-password-btn").textContent = tProf.savePassBtn;
+        document.getElementById("cancel-set-pass-btn").textContent = tProf.cancel;
+
+        document.getElementById("del-warn-title").textContent = tProf.delWarnTitle;
+        document.getElementById("del-warn-body").innerHTML = tProf.delWarnBody;
+        document.getElementById("chk-downloaded-text").textContent = tProf.chkDownloaded;
+        document.getElementById("chk-confirm-text").textContent = tProf.chkConfirm;
+        document.getElementById("download-data-btn").textContent = tProf.downloadDataBtn;
+        document.getElementById("proceed-delete-btn").textContent = tProf.delAccBtn;
+        document.getElementById("cancel-del-warn-btn").textContent = tProf.cancel;
+
+        document.getElementById("del-verify-title").textContent = tProf.delVerifyTitle;
+        document.getElementById("verify-google-account-btn").textContent = tProf.confirmDelBtn;
+        document.getElementById("cancel-verify-btn").textContent = tProf.cancel;
+
+        document.getElementById("del-final-title").textContent = tProf.delFinalTitle;
+        document.getElementById("cancel-final-del-btn").textContent = tProf.cancel;
+        document.getElementById("final-delete-btn").textContent = tProf.deleteBtn;
+
         function closeDeleteModal() { document.getElementById('delete-warning-modal').classList.add('hidden'); }
         function closeVerifyAccountModal() { document.getElementById('delete-verify-account-modal').classList.add('hidden'); }
         function closeFinalDeleteModal() { document.getElementById('delete-confirm-modal').classList.add('hidden'); }
@@ -366,12 +506,12 @@
             setPassError.classList.add('hidden');
 
             if (!p1 || p1.length < 6) {
-                setPassError.textContent = "Password must be at least 6 characters.";
+                setPassError.textContent = tProf.passMinErr;
                 setPassError.classList.remove('hidden');
                 return;
             }
             if (p1 !== p2) {
-                setPassError.textContent = "Passwords do not match.";
+                setPassError.textContent = tProf.passMismatchErr;
                 setPassError.classList.remove('hidden');
                 return;
             }
@@ -382,9 +522,9 @@
                 savedUserData.password = p1;
                 setPasswordModal.classList.add('hidden');
                 setPasswordBtn.style.display = 'none';
-                alert("Password successfully set!");
+                alert(tProf.passSetAlert);
             } catch (e) {
-                setPassError.textContent = "Error: " + e.message;
+                setPassError.textContent = tProf.errPrefix + e.message;
                 setPassError.classList.remove('hidden');
             }
         });
@@ -401,7 +541,7 @@
         const verifyAccountError = document.getElementById('verify-account-error');
         const finalDeleteBtn = document.getElementById('final-delete-btn');
 
-                deleteAccountBtn.addEventListener('click', () => {
+        deleteAccountBtn.addEventListener('click', () => {
             chkDownloaded.checked = false;
             chkConfirm.checked = false;
             proceedDeleteBtn.disabled = true;
@@ -432,6 +572,7 @@
                 nickname: savedUserData?.nickname || currentUser.displayName,
                 role: savedUserData?.role || 'user',
                 dob: savedUserData?.dob || '',
+                gender: savedUserData?.gender || 'not_specified',
                 exportedAt: new Date().toISOString()
             };
             const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
@@ -447,7 +588,7 @@
 
         proceedDeleteBtn.addEventListener('click', () => {
             deleteWarningModal.classList.add('hidden');
-            document.getElementById('target-delete-email').textContent = currentUser.email;
+            document.getElementById('del-verify-body').innerHTML = tProf.delVerifyBody(currentUser.email);
             verifyAccountError.classList.add('hidden');
             deleteVerifyAccountModal.classList.remove('hidden');
         });
@@ -473,12 +614,12 @@
                     document.getElementById('delete-confirm-email').textContent = currentUser.email;
                     deleteConfirmModal.classList.remove('hidden');
                 } else {
-                    verifyAccountError.textContent = `You selected a different account (${selectedEmail}). Select: ${currentUser.email}`;
+                    verifyAccountError.textContent = tProf.wrongAccErr(selectedEmail, currentUser.email);
                     verifyAccountError.classList.remove('hidden');
                 }
             } catch (err) {
                 try { await deleteApp(verifyApp); } catch (_) {}
-                verifyAccountError.textContent = "Verification failed. Please try again.";
+                verifyAccountError.textContent = tProf.verifyFailErr;
                 verifyAccountError.classList.remove('hidden');
             }
         });
@@ -494,7 +635,7 @@
             } catch (e) {
                 document.getElementById('loading-screen').classList.add('hidden');
                 document.getElementById('profile-screen').classList.remove('hidden');
-                alert("Error deleting account: " + e.message);
+                alert(tProf.delErrAlert(e.message));
             }
         });
 
@@ -524,7 +665,7 @@
                     }
 
                     savedUserData = userSnap.data();
-                    const nickname = savedUserData.nickname || user.displayName || 'User';
+                    const nickname = savedUserData.nickname || user.displayName || tProf.userFallback;
                     const role = savedUserData.role || (OWNER_EMAILS.includes(user.email) ? 'owner' : 'user');
 
                     document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
@@ -561,7 +702,7 @@
                     document.getElementById('loading-screen').classList.add('hidden');
                     document.getElementById('profile-screen').classList.remove('hidden');
                 } catch (e) {
-                    alert("Error loading profile: " + e.message);
+                    alert(tProf.loadErrAlert(e.message));
                     handleLogout();
                 }
             });
