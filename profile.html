@@ -1155,18 +1155,19 @@
                 }
 
                 const currentDeviceId = getOrCreateDeviceId();
-                const isOtherDevice = Boolean(
-                    savedUserData.sessionDeviceId &&
-                    savedUserData.sessionDeviceId !== currentDeviceId
-                );
+                const remoteDeviceId = savedUserData.activeDeviceId || savedUserData.sessionDeviceId || "";
+                const isOtherDevice = Boolean(remoteDeviceId && remoteDeviceId !== currentDeviceId);
 
-                if (!savedUserData.sessionDeviceId) {
+                if (!remoteDeviceId) {
                     try {
+                        const detectedName = detectExactDevice();
                         await setDoc(userRef, {
+                            activeDeviceId: currentDeviceId,
                             sessionDeviceId: currentDeviceId,
-                            lastDeviceName: detectExactDevice(),
+                            lastDeviceName: detectedName,
                             lastLogin: serverTimestamp()
                         }, { merge: true });
+                        savedUserData.activeDeviceId = currentDeviceId;
                         savedUserData.sessionDeviceId = currentDeviceId;
                     } catch (_) {}
                 }
@@ -1176,7 +1177,7 @@
 
                 if (isOtherDevice) {
                     openSuspiciousSessionSheet({
-                        device: detectExactDevice(),
+                        device: savedUserData.lastLoginDeviceName || savedUserData.lastDeviceName || detectExactDevice(),
                         onEndSession: handleLogout
                     });
                 }
