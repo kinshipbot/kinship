@@ -459,6 +459,7 @@
                 creatingSub: "This may take a moment",
                 cloudErr: "Cloud error: ",
                 userPrefix: "User",
+                unknownDevice: "Unknown device",
                 limitAlert: (max) => `Limit reached: maximum ${max} accounts allowed.`,
                 serviceErr: (msg) => `Cloud service error: ${msg}`
             },
@@ -492,8 +493,8 @@
                 s3Sub: "Защитите свой аккаунт",
                 s3Label: "Пароль",
                 s3Ph: "Введите пароль (необязательно)",
-                passReq: "Требования: мин. 6 символов, 2 цифры, 1 заглавная буква, спецсимволы (_).",
-                                passWeak: "Слабый (не выполнены требования)",
+                                passReq: "Требования: мин. 6 символов, 2 цифры, 1 заглавная буква, спецсимволы (_).",
+                passWeak: "Слабый (не выполнены требования)",
                 passFair: "Средний",
                 passGood: "Хороший",
                 passStrong: "Надёжный",
@@ -525,6 +526,7 @@
                 creatingSub: "Это может занять некоторое время",
                 cloudErr: "Ошибка облака: ",
                 userPrefix: "Пользователь",
+                unknownDevice: "Неизвестное устройство",
                 limitAlert: (max) => `Достигнут лимит: разрешено максимум ${max} аккаунтов.`,
                 serviceErr: (msg) => `Ошибка облачного сервиса: ${msg}`
             },
@@ -591,6 +593,7 @@
                 creatingSub: "Das kann eine Weile dauern",
                 cloudErr: "Cloud-Fehler: ",
                 userPrefix: "Nutzer",
+                unknownDevice: "Unbekanntes Gerät",
                 limitAlert: (max) => `Limit erreicht: maximal ${max} Konten erlaubt.`,
                 serviceErr: (msg) => `Cloud-Dienstfehler: ${msg}`
             }
@@ -808,6 +811,53 @@
             passInput.value = generated;
             passInput.dispatchEvent(new Event('input'));
         });
+
+        function detectCurrentDeviceName() {
+            const ua = navigator.userAgent || "";
+            const platform = navigator.platform || "";
+            let device = tAuth.unknownDevice;
+
+            if (/Android/i.test(ua)) {
+                const match = ua.match(/Android\s*([\d.]*);\s*([^;)]+)/i);
+                const ver = match && match[1] ? ` ${match[1].trim()}` : "";
+                let model = match && match[2] ? match[2].replace(/\s*Build\/.*/i, "").trim() : "";
+                if (!model || model === "K" || /^Linux$/i.test(model)) {
+                    model = "";
+                }
+                device = model ? `${model} (Android${ver})` : `Android${ver}`;
+            } else if (/iPhone/i.test(ua)) {
+                const iosMatch = ua.match(/OS\s+([\d_]+)\s+like\s+Mac\s+OS\s+X/i);
+                const iosVer = iosMatch ? ` · iOS ${iosMatch[1].replace(/_/g, ".")}` : "";
+                device = `iPhone${iosVer}`;
+            } else if (/iPad/i.test(ua)) {
+                const padMatch = ua.match(/OS\s+([\d_]+)\s+like\s+Mac\s+OS\s+X/i);
+                const padVer = padMatch ? ` · iPadOS ${padMatch[1].replace(/_/g, ".")}` : "";
+                device = `iPad${padVer}`;
+            } else if (/Macintosh|Mac OS X/i.test(ua) || /Mac/i.test(platform)) {
+                const macMatch = ua.match(/Mac\s+OS\s+X\s+([\d_]+)/i);
+                const macVer = macMatch ? ` ${macMatch[1].replace(/_/g, ".")}` : "";
+                device = `Mac (macOS${macVer})`;
+            } else if (/Windows NT\s+([\d.]+)/i.test(ua)) {
+                const winVer = RegExp.$1;
+                const label = winVer === "10.0" ? "Windows 10/11" : `Windows NT ${winVer}`;
+                device = `PC (${label})`;
+            } else if (/CrOS/i.test(ua)) {
+                device = "Chromebook";
+            } else if (/Linux/i.test(ua)) {
+                device = "Linux PC";
+            }
+
+            let browser = "";
+            if (/YaBrowser\/([\d.]+)/i.test(ua)) browser = `Яндекс Браузер ${RegExp.$1.split(".")[0]}`;
+            else if (/Edg\/([\d.]+)/i.test(ua)) browser = `Edge ${RegExp.$1.split(".")[0]}`;
+            else if (/OPR\/([\d.]+)/i.test(ua)) browser = `Opera ${RegExp.$1.split(".")[0]}`;
+            else if (/SamsungBrowser\/([\d.]+)/i.test(ua)) browser = `Samsung Internet ${RegExp.$1.split(".")[0]}`;
+            else if (/Firefox\/([\d.]+)/i.test(ua)) browser = `Firefox ${RegExp.$1.split(".")[0]}`;
+            else if (/Chrome\/([\d.]+)/i.test(ua) && !/Chromium/i.test(ua)) browser = `Chrome ${RegExp.$1.split(".")[0]}`;
+            else if (/Version\/([\d.]+).*Safari/i.test(ua)) browser = `Safari ${RegExp.$1.split(".")[0]}`;
+
+            return browser ? `${device} · ${browser}` : device;
+        }
     </script>
 
     <script type="module">
@@ -828,7 +878,7 @@
         const auth = getAuth(app);
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
-        const MAX_USERS = 100;
+                const MAX_USERS = 100;
         const OWNER_EMAILS = ["danya@gmail.com", "kinshipbot@gmail.com"];
         const ALLOWED_COUNTRIES = ['US', 'RU'];
         const REGION_CACHE_KEY = 'kinship_region_ok';
@@ -901,7 +951,7 @@
             creating: document.getElementById('screen-creating')
         };
 
-                function showScreen(name) {
+        function showScreen(name) {
             Object.values(screens).forEach(el => el.classList.add('hidden'));
             screens[name].classList.remove('hidden');
         }
@@ -1050,11 +1100,25 @@
             await finalizeRegistration();
         });
 
+        async function updateDeviceSessionInCloud(userRef) {
+            const deviceId = getOrCreateDeviceId();
+            const deviceName = detectCurrentDeviceName();
+            await setDoc(userRef, {
+                activeDeviceId: deviceId,
+                sessionDeviceId: deviceId,
+                lastLoginDeviceName: deviceName,
+                lastDeviceName: deviceName,
+                lastLogin: serverTimestamp()
+            }, { merge: true });
+        }
+
         async function finalizeRegistration() {
             try {
                 showScreen('creating');
                 const userRef = doc(db, "users", currentUser.uid);
                 const userRole = OWNER_EMAILS.includes(currentUser.email) ? 'owner' : 'user';
+                const deviceId = getOrCreateDeviceId();
+                const deviceName = detectCurrentDeviceName();
 
                 await setDoc(userRef, {
                     nickname: regData.nickname,
@@ -1064,7 +1128,10 @@
                     gender: regData.gender,
                     password: regData.password,
                     role: userRole,
-                    sessionDeviceId: getOrCreateDeviceId(),
+                    activeDeviceId: deviceId,
+                    sessionDeviceId: deviceId,
+                    lastLoginDeviceName: deviceName,
+                    lastDeviceName: deviceName,
                     lastLogin: serverTimestamp()
                 });
 
@@ -1087,10 +1154,7 @@
                 try {
                     showScreen('creating');
                     const userRef = doc(db, "users", currentUser.uid);
-                    await setDoc(userRef, {
-                        sessionDeviceId: getOrCreateDeviceId(),
-                        lastLogin: serverTimestamp()
-                    }, { merge: true });
+                    await updateDeviceSessionInCloud(userRef);
                     localStorage.setItem('kinship_unlocked', currentUser.uid);
                     window.location.href = "profile.html";
                 } catch (e) {
@@ -1111,10 +1175,7 @@
                 try {
                     showScreen('creating');
                     const userRef = doc(db, "users", currentUser.uid);
-                    await setDoc(userRef, {
-                        sessionDeviceId: getOrCreateDeviceId(),
-                        lastLogin: serverTimestamp()
-                    }, { merge: true });
+                    await updateDeviceSessionInCloud(userRef);
                     localStorage.setItem('kinship_unlocked', currentUser.uid);
                     window.location.href = "profile.html";
                 } catch (e) {
@@ -1173,6 +1234,7 @@
                         document.getElementById('login-welcome-email').textContent = user.email;
                         showScreen('login');
                     } else {
+                        await updateDeviceSessionInCloud(userRef);
                         localStorage.setItem('kinship_unlocked', user.uid);
                         window.location.href = "profile.html";
                     }
