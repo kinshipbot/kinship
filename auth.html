@@ -493,8 +493,8 @@
                 s3Label: "Пароль",
                 s3Ph: "Введите пароль (необязательно)",
                 passReq: "Требования: мин. 6 символов, 2 цифры, 1 заглавная буква, спецсимволы (_).",
-                passWeak: "Слабый (не выполнены требования)",
-                                passFair: "Средний",
+                                passWeak: "Слабый (не выполнены требования)",
+                passFair: "Средний",
                 passGood: "Хороший",
                 passStrong: "Надёжный",
                 genPass: "Сгенерировать надёжный пароль",
@@ -833,6 +833,20 @@
         const ALLOWED_COUNTRIES = ['US', 'RU'];
         const REGION_CACHE_KEY = 'kinship_region_ok';
         const REGION_CACHE_TTL = 10 * 60 * 1000;
+        const DEVICE_ID_KEY = 'ks_device_id';
+
+        function getOrCreateDeviceId() {
+            try {
+                let id = localStorage.getItem(DEVICE_ID_KEY);
+                if (!id) {
+                    id = 'dev_' + Math.random().toString(36).slice(2, 12) + '_' + Date.now().toString(36);
+                    localStorage.setItem(DEVICE_ID_KEY, id);
+                }
+                return id;
+            } catch (_) {
+                return 'dev_volatile_' + Date.now().toString(36);
+            }
+        }
 
         async function verifyRegionOrKick() {
             try {
@@ -887,7 +901,7 @@
             creating: document.getElementById('screen-creating')
         };
 
-        function showScreen(name) {
+                function showScreen(name) {
             Object.values(screens).forEach(el => el.classList.add('hidden'));
             screens[name].classList.remove('hidden');
         }
@@ -896,7 +910,7 @@
         let savedUserData = null;
         let regData = { nickname: '', dob: '', gender: 'not_specified', password: '' };
 
-                function renderReviewScreen() {
+        function renderReviewScreen() {
             const avatarEl = document.getElementById('rev-avatar');
             const nickEl = document.getElementById('rev-nickname');
             const dobRowEl = document.getElementById('rev-dob-row');
@@ -1050,6 +1064,7 @@
                     gender: regData.gender,
                     password: regData.password,
                     role: userRole,
+                    sessionDeviceId: getOrCreateDeviceId(),
                     lastLogin: serverTimestamp()
                 });
 
@@ -1072,7 +1087,10 @@
                 try {
                     showScreen('creating');
                     const userRef = doc(db, "users", currentUser.uid);
-                    await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
+                    await setDoc(userRef, {
+                        sessionDeviceId: getOrCreateDeviceId(),
+                        lastLogin: serverTimestamp()
+                    }, { merge: true });
                     localStorage.setItem('kinship_unlocked', currentUser.uid);
                     window.location.href = "profile.html";
                 } catch (e) {
@@ -1093,7 +1111,10 @@
                 try {
                     showScreen('creating');
                     const userRef = doc(db, "users", currentUser.uid);
-                    await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
+                    await setDoc(userRef, {
+                        sessionDeviceId: getOrCreateDeviceId(),
+                        lastLogin: serverTimestamp()
+                    }, { merge: true });
                     localStorage.setItem('kinship_unlocked', currentUser.uid);
                     window.location.href = "profile.html";
                 } catch (e) {
