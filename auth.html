@@ -182,6 +182,41 @@
             margin-bottom: 12px;
             line-height: 1.4;
         }
+        .preview-box {
+            background-color: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .preview-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 9999px;
+            object-fit: cover;
+            border: 1px solid var(--card-border);
+            background-color: var(--secondary-btn-bg);
+            flex-shrink: 0;
+        }
+        .preview-meta {
+            min-width: 0;
+            flex: 1;
+        }
+        .preview-nick {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text);
+            word-break: break-word;
+            margin-bottom: 4px;
+        }
+        .preview-row {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.45;
+        }
         .spinner {
             width: 32px;
             height: 32px;
@@ -208,7 +243,8 @@
     <div id="screen-loading" class="container">
         <p class="brand notranslate">Kinship</p>
         <div class="spinner"></div>
-        <p id="auth-loading-text" class="subtitle" style="margin-bottom: 0;">Checking region & cloud data...</p>
+        <p id="auth-loading-text" class="subtitle" style="margin-bottom: 4px;">Checking region & cloud data...</p>
+        <p id="auth-loading-sub" style="font-size: 11px; color: var(--subtle); margin-bottom: 0;">This may take a moment</p>
     </div>
 
     <!-- ШАГ 1: Ввод никнейма -->
@@ -283,7 +319,7 @@
         <button id="back-step3" class="secondary-btn">Back</button>
     </div>
 
-    <!-- ШАГ 4: Повторение пароля и финальная регистрация -->
+    <!-- ШАГ 4: Повторение пароля -->
     <div id="screen-step4" class="container card hidden">
         <p class="brand notranslate">Kinship</p>
         <h2 id="s4-title">Confirm Password</h2>
@@ -294,8 +330,29 @@
 
         <p id="err-step4" class="error-msg hidden"></p>
 
-        <button id="btn-register-final" class="primary-btn">Register</button>
+        <button id="btn-step4-next" class="primary-btn">Next</button>
         <button id="back-step4" class="secondary-btn">Back</button>
+    </div>
+
+    <!-- ШАГ 5: Проверка данных профиля перед отправкой в облако -->
+    <div id="screen-review" class="container card hidden">
+        <p class="brand notranslate">Kinship</p>
+        <h2 id="rev-title">Check if all profile details are filled in correctly?</h2>
+        <p id="rev-subtitle" class="subtitle">Make sure everything looks right before sending to the cloud</p>
+
+        <div class="preview-box">
+            <img id="rev-avatar" class="preview-avatar" src="" alt="Avatar">
+            <div class="preview-meta">
+                <div id="rev-nickname" class="preview-nick"></div>
+                <div id="rev-dob-row" class="preview-row"></div>
+                <div id="rev-gender-row" class="preview-row hidden"></div>
+            </div>
+        </div>
+
+        <p id="err-review" class="error-msg hidden"></p>
+
+        <button id="btn-confirm-all" class="primary-btn">Everything is correct</button>
+        <button id="back-review" class="secondary-btn">Back</button>
     </div>
 
     <!-- Модальное окно предупреждения при пропуске пароля -->
@@ -329,7 +386,8 @@
     <div id="screen-creating" class="container hidden">
         <p class="brand notranslate">Kinship</p>
         <div class="spinner"></div>
-        <p id="creating-text" class="subtitle" style="margin-bottom: 0;">Creating your account in the cloud...</p>
+        <p id="creating-text" class="subtitle" style="margin-bottom: 4px;">Creating your account in the cloud...</p>
+        <p id="creating-sub" style="font-size: 11px; color: var(--subtle); margin-bottom: 0;">This may take a moment</p>
     </div>
 
     <footer>
@@ -341,6 +399,7 @@
             en: {
                 lang: "en",
                 loading: "Checking region & cloud data...",
+                loadingSub: "This may take a moment",
                 s1Title: "What's your nickname?",
                 s1Sub: "Choose a unique name for your profile",
                 s1Label: "Nickname",
@@ -360,6 +419,7 @@
                 gNotSpec: "Not specified",
                 gMale: "Male",
                 gFemale: "Female",
+                genderValues: { male: "Male", female: "Female" },
                 whyLink: "Why do we ask for gender and date of birth?",
                 s2Err: "Please enter a valid date of birth (DD.MM.YYYY).",
                 s3Title: "Create Password",
@@ -379,7 +439,11 @@
                 s4Label: "Repeat Password",
                 s4Ph: "Repeat password",
                 s4Err: "Passwords do not match.",
-                register: "Register",
+                revTitle: "Check if all profile details are filled in correctly?",
+                revSub: "Review your profile details before sending to the cloud",
+                revDobPrefix: "Date of birth",
+                revGenderPrefix: "Gender",
+                confirmAll: "Everything is correct",
                 warnTitle: "Warning!",
                 warnBody: "Are you sure you want to skip setting a password?<br><br>We care about your security and strongly recommend setting a password to protect your account. <strong>The developer is not responsible for your account security.</strong><br><br>You can also set a password at any time.",
                 setPass: "Set Password",
@@ -392,6 +456,7 @@
                 loginWrongErr: "Incorrect password.",
                 signIn: "Sign In",
                 creating: "Creating your account in the cloud...",
+                creatingSub: "This may take a moment",
                 cloudErr: "Cloud error: ",
                 userPrefix: "User",
                 limitAlert: (max) => `Limit reached: maximum ${max} accounts allowed.`,
@@ -400,6 +465,7 @@
             ru: {
                 lang: "ru",
                 loading: "Проверяем регион и облачные данные...",
+                loadingSub: "Это может занять некоторое время",
                 s1Title: "Какой у тебя никнейм?",
                 s1Sub: "Выберите уникальное имя для профиля",
                 s1Label: "Никнейм",
@@ -419,6 +485,7 @@
                 gNotSpec: "Не указан",
                 gMale: "Мужской",
                 gFemale: "Женский",
+                genderValues: { male: "Male", female: "Female" },
                 whyLink: "Зачем мы спрашиваем дату рождения и пол?",
                 s2Err: "Введите корректную дату рождения (ДД.ММ.ГГГГ).",
                 s3Title: "Создайте пароль",
@@ -427,7 +494,7 @@
                 s3Ph: "Введите пароль (необязательно)",
                 passReq: "Требования: мин. 6 символов, 2 цифры, 1 заглавная буква, спецсимволы (_).",
                 passWeak: "Слабый (не выполнены требования)",
-                passFair: "Средний",
+                                passFair: "Средний",
                 passGood: "Хороший",
                 passStrong: "Надёжный",
                 genPass: "Сгенерировать надёжный пароль",
@@ -438,7 +505,11 @@
                 s4Label: "Повторите пароль",
                 s4Ph: "Повторите пароль",
                 s4Err: "Пароли не совпадают.",
-                register: "Зарегистрироваться",
+                revTitle: "Проверьте верно ли все данные профиля заполнены?",
+                revSub: "Убедитесь, что всё указано верно перед отправкой в облако",
+                revDobPrefix: "Дата рождения",
+                revGenderPrefix: "Пол",
+                confirmAll: "Всё верно",
                 warnTitle: "Внимание!",
                 warnBody: "Вы уверены, что хотите пропустить установку пароля?<br><br>Мы заботимся о вашей безопасности и настоятельно рекомендуем задать пароль. <strong>Разработчик не несёт ответственности за безопасность вашего аккаунта.</strong><br><br>Вы также в любой момент можете установить пароль.",
                 setPass: "Установить пароль",
@@ -450,7 +521,8 @@
                 loginEmptyErr: "Пожалуйста, введите пароль.",
                 loginWrongErr: "Неверный пароль.",
                 signIn: "Войти",
-                creating: "Создаём ваш аккаунт в облаке...",
+                creating: "Сохраняем данные профиля в облако...",
+                creatingSub: "Это может занять некоторое время",
                 cloudErr: "Ошибка облака: ",
                 userPrefix: "Пользователь",
                 limitAlert: (max) => `Достигнут лимит: разрешено максимум ${max} аккаунтов.`,
@@ -459,6 +531,7 @@
             de: {
                 lang: "de",
                 loading: "Region und Cloud-Daten werden geprüft...",
+                loadingSub: "Das kann eine Weile dauern",
                 s1Title: "Wie lautet dein Spitzname?",
                 s1Sub: "Wähle einen eindeutigen Namen für dein Profil",
                 s1Label: "Spitzname",
@@ -478,8 +551,9 @@
                 gNotSpec: "Nicht angegeben",
                 gMale: "Männlich",
                 gFemale: "Weiblich",
+                genderValues: { male: "Male", female: "Female" },
                 whyLink: "Warum fragen wir nach Geschlecht und Geburtsdatum?",
-                                s2Err: "Bitte gib ein gültiges Geburtsdatum ein (TT.MM.JJJJ).",
+                s2Err: "Bitte gib ein gültiges Geburtsdatum ein (TT.MM.JJJJ).",
                 s3Title: "Passwort erstellen",
                 s3Sub: "Schütze dein Konto",
                 s3Label: "Passwort",
@@ -497,7 +571,11 @@
                 s4Label: "Passwort wiederholen",
                 s4Ph: "Passwort wiederholen",
                 s4Err: "Die Passwörter stimmen nicht überein.",
-                register: "Registrieren",
+                revTitle: "Prüfe, ob alle Profildaten richtig ausgefüllt sind",
+                revSub: "Überprüfe deine Angaben, bevor sie in die Cloud gesendet werden",
+                revDobPrefix: "Geburtsdatum",
+                revGenderPrefix: "Geschlecht",
+                confirmAll: "Alles stimmt",
                 warnTitle: "Warnung!",
                 warnBody: "Möchtest du das Festlegen eines Passworts wirklich überspringen?<br><br>Deine Sicherheit ist uns wichtig und wir empfehlen dringend ein Passwort. <strong>Der Entwickler übernimmt keine Verantwortung für die Sicherheit deines Kontos.</strong><br><br>Du kannst jederzeit ein Passwort festlegen.",
                 setPass: "Passwort festlegen",
@@ -509,7 +587,8 @@
                 loginEmptyErr: "Bitte gib dein Passwort ein.",
                 loginWrongErr: "Falsches Passwort.",
                 signIn: "Anmelden",
-                creating: "Dein Konto wird in der Cloud erstellt...",
+                creating: "Deine Profildaten werden in die Cloud gesendet...",
+                creatingSub: "Das kann eine Weile dauern",
                 cloudErr: "Cloud-Fehler: ",
                 userPrefix: "Nutzer",
                 limitAlert: (max) => `Limit erreicht: maximal ${max} Konten erlaubt.`,
@@ -562,6 +641,7 @@
         }
 
         document.getElementById("auth-loading-text").textContent = tAuth.loading;
+        document.getElementById("auth-loading-sub").textContent = tAuth.loadingSub;
         document.getElementById("s1-title").textContent = tAuth.s1Title;
         document.getElementById("s1-subtitle").textContent = tAuth.s1Sub;
         document.getElementById("s1-label").textContent = tAuth.s1Label;
@@ -594,8 +674,13 @@
         document.getElementById("s4-subtitle").textContent = tAuth.s4Sub;
         document.getElementById("s4-label").textContent = tAuth.s4Label;
         document.getElementById("input-pass-confirm").placeholder = tAuth.s4Ph;
-        document.getElementById("btn-register-final").textContent = tAuth.register;
+        document.getElementById("btn-step4-next").textContent = tAuth.next;
         document.getElementById("back-step4").textContent = tAuth.back;
+
+        document.getElementById("rev-title").textContent = tAuth.revTitle;
+        document.getElementById("rev-subtitle").textContent = tAuth.revSub;
+        document.getElementById("btn-confirm-all").textContent = tAuth.confirmAll;
+        document.getElementById("back-review").textContent = tAuth.back;
 
         document.getElementById("modal-warn-title").textContent = tAuth.warnTitle;
         document.getElementById("modal-warn-body").innerHTML = tAuth.warnBody;
@@ -608,6 +693,7 @@
         document.getElementById("btn-login-submit").textContent = tAuth.signIn;
         document.getElementById("btn-login-logout").textContent = tAuth.logout;
         document.getElementById("creating-text").textContent = tAuth.creating;
+        document.getElementById("creating-sub").textContent = tAuth.creatingSub;
 
         function syncSelectsToText() {
             const d = daySelect.value;
@@ -796,6 +882,7 @@
             step2: document.getElementById('screen-step2'),
             step3: document.getElementById('screen-step3'),
             step4: document.getElementById('screen-step4'),
+            review: document.getElementById('screen-review'),
             login: document.getElementById('screen-login'),
             creating: document.getElementById('screen-creating')
         };
@@ -808,6 +895,33 @@
         let currentUser = null;
         let savedUserData = null;
         let regData = { nickname: '', dob: '', gender: 'not_specified', password: '' };
+
+                function renderReviewScreen() {
+            const avatarEl = document.getElementById('rev-avatar');
+            const nickEl = document.getElementById('rev-nickname');
+            const dobRowEl = document.getElementById('rev-dob-row');
+            const genderRowEl = document.getElementById('rev-gender-row');
+            const errEl = document.getElementById('err-review');
+            errEl.classList.add('hidden');
+
+            const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(regData.nickname || 'U')}&background=1f2937&color=ffffff&size=128`;
+            avatarEl.src = currentUser?.photoURL || fallbackAvatar;
+            avatarEl.onerror = () => { avatarEl.src = fallbackAvatar; };
+
+            nickEl.textContent = regData.nickname;
+            dobRowEl.textContent = `${tAuth.revDobPrefix}: ${regData.dob}`;
+
+            const genderLabel = tAuth.genderValues[regData.gender];
+            if (genderLabel) {
+                genderRowEl.textContent = `${tAuth.revGenderPrefix}: ${genderLabel}`;
+                genderRowEl.classList.remove('hidden');
+            } else {
+                genderRowEl.textContent = '';
+                genderRowEl.classList.add('hidden');
+            }
+
+            showScreen('review');
+        }
 
         const handleLogout = async () => {
             localStorage.removeItem('kinship_unlocked');
@@ -888,13 +1002,39 @@
             document.getElementById('modal-skip-warning').classList.add('hidden');
         });
 
-        document.getElementById('btn-modal-skip-anyway').addEventListener('click', async () => {
+        document.getElementById('btn-modal-skip-anyway').addEventListener('click', () => {
             document.getElementById('modal-skip-warning').classList.add('hidden');
             regData.password = "";
-            await finalizeRegistration();
+            renderReviewScreen();
         });
 
         document.getElementById('back-step4').addEventListener('click', () => showScreen('step3'));
+
+        document.getElementById('btn-step4-next').addEventListener('click', () => {
+            const passConfirm = document.getElementById('input-pass-confirm').value;
+            const err = document.getElementById('err-step4');
+            err.classList.add('hidden');
+
+            if (passConfirm !== regData.password) {
+                err.textContent = tAuth.s4Err;
+                err.classList.remove('hidden');
+                return;
+            }
+
+            renderReviewScreen();
+        });
+
+        document.getElementById('back-review').addEventListener('click', () => {
+            if (regData.password) {
+                showScreen('step4');
+            } else {
+                showScreen('step3');
+            }
+        });
+
+        document.getElementById('btn-confirm-all').addEventListener('click', async () => {
+            await finalizeRegistration();
+        });
 
         async function finalizeRegistration() {
             try {
@@ -902,7 +1042,7 @@
                 const userRef = doc(db, "users", currentUser.uid);
                 const userRole = OWNER_EMAILS.includes(currentUser.email) ? 'owner' : 'user';
 
-                                await setDoc(userRef, {
+                await setDoc(userRef, {
                     nickname: regData.nickname,
                     email: currentUser.email,
                     photo: currentUser.photoURL,
@@ -916,26 +1056,12 @@
                 localStorage.setItem('kinship_unlocked', currentUser.uid);
                 window.location.href = "profile.html";
             } catch (e) {
-                showScreen('step4');
-                const err = document.getElementById('err-step4');
+                showScreen('review');
+                const err = document.getElementById('err-review');
                 err.textContent = tAuth.cloudErr + e.message;
                 err.classList.remove('hidden');
             }
         }
-
-        document.getElementById('btn-register-final').addEventListener('click', async () => {
-            const passConfirm = document.getElementById('input-pass-confirm').value;
-            const err = document.getElementById('err-step4');
-            err.classList.add('hidden');
-
-            if (passConfirm !== regData.password) {
-                err.textContent = tAuth.s4Err;
-                err.classList.remove('hidden');
-                return;
-            }
-
-            await finalizeRegistration();
-        });
 
         document.getElementById('btn-login-submit').addEventListener('click', async () => {
             const enteredPass = document.getElementById('input-login-pass').value;
