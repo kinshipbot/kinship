@@ -18,6 +18,9 @@
             --subtle: #9ca3af;
             --input-bg: #f9fafb;
             --input-border: #d1d5db;
+            --btn-bg: #030712;
+            --btn-text: #ffffff;
+            --btn-hover: #1f2937;
             --secondary-btn-bg: #f3f4f6;
             --secondary-btn-text: #374151;
             --secondary-btn-hover: #e5e7eb;
@@ -32,6 +35,9 @@
                 --subtle: #6b7280;
                 --input-bg: #1f2937;
                 --input-border: #374151;
+                --btn-bg: #ffffff;
+                --btn-text: #000000;
+                --btn-hover: #e5e7eb;
                 --secondary-btn-bg: #1f2937;
                 --secondary-btn-text: #d1d5db;
                 --secondary-btn-hover: #374151;
@@ -66,8 +72,8 @@
             border: 1px solid var(--card-border);
             border-radius: 20px;
             padding: 24px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
             text-align: left;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         }
         .brand {
             font-size: 12px;
@@ -78,52 +84,69 @@
             margin-bottom: 16px;
             text-align: center;
         }
-        h2, h3 {
-            font-size: 18px;
-            font-weight: 800;
-            letter-spacing: -0.01em;
-            text-align: center;
-        }
         .avatar {
             width: 64px;
             height: 64px;
-            border-radius: 50%;
-            margin: 0 auto 12px auto;
-            border: 1px solid var(--card-border);
+            border-radius: 9999px;
             object-fit: cover;
-            display: block;
+            border: 1px solid var(--card-border);
+            background-color: var(--secondary-btn-bg);
         }
-        input {
-            width: 100%;
-            background-color: var(--input-bg);
-            border: 1px solid var(--input-border);
-            border-radius: 12px;
-            padding: 12px 14px;
-            font-size: 14px;
-            color: var(--text);
-            outline: none;
-            margin-bottom: 12px;
+        .nickname {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            word-break: break-word;
         }
-        input:focus {
-            border-color: var(--text);
-        }
-        label {
-            display: block;
+        .email {
             font-size: 12px;
-            font-weight: 600;
             color: var(--muted);
-            margin-bottom: 6px;
+            word-break: break-all;
+            margin-top: 2px;
+        }
+        .status-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--card-border);
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 9999px;
+            background-color: #10b981;
+            flex-shrink: 0;
+        }
+        .primary-btn {
+            width: 100%;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            padding: 13px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s ease, opacity 0.2s ease;
+        }
+        .primary-btn:hover {
+            background-color: var(--btn-hover);
         }
         .secondary-btn {
             width: 100%;
             background-color: var(--secondary-btn-bg);
             color: var(--secondary-btn-text);
             border: none;
-            padding: 12px;
+            padding: 11px;
             border-radius: 12px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
+            margin-top: 8px;
             transition: background-color 0.2s ease;
         }
         .secondary-btn:hover {
@@ -133,21 +156,98 @@
             width: 100%;
             background-color: rgba(239, 68, 68, 0.1);
             color: #ef4444;
-            border: none;
-            padding: 12px;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            padding: 11px;
             border-radius: 12px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
+            margin-top: 8px;
             transition: background-color 0.2s ease;
         }
         .danger-btn:hover {
-            background-color: rgba(239, 68, 68, 0.2);
+            background-color: rgba(239, 68, 68, 0.18);
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            z-index: 50;
+        }
+        .modal-card {
+            max-width: 340px;
+            width: 100%;
+            text-align: left;
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        input[type="password"] {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 11px 14px;
+            font-size: 14px;
+            color: var(--text);
+            outline: none;
+            margin-bottom: 12px;
+        }
+        input[type="password"]:focus {
+            border-color: var(--text);
+        }
+        .error-msg {
+            font-size: 11px;
+            color: #ef4444;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .checkbox-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .checkbox-row input[type="checkbox"] {
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        .premium-diamond-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            margin-bottom: 8px;
+        }
+        .diamond-icon {
+            width: 8px;
+            height: 8px;
+            background-color: #ffffff;
+            transform: rotate(45deg);
+            display: inline-block;
         }
         .spinner {
             width: 32px;
             height: 32px;
-            border: 3px solid var(--card-border);
+            border: 3px solid var(--input-border);
             border-top-color: var(--text);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
@@ -155,27 +255,6 @@
         }
         @keyframes spin {
             to { transform: rotate(360deg); }
-        }
-        .premium-diamond-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(168, 85, 247, 0.15));
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            color: #a855f7;
-            font-size: 11px;
-            font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
-            margin-bottom: 8px;
-        }
-        .diamond-icon {
-            width: 12px;
-            height: 12px;
-            background: linear-gradient(135deg, #60a5fa, #c084fc);
-            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
-            display: inline-block;
         }
         footer {
             font-size: 11px;
@@ -187,88 +266,101 @@
 
     <div style="height: 16px;"></div>
 
+    <!-- Загрузка -->
     <div id="loading-screen" class="container">
         <p class="brand notranslate">Kinship</p>
         <div class="spinner"></div>
-        <p id="prof-loading-text" style="font-size: 12px; color: var(--muted); text-align: center;">Checking region & profile...</p>
+        <p id="prof-loading-text" style="font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 4px;">Checking region & profile...</p>
+        <p id="prof-loading-sub" style="font-size: 11px; color: var(--subtle); text-align: center;">This may take a moment</p>
     </div>
 
-    <div id="profile-screen" class="container card hidden" style="text-align: center;">
-        <img id="user-avatar" src="" alt="Avatar" class="avatar">
-        <h2 id="profile-nickname" style="margin-bottom: 6px;"></h2>
-        <div id="role-badge-container"></div>
-        <p id="user-email" style="font-size: 12px; color: var(--muted); margin-bottom: 8px;"></p>
-        <p id="prof-synced-text" style="font-size: 12px; color: #10b981; font-weight: 600; margin-bottom: 24px;">Synced with cloud ✓</p>
+    <!-- Профиль -->
+    <div id="profile-screen" class="container card hidden">
+        <p class="brand notranslate">Kinship</p>
 
-        <div style="display: flex; flex-direction: column; gap: 10px; text-align: left;">
-            <button id="set-password-btn" class="secondary-btn" style="display: none;">Set Password</button>
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <img id="user-avatar" class="avatar" src="" alt="Avatar">
+            <div style="min-width: 0; flex: 1;">
+                <div id="role-badge-container"></div>
+                <div id="profile-nickname" class="nickname"></div>
+                <div id="user-email" class="email"></div>
+            </div>
+        </div>
+
+        <div class="status-row">
+            <span class="status-dot"></span>
+            <span id="prof-synced-text">Synced with Kinship Cloud</span>
+        </div>
+
+        <div style="margin-top: 18px;">
+            <button id="set-password-btn" class="primary-btn" style="display: none; margin-bottom: 8px;">Set Password</button>
             <button id="logout-btn" class="secondary-btn">Log Out</button>
             <button id="delete-account-btn" class="danger-btn">Delete Account</button>
         </div>
     </div>
 
-    <div id="set-password-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
-        <div class="card" style="max-width: 320px; width: 100%;">
-            <h3 id="set-pass-title" style="font-size: 15px; margin-bottom: 6px;">Set Password</h3>
-            <p id="set-pass-sub" style="font-size: 11px; color: var(--muted); margin-bottom: 16px; text-align: center;">Protect your account with a secure password</p>
+    <!-- Модалка установки пароля -->
+    <div id="set-password-modal" class="modal-backdrop hidden">
+        <div class="card modal-card">
+            <h3 id="set-pass-title" style="font-size: 16px; font-weight: 800; margin-bottom: 4px; text-align: center;">Set Password</h3>
+            <p id="set-pass-sub" style="font-size: 12px; color: var(--muted); margin-bottom: 16px; text-align: center;">Add extra protection to your account</p>
 
             <label id="new-pass-label">New Password</label>
-            <input id="input-new-pass" type="password" placeholder="Enter password">
+            <input id="input-new-pass" type="password" placeholder="At least 6 characters">
 
-            <label id="new-pass-confirm-label">Repeat Password</label>
+            <label id="new-pass-confirm-label">Confirm Password</label>
             <input id="input-new-pass-confirm" type="password" placeholder="Repeat password">
 
-            <p id="set-pass-error" class="hidden" style="font-size: 11px; color: #ef4444; margin-bottom: 12px; text-align: center; font-weight: 600;"></p>
+            <p id="set-pass-error" class="error-msg hidden"></p>
 
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button id="save-password-btn" class="secondary-btn" style="background: var(--text); color: var(--bg);">Save Password</button>
-                <button id="cancel-set-pass-btn" onclick="closeSetPasswordModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px; text-align: center; width: 100%;">Cancel</button>
-            </div>
+            <button id="save-password-btn" class="primary-btn">Save Password</button>
+            <button id="cancel-set-pass-btn" type="button" class="secondary-btn" onclick="closeSetPasswordModal()">Cancel</button>
         </div>
     </div>
 
-    <div id="delete-warning-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
-        <div class="card" style="max-width: 320px; width: 100%;">
-            <h3 id="del-warn-title" style="font-size: 14px; margin-bottom: 10px;">Delete Account</h3>
-            <p id="del-warn-body" style="font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 16px;"></p>
+    <!-- Модалка предупреждения об удалении аккаунта -->
+    <div id="delete-warning-modal" class="modal-backdrop hidden">
+        <div class="card modal-card">
+            <h3 id="del-warn-title" style="font-size: 16px; font-weight: 800; margin-bottom: 10px; text-align: center;">Delete Account</h3>
+            <p id="del-warn-body" style="font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 14px;"></p>
 
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
-                <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 11px; color: var(--text); cursor: pointer;">
-                    <input id="chk-downloaded" type="checkbox" style="margin-top: 2px; width: auto;">
-                    <span id="chk-downloaded-text">I have downloaded my account data</span>
-                </label>
-                <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 11px; color: var(--text); cursor: pointer;">
-                    <input id="chk-confirm" type="checkbox" style="margin-top: 2px; width: auto;">
-                    <span id="chk-confirm-text">I confirm permanent account deletion</span>
-                </label>
-            </div>
+            <label class="checkbox-row">
+                <input id="chk-downloaded" type="checkbox">
+                <span id="chk-downloaded-text">I have downloaded my account data</span>
+            </label>
 
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button id="download-data-btn" class="secondary-btn" style="font-size: 11px; padding: 10px;">Download Data</button>
-                <button id="proceed-delete-btn" disabled class="danger-btn" style="opacity: 0.5; cursor: not-allowed; font-size: 11px; padding: 10px;">Delete Account</button>
-                <button id="cancel-del-warn-btn" onclick="closeDeleteModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px; text-align: center; width: 100%;">Cancel</button>
-            </div>
+            <label class="checkbox-row">
+                <input id="chk-confirm" type="checkbox">
+                <span id="chk-confirm-text">I understand this action cannot be undone</span>
+            </label>
+
+            <button id="download-data-btn" type="button" class="secondary-btn" style="margin-top: 4px;">Download Data (JSON)</button>
+            <button id="proceed-delete-btn" type="button" class="danger-btn" disabled style="opacity: 0.5; cursor: not-allowed;">Delete Account</button>
+            <button id="cancel-del-warn-btn" type="button" class="secondary-btn" onclick="closeDeleteModal()">Cancel</button>
         </div>
     </div>
 
-    <div id="delete-verify-account-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
-        <div class="card" style="max-width: 320px; width: 100%; text-align: center;">
-            <h3 id="del-verify-title" style="font-size: 14px; margin-bottom: 8px;">Account Verification</h3>
-            <p id="del-verify-body" style="font-size: 12px; color: var(--muted); margin-bottom: 16px; line-height: 1.4;"></p>
-            <p id="verify-account-error" class="hidden" style="font-size: 11px; color: #ef4444; margin-bottom: 12px;"></p>
-            <button id="verify-google-account-btn" class="secondary-btn" style="margin-bottom: 8px;">Confirm Deletion</button>
-            <button id="cancel-verify-btn" onclick="closeVerifyAccountModal()" style="background: none; border: none; color: var(--subtle); font-size: 11px; cursor: pointer; padding: 6px;">Cancel</button>
+    <!-- Модалка подтверждения Google-аккаунта перед удалением -->
+    <div id="delete-verify-account-modal" class="modal-backdrop hidden">
+        <div class="card modal-card">
+            <h3 id="del-verify-title" style="font-size: 16px; font-weight: 800; margin-bottom: 10px; text-align: center;">Verify Account</h3>
+            <p id="del-verify-body" style="font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 14px;"></p>
+
+            <p id="verify-account-error" class="error-msg hidden"></p>
+
+            <button id="verify-google-account-btn" type="button" class="danger-btn">Confirm Deletion</button>
+            <button id="cancel-verify-btn" type="button" class="secondary-btn" onclick="closeVerifyAccountModal()">Cancel</button>
         </div>
     </div>
 
-    <div id="delete-confirm-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 50;">
-        <div class="card" style="max-width: 320px; width: 100%; text-align: center;">
-            <h3 id="del-final-title" style="font-size: 14px; margin-bottom: 8px;">Are you absolutely sure?</h3>
-            <p id="delete-confirm-email" style="font-size: 12px; color: var(--muted); margin-bottom: 20px;"></p>
-            <div style="display: flex; gap: 8px;">
-                <button id="cancel-final-del-btn" onclick="closeFinalDeleteModal()" class="secondary-btn">Cancel</button>
-                <button id="final-delete-btn" class="danger-btn">Delete</button>
-            </div>
+    <!-- Финальная модалка подтверждения удаления -->
+    <div id="delete-confirm-modal" class="modal-backdrop hidden">
+        <div class="card modal-card">
+            <h3 id="del-final-title" style="font-size: 16px; font-weight: 800; margin-bottom: 10px; text-align: center;">Are you sure?</h3>
+            <p id="delete-confirm-email" style="font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 16px; word-break: break-all;"></p>
+
+            <button id="final-delete-btn" type="button" class="danger-btn">Delete</button>
+            <button id="cancel-final-del-btn" type="button" class="secondary-btn" onclick="closeFinalDeleteModal()">Cancel</button>
         </div>
     </div>
 
@@ -281,111 +373,114 @@
             en: {
                 lang: "en",
                 loading: "Checking region & profile...",
-                synced: "Synced with cloud ✓",
+                loadingSub: "This may take a moment",
+                synced: "Synced with Kinship Cloud",
                 setPassBtn: "Set Password",
                 logoutBtn: "Log Out",
                 delAccBtn: "Delete Account",
                 setPassTitle: "Set Password",
-                setPassSub: "Protect your account with a secure password",
+                setPassSub: "Add extra protection to your account",
                 newPassLabel: "New Password",
-                newPassPh: "Enter password",
-                newPassConfirmLabel: "Repeat Password",
+                newPassPh: "At least 6 characters",
+                newPassConfirmLabel: "Confirm Password",
                 newPassConfirmPh: "Repeat password",
                 savePassBtn: "Save Password",
                 cancel: "Cancel",
                 passMinErr: "Password must be at least 6 characters.",
                 passMismatchErr: "Passwords do not match.",
-                passSetAlert: "Password successfully set!",
+                passSetAlert: "Password has been set.",
                 errPrefix: "Error: ",
                 delWarnTitle: "Delete Account",
-                delWarnBody: "You are about to delete your Kinship account, which provides access to Kinship services including friends, subscriptions, likes, comments, messages, and profile. You will no longer be able to use them, and all data in your account will be lost.<br><br>You can download all your personal data before proceeding.",
+                delWarnBody: "You are about to permanently delete your <strong>Kinship</strong> profile and cloud data. This action cannot be undone.",
                 chkDownloaded: "I have downloaded my account data",
-                chkConfirm: "I confirm permanent account deletion",
-                downloadDataBtn: "Download Data",
-                delVerifyTitle: "Account Verification",
-                delVerifyBody: (email) => `Select your account (<span style="font-weight: bold; color: var(--text);">${email}</span>) to confirm deletion.`,
+                chkConfirm: "I understand this action cannot be undone",
+                downloadDataBtn: "Download Data (JSON)",
+                delVerifyTitle: "Verify Account",
+                delVerifyBody: (email) => `Please sign in with <strong>${email}</strong> to confirm account deletion.`,
                 confirmDelBtn: "Confirm Deletion",
-                wrongAccErr: (selected, expected) => `You selected a different account (${selected}). Select: ${expected}`,
-                verifyFailErr: "Verification failed. Please try again.",
-                delFinalTitle: "Are you absolutely sure?",
+                wrongAccErr: (selected, current) => `Selected account (${selected}) does not match current account (${current}).`,
+                verifyFailErr: "Account verification failed.",
+                delFinalTitle: "Permanently delete account?",
                 deleteBtn: "Delete",
-                delErrAlert: (msg) => `Error deleting account: ${msg}`,
-                loadErrAlert: (msg) => `Error loading profile: ${msg}`,
+                delErrAlert: (msg) => `Failed to delete account: ${msg}`,
+                loadErrAlert: (msg) => `Failed to load profile: ${msg}`,
                 userFallback: "User"
             },
             ru: {
                 lang: "ru",
                 loading: "Проверяем регион и профиль...",
-                synced: "Синхронизировано с облаком ✓",
+                loadingSub: "Это может занять некоторое время",
+                synced: "Синхронизировано с облаком Kinship",
                 setPassBtn: "Установить пароль",
                 logoutBtn: "Выйти",
                 delAccBtn: "Удалить аккаунт",
                 setPassTitle: "Установка пароля",
-                setPassSub: "Защитите аккаунт надёжным паролем",
+                setPassSub: "Добавьте дополнительную защиту аккаунту",
                 newPassLabel: "Новый пароль",
-                newPassPh: "Введите пароль",
-                newPassConfirmLabel: "Повторите пароль",
+                newPassPh: "Не менее 6 символов",
+                newPassConfirmLabel: "Подтвердите пароль",
                 newPassConfirmPh: "Повторите пароль",
                 savePassBtn: "Сохранить пароль",
                 cancel: "Отмена",
                 passMinErr: "Пароль должен содержать минимум 6 символов.",
                 passMismatchErr: "Пароли не совпадают.",
-                passSetAlert: "Пароль успешно установлен!",
+                passSetAlert: "Пароль установлен.",
                 errPrefix: "Ошибка: ",
                 delWarnTitle: "Удаление аккаунта",
-                delWarnBody: "Вы собираетесь удалить свой аккаунт в Kinship, который обеспечивает доступ к различным сервисам Kinship, включая друзей, подписки, лайки, комментарии, сообщения и профиль. Вы больше не сможете пользоваться ими, а все данные в вашем аккаунте будут потеряны.<br><br>Вы можете скачать все свои личные данные перед продолжением.",
+                delWarnBody: "Вы собираетесь безвозвратно удалить свой профиль <strong>Kinship</strong> и данные в облаке. Это действие нельзя отменить.",
                 chkDownloaded: "Я скачал данные своего аккаунта",
-                chkConfirm: "Я подтверждаю безвозвратное удаление аккаунта",
-                downloadDataBtn: "Скачать данные",
+                chkConfirm: "Я понимаю, что это действие необратимо",
+                downloadDataBtn: "Скачать данные (JSON)",
                 delVerifyTitle: "Подтверждение аккаунта",
-                delVerifyBody: (email) => `Выберите свой аккаунт (<span style="font-weight: bold; color: var(--text);">${email}</span>), чтобы подтвердить удаление.`,
+                delVerifyBody: (email) => `Войдите через аккаунт <strong>${email}</strong>, чтобы подтвердить удаление.`,
                 confirmDelBtn: "Подтвердить удаление",
-                wrongAccErr: (selected, expected) => `Вы выбрали другой аккаунт (${selected}). Выберите: ${expected}`,
-                verifyFailErr: "Не удалось выполнить проверку. Попробуйте ещё раз.",
-                delFinalTitle: "Вы абсолютно уверены?",
+                wrongAccErr: (selected, current) => `Выбранный аккаунт (${selected}) не совпадает с текущим (${current}).`,
+                verifyFailErr: "Не удалось подтвердить аккаунт.",
+                delFinalTitle: "Удалить аккаунт навсегда?",
                 deleteBtn: "Удалить",
-                delErrAlert: (msg) => `Ошибка удаления аккаунта: ${msg}`,
-                loadErrAlert: (msg) => `Ошибка загрузки профиля: ${msg}`,
+                delErrAlert: (msg) => `Не удалось удалить аккаунт: ${msg}`,
+                loadErrAlert: (msg) => `Не удалось загрузить профиль: ${msg}`,
                 userFallback: "Пользователь"
             },
             de: {
                 lang: "de",
                 loading: "Region und Profil werden geprüft...",
-                synced: "Mit der Cloud synchronisiert ✓",
+                loadingSub: "Das kann eine Weile dauern",
+                synced: "Mit der Kinship-Cloud synchronisiert",
                 setPassBtn: "Passwort festlegen",
                 logoutBtn: "Abmelden",
                 delAccBtn: "Konto löschen",
                 setPassTitle: "Passwort festlegen",
-                setPassSub: "Schütze dein Konto mit einem sicheren Passwort",
+                setPassSub: "Schütze dein Konto zusätzlich",
                 newPassLabel: "Neues Passwort",
-                newPassPh: "Passwort eingeben",
-                newPassConfirmLabel: "Passwort wiederholen",
+                newPassPh: "Mindestens 6 Zeichen",
+                newPassConfirmLabel: "Passwort bestätigen",
                 newPassConfirmPh: "Passwort wiederholen",
                 savePassBtn: "Passwort speichern",
                 cancel: "Abbrechen",
                 passMinErr: "Das Passwort muss mindestens 6 Zeichen lang sein.",
                 passMismatchErr: "Die Passwörter stimmen nicht überein.",
-                passSetAlert: "Passwort erfolgreich festgelegt!",
+                passSetAlert: "Passwort wurde festgelegt.",
                 errPrefix: "Fehler: ",
                 delWarnTitle: "Konto löschen",
-                delWarnBody: "Du bist dabei, dein Kinship-Konto zu löschen, das Zugriff auf Kinship-Dienste wie Freunde, Abonnements, Likes, Kommentare, Nachrichten und Profil bietet. Du kannst diese Dienste nicht mehr nutzen und alle Kontodaten gehen verloren.<br><br>Du kannst deine persönlichen Daten vor dem Fortfahren herunterladen.",
+                delWarnBody: "Du bist dabei, dein <strong>Kinship</strong>-Profil und deine Cloud-Daten dauerhaft zu löschen. Dies kann nicht rückgängig gemacht werden.",
                 chkDownloaded: "Ich habe meine Kontodaten heruntergeladen",
-                chkConfirm: "Ich bestätige die endgültige Löschung des Kontos",
-                downloadDataBtn: "Daten herunterladen",
-                delVerifyTitle: "Kontobestätigung",
-                delVerifyBody: (email) => `Wähle dein Konto (<span style="font-weight: bold; color: var(--text);">${email}</span>), um die Löschung zu bestätigen.`,
+                chkConfirm: "Ich verstehe, dass dies endgültig ist",
+                downloadDataBtn: "Daten herunterladen (JSON)",
+                delVerifyTitle: "Konto bestätigen",
+                delVerifyBody: (email) => `Bitte melde dich mit <strong>${email}</strong> an, um das Löschen zu bestätigen.`,
                 confirmDelBtn: "Löschung bestätigen",
-                wrongAccErr: (selected, expected) => `Du hast ein anderes Konto ausgewählt (${selected}). Wähle: ${expected}`,
-                verifyFailErr: "Überprüfung fehlgeschlagen. Bitte versuche es erneut.",
-                delFinalTitle: "Bist du absolut sicher?",
+                wrongAccErr: (selected, current) => `Das ausgewählte Konto (${selected}) stimmt nicht mit dem aktuellen Konto (${current}) überein.`,
+                verifyFailErr: "Kontobestätigung fehlgeschlagen.",
+                delFinalTitle: "Konto dauerhaft löschen?",
                 deleteBtn: "Löschen",
-                delErrAlert: (msg) => `Fehler beim Löschen des Kontos: ${msg}`,
-                loadErrAlert: (msg) => `Fehler beim Laden des Profils: ${msg}`,
+                delErrAlert: (msg) => `Konto konnte nicht gelöscht werden: ${msg}`,
+                                loadErrAlert: (msg) => `Profil konnte nicht geladen werden: ${msg}`,
                 userFallback: "Nutzer"
             }
         };
 
-                function detectAppLang() {
+        function detectAppLang() {
             const list = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"])
                 .map(l => String(l).toLowerCase());
             if (list.some(l => l === "ru" || l.startsWith("ru-"))) return "ru";
@@ -398,6 +493,7 @@
         document.documentElement.lang = tProf.lang;
 
         document.getElementById("prof-loading-text").textContent = tProf.loading;
+        document.getElementById("prof-loading-sub").textContent = tProf.loadingSub;
         document.getElementById("prof-synced-text").textContent = tProf.synced;
         document.getElementById("set-password-btn").textContent = tProf.setPassBtn;
         document.getElementById("logout-btn").textContent = tProf.logoutBtn;
@@ -454,14 +550,31 @@
 
         const OWNER_EMAILS = ["danya@gmail.com", "kinshipbot@gmail.com"];
         const ALLOWED_COUNTRIES = ['US', 'RU'];
+        const REGION_CACHE_KEY = 'kinship_region_ok';
+        const REGION_CACHE_TTL = 10 * 60 * 1000;
 
         async function verifyRegionOrKick() {
             try {
-                const response = await fetch('https://ipwho.is/');
+                const cachedRaw = sessionStorage.getItem(REGION_CACHE_KEY);
+                if (cachedRaw) {
+                    const cached = JSON.parse(cachedRaw);
+                    if (cached && cached.ok && (Date.now() - cached.ts) < REGION_CACHE_TTL) {
+                        return true;
+                    }
+                }
+            } catch (_) {}
+
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 3000);
+
+            try {
+                const response = await fetch('https://ipwho.is/', { signal: controller.signal });
+                clearTimeout(timer);
                 const data = await response.json();
                 const countryCode = (data.country_code || '').toUpperCase();
 
                 if (!data.success || !ALLOWED_COUNTRIES.includes(countryCode)) {
+                    sessionStorage.removeItem(REGION_CACHE_KEY);
                     localStorage.removeItem('kinship_unlocked');
                     try {
                         await signOut(auth);
@@ -469,13 +582,18 @@
                     window.location.replace("unavailable.html");
                     return false;
                 }
+
+                try {
+                    sessionStorage.setItem(REGION_CACHE_KEY, JSON.stringify({ ok: true, ts: Date.now() }));
+                } catch (_) {}
+
                 return true;
             } catch (err) {
+                clearTimeout(timer);
                 window.location.replace("unavailable.html");
                 return false;
             }
         }
-        
 
         let currentUser = null;
         let savedUserData = null;
@@ -639,73 +757,74 @@
             }
         });
 
-        verifyRegionOrKick().then(isAllowed => {
+        const regionCheckPromise = verifyRegionOrKick();
+
+        onAuthStateChanged(auth, async (user) => {
+            const isAllowed = await regionCheckPromise;
             if (!isAllowed) return;
 
-            onAuthStateChanged(auth, async (user) => {
-                if (!user) {
-                    window.location.href = "index.html";
-                    return;
-                }
+            if (!user) {
+                window.location.href = "index.html";
+                return;
+            }
 
-                if (localStorage.getItem('kinship_unlocked') !== user.uid) {
+            if (localStorage.getItem('kinship_unlocked') !== user.uid) {
+                window.location.href = "auth.html";
+                return;
+            }
+
+            currentUser = user;
+
+            try {
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (!userSnap.exists()) {
                     window.location.href = "auth.html";
                     return;
                 }
 
-                currentUser = user;
+                savedUserData = userSnap.data();
+                const nickname = savedUserData.nickname || user.displayName || tProf.userFallback;
+                const role = savedUserData.role || (OWNER_EMAILS.includes(user.email) ? 'owner' : 'user');
 
-                try {
-                    const userRef = doc(db, "users", user.uid);
-                    const userSnap = await getDoc(userRef);
+                document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
+                document.getElementById('profile-nickname').textContent = nickname;
+                document.getElementById('user-email').textContent = user.email;
 
-                    if (!userSnap.exists()) {
-                        window.location.href = "auth.html";
-                        return;
-                    }
-
-                    savedUserData = userSnap.data();
-                    const nickname = savedUserData.nickname || user.displayName || tProf.userFallback;
-                    const role = savedUserData.role || (OWNER_EMAILS.includes(user.email) ? 'owner' : 'user');
-
-                    document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/64';
-                    document.getElementById('profile-nickname').textContent = nickname;
-                    document.getElementById('user-email').textContent = user.email;
-
-                    if (!savedUserData.password) {
-                        setPasswordBtn.style.display = 'block';
-                    } else {
-                        setPasswordBtn.style.display = 'none';
-                    }
-
-                    const badgeContainer = document.getElementById('role-badge-container');
-                    badgeContainer.innerHTML = '';
-
-                    if (role === 'owner') {
-                        badgeContainer.innerHTML = `
-                            <div class="premium-diamond-badge">
-                                <span class="diamond-icon"></span>
-                                <span>Owner</span>
-                            </div>
-                        `;
-                    } else if (role === 'premium') {
-                        badgeContainer.innerHTML = `
-                            <div class="premium-diamond-badge">
-                                <span class="diamond-icon"></span>
-                                <span>Premium</span>
-                            </div>
-                        `;
-                    } else if (role === 'admin') {
-                        badgeContainer.innerHTML = `<span style="display:inline-block; background:rgba(59,130,246,0.1); color:#3b82f6; font-size:11px; font-weight:bold; padding:4px 10px; border-radius:8px; margin-bottom:8px;">🛡️ Admin</span>`;
-                    }
-
-                    document.getElementById('loading-screen').classList.add('hidden');
-                    document.getElementById('profile-screen').classList.remove('hidden');
-                } catch (e) {
-                    alert(tProf.loadErrAlert(e.message));
-                    handleLogout();
+                if (!savedUserData.password) {
+                    setPasswordBtn.style.display = 'block';
+                } else {
+                    setPasswordBtn.style.display = 'none';
                 }
-            });
+
+                const badgeContainer = document.getElementById('role-badge-container');
+                badgeContainer.innerHTML = '';
+
+                if (role === 'owner') {
+                    badgeContainer.innerHTML = `
+                        <div class="premium-diamond-badge">
+                            <span class="diamond-icon"></span>
+                            <span>Owner</span>
+                        </div>
+                    `;
+                } else if (role === 'premium') {
+                    badgeContainer.innerHTML = `
+                        <div class="premium-diamond-badge">
+                            <span class="diamond-icon"></span>
+                            <span>Premium</span>
+                        </div>
+                    `;
+                } else if (role === 'admin') {
+                    badgeContainer.innerHTML = `<span style="display:inline-block; background:rgba(59,130,246,0.1); color:#3b82f6; font-size:11px; font-weight:bold; padding:4px 10px; border-radius:8px; margin-bottom:8px;">🛡️ Admin</span>`;
+                }
+
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('profile-screen').classList.remove('hidden');
+            } catch (e) {
+                alert(tProf.loadErrAlert(e.message));
+                handleLogout();
+            }
         });
     </script>
 </body>
