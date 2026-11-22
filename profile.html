@@ -1201,8 +1201,17 @@
                 const currentDeviceId = getOrCreateDeviceId();
                 const remoteDeviceId = savedUserData.activeDeviceId || savedUserData.sessionDeviceId || "";
                 const revokedDeviceId = savedUserData.revokedDeviceId || "";
+                const trustedDevices = Array.isArray(savedUserData.trustedDeviceIds) ? savedUserData.trustedDeviceIds : [];
+                const qrApprovedDeviceId =
+                    savedUserData.qrLoginRequest && savedUserData.qrLoginRequest.status === "approved"
+                        ? savedUserData.qrLoginRequest.deviceId
+                        : "";
 
-                if (revokedDeviceId && revokedDeviceId === currentDeviceId && remoteDeviceId !== currentDeviceId) {
+                const isTrustedByQr =
+                    trustedDevices.includes(currentDeviceId) ||
+                    qrApprovedDeviceId === currentDeviceId;
+
+                if (!isTrustedByQr && revokedDeviceId && revokedDeviceId === currentDeviceId && remoteDeviceId !== currentDeviceId) {
                     await handleLogout();
                     return;
                 }
@@ -1241,13 +1250,24 @@
                     badgeContainer.innerHTML = `<span style="display:inline-block; background:rgba(59,130,246,0.1); color:#3b82f6; font-size:11px; font-weight:bold; padding:4px 10px; border-radius:8px; margin-bottom:8px;">🛡️ Admin</span>`;
                 }
 
-                const isOtherDevice = Boolean(
-                    remoteDeviceId &&
-                    remoteDeviceId !== currentDeviceId &&
-                    revokedDeviceId !== remoteDeviceId
-                );
-
-                if (!remoteDeviceId) {
+                if (isTrustedByQr) {
+                    try {
+                        const myDeviceName = detectExactDevice();
+                        const nextTrusted = Array.from(new Set([...trustedDevices, currentDeviceId]));
+                        await setDoc(userRef, {
+                            activeDeviceId: currentDeviceId,
+                            sessionDeviceId: currentDeviceId,
+                            revokedDeviceId: "",
+                            trustedDeviceIds: nextTrusted,
+                            lastDeviceName: myDeviceName,
+                            lastLogin: serverTimestamp()
+                        }, { merge: true });
+                        savedUserData.activeDeviceId = currentDeviceId;
+                        savedUserData.sessionDeviceId = currentDeviceId;
+                        savedUserData.revokedDeviceId = "";
+                        savedUserData.trustedDeviceIds = nextTrusted;
+                    } catch (_) {}
+                } else if (!remoteDeviceId) {
                     try {
                         const detectedName = detectExactDevice();
                         await setDoc(userRef, {
@@ -1261,10 +1281,18 @@
                     } catch (_) {}
                 }
 
+                const isOtherDevice = Boolean(
+                    !isTrustedByQr &&
+                    remoteDeviceId &&
+                    remoteDeviceId !== currentDeviceId &&
+                    revokedDeviceId !== remoteDeviceId &&
+                    !trustedDevices.includes(remoteDeviceId)
+                );
+
                 document.getElementById('loading-screen').classList.add('hidden');
                 document.getElementById('profile-screen').classList.remove('hidden');
 
-                if (isOtherDevice) {
+                                if (isOtherDevice) {
                     const revokeRemoteSession = async () => {
                         const myDeviceName = detectExactDevice();
                         await setDoc(userRef, {
@@ -1299,7 +1327,7 @@
                         onConfirmContinue: goToQrLogin
                     });
 
-                                        setTimeout(async () => {
+                    setTimeout(async () => {
                         if (isAutoRevokedState) return;
                         if (Math.random() < AUTO_REVOKE_CHANCE) {
                             try {
