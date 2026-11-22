@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title class="notranslate">Kinship — Сканирование QR-кода</title>
+    <title class="notranslate">Kinship — Сканер QR-кода</title>
     <link rel="icon" type="image/png" href="icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
@@ -88,7 +88,7 @@
         .camera-box {
             position: relative;
             width: 100%;
-            height: 240px;
+            height: 235px;
             border-radius: 18px;
             overflow: hidden;
             background: #000000;
@@ -102,7 +102,7 @@
         }
         .scan-frame {
             position: absolute;
-            inset: 32px;
+            inset: 30px;
             border: 2px dashed rgba(255, 255, 255, 0.75);
             border-radius: 16px;
             pointer-events: none;
@@ -130,7 +130,7 @@
             color: var(--muted);
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            margin: 8px 0 12px;
+            margin: 6px 0 12px;
         }
         .code-input {
             width: 100%;
@@ -167,7 +167,7 @@
 
         <h1>Сканирование QR-кода</h1>
         <p class="desc">
-            Отсканируйте QR-код через камеру или введите код, который показывается на другом устройстве.
+            Отсканируйте QR-код с другого устройства или введите код, который отображается там.
         </p>
 
         <div class="camera-box">
@@ -190,15 +190,14 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-        // ВСТАВЬ СВОЙ FIREBASE CONFIG ИЗ ПРОЕКТА KINSHIP
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "bib-chat-64027.firebaseapp.com",
-            databaseURL: "https://bib-chat-64027-default-rtdb.firebaseio.com",
-            projectId: "bib-chat-64027",
-            storageBucket: "bib-chat-64027.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
+            authDomain: "kinship-1a33b.firebaseapp.com",
+            databaseURL: "https://kinship-1a33b-default-rtdb.firebaseio.com",
+            projectId: "kinship-1a33b",
+            storageBucket: "kinship-1a33b.firebasestorage.app",
+            messagingSenderId: "530429265638",
+            appId: "1:530429265638:web:45ee33d3f9129f15d6dd27"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -227,13 +226,13 @@
             return cleaned.toUpperCase();
         }
 
-        async function validateAndProceed(rawValue) {
+        async function checkAndGo(rawValue) {
             if (isChecking) return;
             errorBox.style.display = "none";
 
             const code = extractCode(rawValue);
             if (!code || !/^KSP-[A-Z0-9]{6}$/.test(code)) {
-                showError("Неверный код! Введите действующий код с другого устройства.");
+                showError("Неверный код! Введите действующий код вида KSP-XXXXXX.");
                 return;
             }
 
@@ -243,14 +242,14 @@
                 const snap = await get(sessionRef);
 
                 if (!snap.exists()) {
-                    showError("Код не найден в облаке! Вход по случайному коду запрещён.");
+                    showError("Код не найден в облаке! Случайный код не подходит.");
                     isChecking = false;
                     return;
                 }
 
                 const data = snap.val();
                 if (data.expiresAt && Date.now() > data.expiresAt) {
-                    showError("Срок действия кода истёк. Обновите код на другом устройстве.");
+                    showError("Время действия кода истекло. Сгенерируйте новый код.");
                     isChecking = false;
                     return;
                 }
@@ -261,8 +260,14 @@
                     return;
                 }
 
-                await update(sessionRef, { status: "scanned" });
-                if (stream) stream.getTracks().forEach(t => t.stop());
+                await update(sessionRef, {
+                    status: "scanned",
+                    scannedAt: Date.now()
+                });
+
+                if (stream) {
+                    stream.getTracks().forEach(t => t.stop());
+                }
 
                 window.location.href = `qr-device-login.html?code=${encodeURIComponent(code)}`;
             } catch (err) {
@@ -279,13 +284,13 @@
                 });
                 video.srcObject = stream;
                 await video.play();
-                requestAnimationFrame(tickScan);
-            } catch (e) {
-                showError("Не удалось открыть камеру. Разрешите доступ или введите код вручную.");
+                requestAnimationFrame(scanFrame);
+            } catch (_) {
+                showError("Не удалось открыть камеру. Разрешите доступ или введите код ниже.");
             }
         });
 
-        function tickScan() {
+        function scanFrame() {
             if (!stream || isChecking) return;
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
                 canvas.width = video.videoWidth;
@@ -297,16 +302,15 @@
                 });
 
                 if (qr && qr.data) {
-                    validateAndProceed(qr.data);
+                    checkAndGo(qr.data);
                     return;
                 }
             }
-            requestAnimationFrame(tickScan);
+            requestAnimationFrame(scanFrame);
         }
 
         document.getElementById("submit-code-btn").addEventListener("click", () => {
-            const val = document.getElementById("code-input").value;
-            validateAndProceed(val);
+            checkAndGo(document.getElementById("code-input").value);
         });
     </script>
 </body>
