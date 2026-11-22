@@ -24,6 +24,8 @@
             --secondary-btn-text: #111827;
             --secondary-btn-hover: #e5e7eb;
             --badge-bg: #f3f4f6;
+            --error-bg: #fee2e2;
+            --error-text: #b91c1c;
         }
         @media (prefers-color-scheme: dark) {
             :root {
@@ -40,6 +42,8 @@
                 --secondary-btn-text: #f3f4f6;
                 --secondary-btn-hover: #374151;
                 --badge-bg: #1f2937;
+                --error-bg: #3f1515;
+                --error-text: #fca5a5;
             }
         }
         * {
@@ -126,6 +130,7 @@
             color: var(--btn-text);
         }
         .primary-btn:hover { background-color: var(--btn-hover); }
+        .primary-btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .secondary-btn {
             background-color: var(--secondary-btn-bg);
             color: var(--secondary-btn-text);
@@ -138,6 +143,17 @@
             font-size: 12px;
             color: var(--subtle);
             line-height: 1.45;
+        }
+        .auth-error {
+            display: none;
+            margin-top: 14px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: var(--error-bg);
+            color: var(--error-text);
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.4;
         }
         footer {
             font-size: 11px;
@@ -156,7 +172,7 @@
         </p>
 
         <div class="btn-group">
-            <a id="btn-google-login" href="auth.html?provider=google" class="primary-btn">
+            <button id="btn-google-login" type="button" class="primary-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
                     <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/>
                     <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/>
@@ -164,7 +180,7 @@
                     <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
                 </svg>
                 <span id="google-btn-text">Войти с Google</span>
-            </a>
+            </button>
 
             <a id="btn-qr-login" href="qr-scan.html" class="secondary-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -180,6 +196,8 @@
         <p id="qr-hint-text" class="qr-hint">
             Отсканируйте QR-код с другого устройства через камеру или введите секретный код входа.
         </p>
+
+        <div id="auth-error" class="auth-error"></div>
     </div>
 
     <footer>
@@ -229,6 +247,87 @@
         document.getElementById("google-btn-text").textContent = t.googleBtn;
         document.getElementById("qr-btn-text").textContent = t.qrBtn;
         document.getElementById("qr-hint-text").textContent = t.qrHint;
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import {
+            getAuth,
+            GoogleAuthProvider,
+            signInWithPopup,
+            signInWithRedirect,
+            getRedirectResult
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
+            authDomain: "kinship-1a33b.firebaseapp.com",
+            projectId: "kinship-1a33b",
+            storageBucket: "kinship-1a33b.firebasestorage.app",
+            messagingSenderId: "530429265638",
+            appId: "1:530429265638:web:45ee33d3f9129f15d6dd27"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        const googleBtn = document.getElementById("btn-google-login");
+        const errorBox = document.getElementById("auth-error");
+
+        function showAuthError(message) {
+            errorBox.textContent = message;
+            errorBox.style.display = "block";
+        }
+
+        function saveUserAndGo(user) {
+            if (!user) return;
+            const displayName = user.displayName || "Пользователь Kinship";
+            const emailPrefix = user.email ? user.email.split("@")[0] : "kinship_user";
+            localStorage.setItem("kinship_uid", user.uid);
+            localStorage.setItem("kinship_user_name", displayName);
+            localStorage.setItem("kinship_user_handle", "@" + emailPrefix);
+            window.location.href = "profile.html";
+        }
+
+        // Проверяем результат редиректа (если использовался signInWithRedirect)
+        getRedirectResult(auth)
+            .then((result) => {
+                if (result && result.user) {
+                    saveUserAndGo(result.user);
+                }
+            })
+            .catch((err) => {
+                if (err && err.code && err.code !== "auth/no-auth-event") {
+                    showAuthError(`Ошибка входа (${err.code}): ${err.message}`);
+                }
+            });
+
+        googleBtn.addEventListener("click", async () => {
+            errorBox.style.display = "none";
+            googleBtn.disabled = true;
+
+            try {
+                const result = await signInWithPopup(auth, provider);
+                saveUserAndGo(result.user);
+            } catch (err) {
+                if (
+                    err.code === "auth/popup-blocked" ||
+                    err.code === "auth/operation-not-supported-in-this-environment" ||
+                    err.code === "auth/cancelled-popup-request"
+                ) {
+                    try {
+                        await signInWithRedirect(auth, provider);
+                        return;
+                    } catch (redirectErr) {
+                        showAuthError(`Ошибка редиректа (${redirectErr.code}): ${redirectErr.message}`);
+                    }
+                } else {
+                    showAuthError(`Ошибка входа с Google (${err.code || "unknown"}): ${err.message}`);
+                }
+                googleBtn.disabled = false;
+            }
+        });
     </script>
 </body>
 </html>
