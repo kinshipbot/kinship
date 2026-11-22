@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title class="notranslate">Kinship — Подтверждение входа</title>
+    <title class="notranslate">Kinship — Ожидание подтверждения</title>
     <link rel="icon" type="image/png" href="icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -14,10 +14,9 @@
             --text: #030712;
             --muted: #4b5563;
             --secondary-bg: #f3f4f6;
-            --btn-bg: #030712;
-            --btn-text: #ffffff;
-            --danger-bg: #fee2e2;
-            --danger-text: #b91c1c;
+            --warn: #f59e0b;
+            --ok: #10b981;
+            --err: #ef4444;
         }
         @media (prefers-color-scheme: dark) {
             :root {
@@ -27,10 +26,6 @@
                 --text: #ffffff;
                 --muted: #9ca3af;
                 --secondary-bg: #1f2937;
-                --btn-bg: #ffffff;
-                --btn-text: #000000;
-                --danger-bg: #3f1515;
-                --danger-text: #fca5a5;
             }
         }
         * {
@@ -58,15 +53,17 @@
             text-align: center;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
         }
-        .shield-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            background: var(--secondary-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
+        .loader {
+            width: 42px;
+            height: 42px;
+            border: 4px solid var(--secondary-bg);
+            border-top-color: var(--text);
+            border-radius: 50%;
+            margin: 0 auto 18px;
+            animation: spin 0.85s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         h1 {
             font-size: 21px;
@@ -79,90 +76,67 @@
             line-height: 1.5;
             margin-bottom: 18px;
         }
-        .device-info {
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             background: var(--secondary-bg);
-            border-radius: 16px;
-            padding: 14px;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .device-row {
-            display: flex;
-            justify-content: space-between;
+            padding: 10px 14px;
+            border-radius: 12px;
             font-size: 13px;
-            padding: 5px 0;
+            font-weight: 700;
+            margin-bottom: 16px;
         }
-        .device-row span:first-child {
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--warn);
+        }
+        .dot.ok { background: var(--ok); }
+        .dot.err { background: var(--err); }
+        .back-link {
+            display: inline-block;
+            text-decoration: none;
             color: var(--muted);
-        }
-        .device-row span:last-child {
+            background: var(--secondary-bg);
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 13px;
             font-weight: 700;
-        }
-        .btn {
-            width: 100%;
-            border: none;
-            border-radius: 13px;
-            padding: 14px 16px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-        .btn-approve {
-            background: var(--btn-bg);
-            color: var(--btn-text);
-        }
-        .btn-reject {
-            background: var(--danger-bg);
-            color: var(--danger-text);
         }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="shield-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-        </div>
-
-        <h1>Подтверждение входа</h1>
-        <p class="desc">
-            Ожидание подтверждения входа с другого устройства. Подтвердите, если вы входите в аккаунт Kinship.
+        <div id="spinner" class="loader"></div>
+        <h1 id="title">Ожидание подтверждения</h1>
+        <p id="desc" class="desc">
+            Подтвердите вход на другом устройстве. Как только вход будет принят, вы автоматически перейдёте в профиль.
         </p>
 
-        <div class="device-info">
-            <div class="device-row">
-                <span>Устройство:</span>
-                <span id="dev-name">Проверка...</span>
-            </div>
-            <div class="device-row">
-                <span>Код сессии:</span>
-                <span id="dev-code">---</span>
-            </div>
-            <div class="device-row">
-                <span>Статус:</span>
-                <span id="dev-status">Ожидает подтверждения</span>
-            </div>
+        <div class="status-pill">
+            <span id="dot" class="dot"></span>
+            <span id="status-text">Ожидание решения с другого устройства...</span>
         </div>
 
-        <button id="approve-btn" class="btn btn-approve" type="button">Подтвердить вход</button>
-        <button id="reject-btn" class="btn btn-reject" type="button">Отклонить вход</button>
+        <div>
+            <a href="qr-scan.html" class="back-link">← Вернуться к сканеру</a>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, get, update, onValue, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-        // ВСТАВЬ СВОЙ FIREBASE CONFIG ИЗ ПРОЕКТА KINSHIP
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "bib-chat-64027.firebaseapp.com",
-            databaseURL: "https://bib-chat-64027-default-rtdb.firebaseio.com",
-            projectId: "bib-chat-64027",
-            storageBucket: "bib-chat-64027.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
+            authDomain: "kinship-1a33b.firebaseapp.com",
+            databaseURL: "https://kinship-1a33b-default-rtdb.firebaseio.com",
+            projectId: "kinship-1a33b",
+            storageBucket: "kinship-1a33b.firebasestorage.app",
+            messagingSenderId: "530429265638",
+            appId: "1:530429265638:web:45ee33d3f9129f15d6dd27"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -171,94 +145,55 @@
         const params = new URLSearchParams(window.location.search);
         const code = (params.get("code") || "").toUpperCase();
 
-        const devNameEl = document.getElementById("dev-name");
-        const devCodeEl = document.getElementById("dev-code");
-        const devStatusEl = document.getElementById("dev-status");
-        const approveBtn = document.getElementById("approve-btn");
-        const rejectBtn = document.getElementById("reject-btn");
+        const dot = document.getElementById("dot");
+        const statusText = document.getElementById("status-text");
+        const descEl = document.getElementById("desc");
+        const spinner = document.getElementById("spinner");
 
-        let sessionData = null;
-
-        async function initVerification() {
+        async function watchSession() {
             if (!code) {
-                alert("Отсутствует код подтверждения!");
                 window.location.href = "qr-scan.html";
                 return;
             }
 
             const sessionRef = ref(db, "qr_sessions/" + code);
-            const snap = await get(sessionRef);
+            const initialSnap = await get(sessionRef);
 
-            if (!snap.exists()) {
-                alert("Код не найден в базе! Вход запрещён.");
-                window.location.href = "qr-scan.html";
+            if (!initialSnap.exists()) {
+                dot.className = "dot err";
+                spinner.style.display = "none";
+                statusText.textContent = "Сессия не найдена в базе";
+                descEl.textContent = "Нельзя войти по несуществующему коду.";
                 return;
             }
 
-            sessionData = snap.val();
-            if (sessionData.expiresAt && Date.now() > sessionData.expiresAt) {
-                alert("Срок действия кода истёк!");
-                window.location.href = "qr-scan.html";
-                return;
-            }
+            onValue(sessionRef, (snap) => {
+                const data = snap.val();
+                if (!data) return;
 
-            devNameEl.textContent = sessionData.deviceName || "Другое устройство";
-            devCodeEl.textContent = code;
+                if (data.status === "approved") {
+                    dot.className = "dot ok";
+                    spinner.style.display = "none";
+                    statusText.textContent = "Вход подтверждён!";
+                    descEl.textContent = "Переход в профиль...";
 
-            // Слушаем статус сессии в реальном времени
-            onValue(sessionRef, (liveSnap) => {
-                const live = liveSnap.val();
-                if (!live) return;
-
-                if (live.status === "approved") {
-                    devStatusEl.textContent = "Подтверждено! Вход в профиль...";
-                    if (live.uid) localStorage.setItem("kinship_uid", live.uid);
-                    if (live.userName) localStorage.setItem("kinship_user_name", live.userName);
-                    if (live.userHandle) localStorage.setItem("kinship_user_handle", live.userHandle);
+                    if (data.uid) localStorage.setItem("kinship_uid", data.uid);
+                    if (data.userName) localStorage.setItem("kinship_user_name", data.userName);
+                    if (data.userHandle) localStorage.setItem("kinship_user_handle", data.userHandle);
 
                     setTimeout(() => {
                         window.location.href = "profile.html";
                     }, 600);
-                } else if (live.status === "rejected") {
-                    devStatusEl.textContent = "Отклонено";
-                    setTimeout(() => {
-                        window.location.href = "qr-scan.html";
-                    }, 800);
+                } else if (data.status === "rejected") {
+                    dot.className = "dot err";
+                    spinner.style.display = "none";
+                    statusText.textContent = "Вход отклонён";
+                    descEl.textContent = "Подтверждение на другом устройстве было отклонено.";
                 }
             });
         }
 
-        approveBtn.addEventListener("click", async () => {
-            if (!sessionData) return;
-            approveBtn.disabled = true;
-
-            const uid = localStorage.getItem("kinship_uid") || "default_user";
-            const userName = localStorage.getItem("kinship_user_name") || "Пользователь Kinship";
-            const userHandle = localStorage.getItem("kinship_user_handle") || "@kinship_user";
-
-            await update(ref(db, "qr_sessions/" + code), {
-                status: "approved",
-                uid: uid,
-                userName: userName,
-                userHandle: userHandle,
-                approvedAt: Date.now()
-            });
-
-            await push(ref(db, `users/${uid}/devices`), {
-                deviceName: sessionData.deviceName || "Другое устройство",
-                code: code,
-                method: "QR / Код",
-                loggedInAt: new Date().toLocaleString("ru-RU")
-            });
-        });
-
-        rejectBtn.addEventListener("click", async () => {
-            await update(ref(db, "qr_sessions/" + code), {
-                status: "rejected"
-            });
-        });
-
-        initVerification();
+        watchSession();
     </script>
 </body>
 </html>
