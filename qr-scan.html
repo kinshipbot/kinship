@@ -121,6 +121,10 @@
             background: var(--btn-bg);
             color: var(--btn-text);
         }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
         .btn-secondary {
             background: var(--secondary-bg);
             color: var(--text);
@@ -146,6 +150,16 @@
             text-transform: uppercase;
             margin-bottom: 10px;
         }
+        .status-msg {
+            display: none;
+            background: var(--secondary-bg);
+            color: var(--text);
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
         .error-box {
             display: none;
             background: var(--error-bg);
@@ -155,6 +169,7 @@
             font-size: 12px;
             font-weight: 700;
             margin-top: 6px;
+            word-break: break-word;
         }
     </style>
 </head>
@@ -180,7 +195,8 @@
 
         <div class="divider">или введите код с другого устройства</div>
 
-        <input id="code-input" class="code-input" type="text" placeholder="KSP-XXXXXX" maxlength="12">
+        <input id="code-input" class="code-input" type="text" placeholder="KSP-XXXXXX" maxlength="200">
+        <div id="status-msg" class="status-msg"></div>
         <button id="submit-code-btn" class="btn btn-primary" type="button">Продолжить</button>
 
         <div id="error-box" class="error-box"></div>
@@ -190,6 +206,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+        // Убедись, что databaseURL совпадает с URL твоей Realtime Database в Firebase Console
         const firebaseConfig = {
             apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
             authDomain: "kinship-1a33b.firebaseapp.com",
@@ -207,22 +224,43 @@
         const canvas = document.getElementById("scan-canvas");
         const ctx = canvas.getContext("2d", { willReadFrequently: true });
         const errorBox = document.getElementById("error-box");
+        const statusMsg = document.getElementById("status-msg");
+        const submitBtn = document.getElementById("submit-code-btn");
+        const codeInput = document.getElementById("code-input");
+
         let stream = null;
         let isChecking = false;
 
         function showError(msg) {
+            statusMsg.style.display = "none";
             errorBox.textContent = msg;
             errorBox.style.display = "block";
         }
 
+        function showStatus(msg) {
+            errorBox.style.display = "none";
+            statusMsg.textContent = msg;
+            statusMsg.style.display = "block";
+        }
+
         function extractCode(rawText) {
-            const cleaned = rawText.trim();
+            const cleaned = String(rawText || "").trim();
+            if (!cleaned) return "";
+
             if (cleaned.includes("code=")) {
                 try {
                     const url = new URL(cleaned);
-                    return (url.searchParams.get("code") || "").toUpperCase();
-                } catch (_) {}
+                    const fromUrl = url.searchParams.get("code");
+                    if (fromUrl) return fromUrl.trim().toUpperCase();
+                } catch (_) {
+                    const match = cleaned.match(/code=([A-Za-z0-9-]+)/i);
+                    if (match) return match[1].trim().toUpperCase();
+                }
             }
+
+            const codeMatch = cleaned.toUpperCase().match(/KSP-[A-Z0-9]{6}/);
+            if (codeMatch) return codeMatch[0];
+
             return cleaned.toUpperCase();
         }
 
@@ -232,34 +270,41 @@
 
             const code = extractCode(rawValue);
             if (!code || !/^KSP-[A-Z0-9]{6}$/.test(code)) {
-                showError("Неверный код! Введите действующий код вида KSP-XXXXXX.");
+                showError("Неверный формат кода. Введите действующий код вида KSP-XXXXXX.");
                 return;
             }
 
             isChecking = true;
+            submitBtn.disabled = true;
+            showStatus(`Проверяю код ${code} в базе...`);
+
             try {
                 const sessionRef = ref(db, "qr_sessions/" + code);
                 const snap = await get(sessionRef);
 
                 if (!snap.exists()) {
-                    showError("Код не найден в облаке! Случайный код не подходит.");
+                    showError(`Код ${code} не найден в базе. Убедитесь, что он создан в qr-login.html и databaseURL верный.`);
                     isChecking = false;
+                    submitBtn.disabled = false;
                     return;
                 }
 
                 const data = snap.val();
                 if (data.expiresAt && Date.now() > data.expiresAt) {
-                    showError("Время действия кода истекло. Сгенерируйте новый код.");
+                    showError("Срок действия кода истёк. Сгенерируйте новый код.");
                     isChecking = false;
+                    submitBtn.disabled = false;
                     return;
                 }
 
                 if (data.status === "approved" || data.status === "rejected") {
                     showError("Этот код уже был использован.");
                     isChecking = false;
+                    submitBtn.disabled = false;
                     return;
                 }
 
+                showStatus("Код подтверждён, перехожу на страницу подтверждения...");
                 await update(sessionRef, {
                     status: "scanned",
                     scannedAt: Date.now()
@@ -271,8 +316,9 @@
 
                 window.location.href = `qr-device-login.html?code=${encodeURIComponent(code)}`;
             } catch (err) {
-                showError("Ошибка проверки в базе данных: " + err.message);
+                showError("Ошибка при обращении к базе: " + (err.message || err));
                 isChecking = false;
+                submitBtn.disabled = false;
             }
         }
 
@@ -284,9 +330,10 @@
                 });
                 video.srcObject = stream;
                 await video.play();
+                showStatus("Камера включена, наведите на QR-код...");
                 requestAnimationFrame(scanFrame);
             } catch (_) {
-                showError("Не удалось открыть камеру. Разрешите доступ или введите код ниже.");
+                showError("Не удалось открыть камеру. Разрешите доступ или введите код вручную ниже.");
             }
         });
 
@@ -309,9 +356,16 @@
             requestAnimationFrame(scanFrame);
         }
 
-        document.getElementById("submit-code-btn").addEventListener("click", () => {
-            checkAndGo(document.getElementById("code-input").value);
+        submitBtn.addEventListener("click", () => {
+            checkAndGo(codeInput.value);
+        });
+
+        codeInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                checkAndGo(codeInput.value);
+            }
         });
     </script>
 </body>
 </html>
+    
