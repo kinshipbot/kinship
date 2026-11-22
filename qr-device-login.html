@@ -418,10 +418,16 @@
                         document.getElementById("dev-qr-spinner").classList.add("hidden");
                         setStatus(tDev.approvedMsg, false);
 
+                        const curSnap = await getDoc(userRef);
+                        const curData = curSnap.exists() ? curSnap.data() : {};
+                        const curTrusted = Array.isArray(curData.trustedDeviceIds) ? curData.trustedDeviceIds : [];
+                        const nextTrusted = Array.from(new Set([...curTrusted, deviceId]));
+
                         await setDoc(userRef, {
                             activeDeviceId: deviceId,
                             sessionDeviceId: deviceId,
                             revokedDeviceId: "",
+                            trustedDeviceIds: nextTrusted,
                             lastDeviceName: deviceName,
                             lastLogin: serverTimestamp()
                         }, { merge: true });
@@ -429,7 +435,7 @@
                         localStorage.setItem("kinship_unlocked", qrUid);
                         setTimeout(() => {
                             window.location.href = "profile.html";
-                        }, 600);
+                        }, 400);
                     } else if (req.status === "declined") {
                         completed = true;
                         document.getElementById("dev-qr-spinner").classList.add("hidden");
@@ -443,5 +449,4 @@
         })();
     </script>
 </body>
-  </html>
-  
+</html>
