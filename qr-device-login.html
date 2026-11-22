@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title class="notranslate">Kinship — Сканер QR и кода</title>
+    <title class="notranslate">Kinship — Подтверждение входа</title>
     <link rel="icon" type="image/png" href="icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Кроссбраузерный декодер QR с камеры (работает на всех Android и iOS) -->
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
         :root {
             --bg: #f9fafb;
@@ -18,8 +16,8 @@
             --secondary-bg: #f3f4f6;
             --btn-bg: #030712;
             --btn-text: #ffffff;
-            --error-bg: #fee2e2;
-            --error-text: #b91c1c;
+            --danger-bg: #fee2e2;
+            --danger-text: #b91c1c;
         }
         @media (prefers-color-scheme: dark) {
             :root {
@@ -31,8 +29,8 @@
                 --secondary-bg: #1f2937;
                 --btn-bg: #ffffff;
                 --btn-text: #000000;
-                --error-bg: #3f1515;
-                --error-text: #fca5a5;
+                --danger-bg: #3f1515;
+                --danger-text: #fca5a5;
             }
         }
         * {
@@ -56,140 +54,107 @@
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 24px;
-            padding: 24px 20px;
+            padding: 28px 22px;
             text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
         }
-        .top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-        .back-link {
-            text-decoration: none;
-            color: var(--muted);
+        .shield-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
             background: var(--secondary-bg);
-            padding: 7px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
         }
         h1 {
-            font-size: 20px;
+            font-size: 21px;
             font-weight: 800;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         .desc {
             font-size: 13px;
             color: var(--muted);
-            line-height: 1.45;
-            margin-bottom: 16px;
+            line-height: 1.5;
+            margin-bottom: 18px;
         }
-        .camera-box {
-            position: relative;
-            width: 100%;
-            height: 240px;
-            border-radius: 18px;
-            overflow: hidden;
-            background: #000000;
-            border: 1px solid var(--card-border);
-            margin-bottom: 12px;
-        }
-        video#video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .scan-frame {
-            position: absolute;
-            inset: 32px;
-            border: 2px dashed rgba(255, 255, 255, 0.75);
+        .device-info {
+            background: var(--secondary-bg);
             border-radius: 16px;
-            pointer-events: none;
+            padding: 14px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .device-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 5px 0;
+        }
+        .device-row span:first-child {
+            color: var(--muted);
+        }
+        .device-row span:last-child {
+            font-weight: 700;
         }
         .btn {
             width: 100%;
             border: none;
             border-radius: 13px;
-            padding: 13px 16px;
-            font-size: 13px;
+            padding: 14px 16px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
-        .btn-primary {
+        .btn-approve {
             background: var(--btn-bg);
             color: var(--btn-text);
         }
-        .btn-secondary {
-            background: var(--secondary-bg);
-            color: var(--text);
-        }
-        .divider {
-            font-size: 11px;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin: 8px 0 12px;
-        }
-        .code-input {
-            width: 100%;
-            padding: 13px 14px;
-            border-radius: 13px;
-            border: 1px solid var(--card-border);
-            background: var(--bg);
-            color: var(--text);
-            font-size: 15px;
-            font-weight: 700;
-            text-align: center;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-        .error-box {
-            display: none;
-            background: var(--error-bg);
-            color: var(--error-text);
-            padding: 11px 14px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 700;
-            margin-top: 6px;
+        .btn-reject {
+            background: var(--danger-bg);
+            color: var(--danger-text);
         }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="top-row">
-            <a href="setting-kinship.html" class="back-link">← Назад</a>
-            <span style="font-size:11px;font-weight:700;color:var(--muted);">Сканер устройства</span>
+        <div class="shield-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
         </div>
 
-        <h1>Подключить устройство</h1>
+        <h1>Подтверждение входа</h1>
         <p class="desc">
-            Наведите камеру на QR-код, который отображается на другом устройстве, или введите его секретный код вручную.
+            Ожидание подтверждения входа с другого устройства. Подтвердите, если вы входите в аккаунт Kinship.
         </p>
 
-        <div class="camera-box">
-            <video id="video" playsinline muted></video>
-            <div class="scan-frame"></div>
+        <div class="device-info">
+            <div class="device-row">
+                <span>Устройство:</span>
+                <span id="dev-name">Проверка...</span>
+            </div>
+            <div class="device-row">
+                <span>Код сессии:</span>
+                <span id="dev-code">---</span>
+            </div>
+            <div class="device-row">
+                <span>Статус:</span>
+                <span id="dev-status">Ожидает подтверждения</span>
+            </div>
         </div>
-        <canvas id="scan-canvas" style="display:none;"></canvas>
 
-        <button id="start-cam-btn" class="btn btn-secondary" type="button">Включить камеру</button>
-
-        <div class="divider">или введите код с экрана</div>
-
-        <input id="code-input" class="code-input" type="text" placeholder="KSP-XXXXXX" maxlength="12">
-        <button id="submit-code-btn" class="btn btn-primary" type="button">Продолжить</button>
-
-        <div id="error-box" class="error-box"></div>
+        <button id="approve-btn" class="btn btn-approve" type="button">Подтвердить вход</button>
+        <button id="reject-btn" class="btn btn-reject" type="button">Отклонить вход</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getDatabase, ref, get, update, onValue, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+        // ВСТАВЬ СВОЙ FIREBASE CONFIG ИЗ ПРОЕКТА KINSHIP
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "bib-chat-64027.firebaseapp.com",
@@ -203,113 +168,97 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        const video = document.getElementById("video");
-        const canvas = document.getElementById("scan-canvas");
-        const ctx = canvas.getContext("2d", { willReadFrequently: true });
-        const errorBox = document.getElementById("error-box");
-        let stream = null;
-        let isChecking = false;
+        const params = new URLSearchParams(window.location.search);
+        const code = (params.get("code") || "").toUpperCase();
 
-        function showError(msg) {
-            errorBox.textContent = msg;
-            errorBox.style.display = "block";
-        }
+        const devNameEl = document.getElementById("dev-name");
+        const devCodeEl = document.getElementById("dev-code");
+        const devStatusEl = document.getElementById("dev-status");
+        const approveBtn = document.getElementById("approve-btn");
+        const rejectBtn = document.getElementById("reject-btn");
 
-        function extractCode(rawText) {
-            const cleaned = rawText.trim();
-            if (cleaned.includes("code=")) {
-                try {
-                    const url = new URL(cleaned);
-                    return (url.searchParams.get("code") || "").toUpperCase();
-                } catch (_) {}
-            }
-            return cleaned.toUpperCase();
-        }
+        let sessionData = null;
 
-        // Строгая проверка кода по Firebase Realtime Database
-        async function validateAndProceed(rawValue) {
-            if (isChecking) return;
-            errorBox.style.display = "none";
-
-            const code = extractCode(rawValue);
-            if (!code || !/^KSP-[A-Z0-9]{6}$/.test(code)) {
-                showError("Неверный формат кода. Введите действующий код вида KSP-XXXXXX.");
+        async function initVerification() {
+            if (!code) {
+                alert("Отсутствует код подтверждения!");
+                window.location.href = "qr-scan.html";
                 return;
             }
 
-            isChecking = true;
-            try {
-                const sessionRef = ref(db, "qr_sessions/" + code);
-                const snap = await get(sessionRef);
+            const sessionRef = ref(db, "qr_sessions/" + code);
+            const snap = await get(sessionRef);
 
-                if (!snap.exists()) {
-                    showError("Код не найден в облаке! Нельзя войти по случайному коду.");
-                    isChecking = false;
-                    return;
-                }
-
-                const data = snap.val();
-                if (data.expiresAt && Date.now() > data.expiresAt) {
-                    showError("Срок действия этого QR-кода истёк. Обновите код на другом устройстве.");
-                    isChecking = false;
-                    return;
-                }
-
-                if (data.status === "approved" || data.status === "rejected") {
-                    showError("Этот код уже был использован.");
-                    isChecking = false;
-                    return;
-                }
-
-                // Помечаем в облаке, что код отсканирован, и переходим на страницу подтверждения
-                await update(sessionRef, { status: "scanned" });
-                if (stream) stream.getTracks().forEach(t => t.stop());
-
-                window.location.href = `qr-device-login.html?code=${encodeURIComponent(code)}`;
-            } catch (err) {
-                showError("Ошибка проверки в базе данных: " + err.message);
-                isChecking = false;
+            if (!snap.exists()) {
+                alert("Код не найден в базе! Вход запрещён.");
+                window.location.href = "qr-scan.html";
+                return;
             }
+
+            sessionData = snap.val();
+            if (sessionData.expiresAt && Date.now() > sessionData.expiresAt) {
+                alert("Срок действия кода истёк!");
+                window.location.href = "qr-scan.html";
+                return;
+            }
+
+            devNameEl.textContent = sessionData.deviceName || "Другое устройство";
+            devCodeEl.textContent = code;
+
+            // Слушаем статус сессии в реальном времени
+            onValue(sessionRef, (liveSnap) => {
+                const live = liveSnap.val();
+                if (!live) return;
+
+                if (live.status === "approved") {
+                    devStatusEl.textContent = "Подтверждено! Вход в профиль...";
+                    if (live.uid) localStorage.setItem("kinship_uid", live.uid);
+                    if (live.userName) localStorage.setItem("kinship_user_name", live.userName);
+                    if (live.userHandle) localStorage.setItem("kinship_user_handle", live.userHandle);
+
+                    setTimeout(() => {
+                        window.location.href = "profile.html";
+                    }, 600);
+                } else if (live.status === "rejected") {
+                    devStatusEl.textContent = "Отклонено";
+                    setTimeout(() => {
+                        window.location.href = "qr-scan.html";
+                    }, 800);
+                }
+            });
         }
 
-        // Запуск камеры и сканирование через jsQR
-        document.getElementById("start-cam-btn").addEventListener("click", async () => {
-            errorBox.style.display = "none";
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" }
-                });
-                video.srcObject = stream;
-                await video.play();
-                requestAnimationFrame(tickScan);
-            } catch (e) {
-                showError("Не удалось открыть камеру. Разрешите доступ или введите код вручную ниже.");
-            }
+        approveBtn.addEventListener("click", async () => {
+            if (!sessionData) return;
+            approveBtn.disabled = true;
+
+            const uid = localStorage.getItem("kinship_uid") || "default_user";
+            const userName = localStorage.getItem("kinship_user_name") || "Пользователь Kinship";
+            const userHandle = localStorage.getItem("kinship_user_handle") || "@kinship_user";
+
+            await update(ref(db, "qr_sessions/" + code), {
+                status: "approved",
+                uid: uid,
+                userName: userName,
+                userHandle: userHandle,
+                approvedAt: Date.now()
+            });
+
+            await push(ref(db, `users/${uid}/devices`), {
+                deviceName: sessionData.deviceName || "Другое устройство",
+                code: code,
+                method: "QR / Код",
+                loggedInAt: new Date().toLocaleString("ru-RU")
+            });
         });
 
-        function tickScan() {
-            if (!stream || isChecking) return;
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const qr = jsQR(imageData.data, imageData.width, imageData.height, {
-                    inversionAttempts: "dontInvert"
-                });
-
-                if (qr && qr.data) {
-                    validateAndProceed(qr.data);
-                    return;
-                }
-            }
-            requestAnimationFrame(tickScan);
-        }
-
-        document.getElementById("submit-code-btn").addEventListener("click", () => {
-            const val = document.getElementById("code-input").value;
-            validateAndProceed(val);
+        rejectBtn.addEventListener("click", async () => {
+            await update(ref(db, "qr_sessions/" + code), {
+                status: "rejected"
+            });
         });
+
+        initVerification();
     </script>
 </body>
 </html>
