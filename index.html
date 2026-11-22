@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="udnUHBFzL2Us47m9qxyJWabmzRHfYsnHBpyANc-sgqI" />
     <title class="notranslate">Kinship</title>
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #f9fafb;
@@ -15,10 +16,13 @@
             --card-border: #e5e7eb;
             --text: #030712;
             --muted: #4b5563;
-            --subtle: #9ca3af;
+            --subtle: #6b7280;
             --btn-bg: #030712;
             --btn-text: #ffffff;
             --btn-hover: #1f2937;
+            --secondary-btn-bg: #f3f4f6;
+            --secondary-btn-text: #374151;
+            --secondary-btn-hover: #e5e7eb;
         }
         @media (prefers-color-scheme: dark) {
             :root {
@@ -31,6 +35,9 @@
                 --btn-bg: #ffffff;
                 --btn-text: #000000;
                 --btn-hover: #e5e7eb;
+                --secondary-btn-bg: #1f2937;
+                --secondary-btn-text: #d1d5db;
+                --secondary-btn-hover: #374151;
             }
         }
         * {
@@ -38,6 +45,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         body {
             background-color: var(--bg);
@@ -51,8 +59,26 @@
             text-align: center;
         }
         .container {
-            max-width: 380px;
+            max-width: 390px;
             width: 100%;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            animation: fadeIn 0.25s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         .brand {
             font-size: 12px;
@@ -60,140 +86,103 @@
             color: var(--subtle);
             text-transform: uppercase;
             letter-spacing: 0.12em;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
         h1 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
-            line-height: 1.25;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             letter-spacing: -0.02em;
         }
         .subtitle {
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 13px;
             color: var(--muted);
-            line-height: 1.55;
-            margin-bottom: 24px;
+            line-height: 1.5;
+            margin-bottom: 22px;
         }
-        .google-btn {
+        .primary-btn {
+            display: block;
             width: 100%;
+            text-decoration: none;
             background-color: var(--btn-bg);
             color: var(--btn-text);
             border: none;
-            padding: 13px 16px;
-            border-radius: 14px;
+            padding: 13px;
+            border-radius: 12px;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.2s ease, opacity 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            transition: background-color 0.2s ease, transform 0.12s ease;
         }
-        .google-btn:hover:not(:disabled) {
+        .primary-btn:hover {
             background-color: var(--btn-hover);
         }
-        .google-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+        .primary-btn:active {
+            transform: scale(0.98);
         }
-        .error-msg {
+        .secondary-btn {
+            display: block;
+            width: 100%;
+            text-decoration: none;
+            background-color: var(--secondary-btn-bg);
+            color: var(--secondary-btn-text);
+            border: none;
+            padding: 11px;
+            border-radius: 12px;
             font-size: 12px;
-            color: #ef4444;
-            margin-top: 12px;
-            font-weight: 600;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background-color 0.2s ease, transform 0.12s ease;
         }
-        .hidden {
-            display: none !important;
+        .secondary-btn:hover {
+            background-color: var(--secondary-btn-hover);
+        }
+        .secondary-btn:active {
+            transform: scale(0.98);
         }
         footer {
-            font-size: 12px;
-            color: var(--subtle);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-        .footer-links {
-            display: flex;
-            gap: 14px;
-        }
-        .footer-links a {
-            color: var(--subtle);
-            text-decoration: none;
-        }
-        .footer-links a:hover {
-            color: var(--text);
-        }
-        .copy {
             font-size: 11px;
-            opacity: 0.7;
+            color: var(--subtle);
         }
     </style>
 </head>
 <body>
+    <div style="height: 12px;"></div>
 
-    <div style="height: 16px;"></div>
-
-    <div class="container">
+    <div class="container card">
         <p class="brand notranslate">Kinship</p>
-        <h1 id="idx-title">Your best social network to find friends!</h1>
-        <p id="idx-subtitle" class="subtitle">Play, chat, comment, watch, and like.</p>
-
-        <button id="google-signin-btn" type="button" class="google-btn">
-            <span id="google-btn-text">Continue with Google</span>
-        </button>
-
-        <p id="idx-error" class="error-msg hidden"></p>
+        <h1 class="notranslate">Kinship</h1>
+        <p id="index-subtitle" class="subtitle">
+            Sign in or continue to your account.
+        </p>
+        <a id="btn-go-auth" href="auth.html" class="primary-btn">Continue</a>
+        <a id="btn-go-qr" href="qr-login.html" class="secondary-btn">QR Sign In</a>
     </div>
 
     <footer>
-        <div class="footer-links">
-            <a id="idx-terms" href="legal.html?tab=terms">Terms</a>
-            <span>•</span>
-            <a id="idx-privacy" href="legal.html?tab=privacy">Privacy</a>
-            <span>•</span>
-            <a id="idx-contact" href="legal.html?tab=contact">Contact</a>
-        </div>
-        <p class="copy">&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
+        <p>&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
     </footer>
 
     <script>
         const i18nIndex = {
             en: {
                 lang: "en",
-                title: "Your best social network to find friends!",
-                subtitle: "Play, chat, comment, watch, and like.",
-                googleBtn: "Continue with Google",
-                signingIn: "Signing in...",
-                signInError: "Sign-in failed. Please try again.",
-                terms: "Terms",
-                privacy: "Privacy",
-                contact: "Contact"
+                subtitle: "Sign in or continue to your account.",
+                continueBtn: "Continue",
+                qrBtn: "QR Sign In"
             },
             ru: {
                 lang: "ru",
-                title: "Ваша лучшая соцсеть для поиска друзей!",
-                subtitle: "Играйтесь, общайтесь, комментируйте, смотрите и лайкайте.",
-                googleBtn: "Войти через Google",
-                signingIn: "Вход...",
-                signInError: "Ошибка входа. Попробуйте ещё раз.",
-                terms: "Условия",
-                privacy: "Конфиденциальность",
-                contact: "Контакты"
+                subtitle: "Войдите или перейдите в свой аккаунт.",
+                continueBtn: "Продолжить",
+                qrBtn: "Вход по QR-коду"
             },
             de: {
                 lang: "de",
-                title: "Dein bestes soziales Netzwerk, um Freunde zu finden!",
-                subtitle: "Spielen, chatten, kommentieren, ansehen und liken.",
-                googleBtn: "Mit Google fortfahren",
-                signingIn: "Anmeldung...",
-                signInError: "Anmeldung fehlgeschlagen. Bitte versuche es erneut.",
-                terms: "Nutzungsbedingungen",
-                privacy: "Datenschutz",
-                contact: "Kontakt"
+                subtitle: "Melde dich an oder fahre mit deinem Konto fort.",
+                continueBtn: "Weiter",
+                qrBtn: "QR-Login"
             }
         };
 
@@ -205,88 +194,11 @@
             return "en";
         }
 
-        const currentLang = detectAppLang();
-        const tIdx = i18nIndex[currentLang];
-
+        const tIdx = i18nIndex[detectAppLang()];
         document.documentElement.lang = tIdx.lang;
-        document.getElementById("idx-title").textContent = tIdx.title;
-        document.getElementById("idx-subtitle").textContent = tIdx.subtitle;
-        document.getElementById("google-btn-text").textContent = tIdx.googleBtn;
-        document.getElementById("idx-terms").textContent = tIdx.terms;
-        document.getElementById("idx-privacy").textContent = tIdx.privacy;
-        document.getElementById("idx-contact").textContent = tIdx.contact;
-    </script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
-            authDomain: "kinship-1a33b.firebaseapp.com",
-            projectId: "kinship-1a33b",
-            storageBucket: "kinship-1a33b.firebasestorage.app",
-            messagingSenderId: "530429265638",
-            appId: "1:530429265638:web:45ee33d3f9129f15d6dd27"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const ALLOWED_COUNTRIES = ['US', 'RU'];
-
-        async function verifyRegionOrKick() {
-            try {
-                const response = await fetch('https://ipwho.is/');
-                const data = await response.json();
-                const countryCode = (data.country_code || '').toUpperCase();
-
-                if (!data.success || !ALLOWED_COUNTRIES.includes(countryCode)) {
-                    localStorage.removeItem('kinship_unlocked');
-                    try {
-                        await signOut(auth);
-                    } catch (_) {}
-                    window.location.replace("unavailable.html");
-                    return false;
-                }
-                return true;
-            } catch (err) {
-                window.location.replace("unavailable.html");
-                return false;
-            }
-        }
-        
-
-        const googleBtn = document.getElementById("google-signin-btn");
-        const googleBtnText = document.getElementById("google-btn-text");
-        const errEl = document.getElementById("idx-error");
-
-        googleBtn.addEventListener("click", async () => {
-            errEl.classList.add("hidden");
-            googleBtn.disabled = true;
-            googleBtnText.textContent = tIdx.signingIn;
-            try {
-                const provider = new GoogleAuthProvider();
-                await signInWithPopup(auth, provider);
-            } catch (e) {
-                googleBtn.disabled = false;
-                googleBtnText.textContent = tIdx.googleBtn;
-                errEl.textContent = e.message || tIdx.signInError;
-                errEl.classList.remove("hidden");
-            }
-        });
-
-        verifyRegionOrKick().then(isAllowed => {
-            if (!isAllowed) return;
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    if (localStorage.getItem('kinship_unlocked') === user.uid) {
-                        window.location.href = "profile.html";
-                    } else {
-                        window.location.href = "auth.html";
-                    }
-                }
-            });
-        });
+        document.getElementById("index-subtitle").textContent = tIdx.subtitle;
+        document.getElementById("btn-go-auth").textContent = tIdx.continueBtn;
+        document.getElementById("btn-go-qr").textContent = tIdx.qrBtn;
     </script>
 </body>
 </html>
