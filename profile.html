@@ -569,7 +569,7 @@
                 sheetLocationUnknown: "Unknown",
                 sheetIpUnknown: "Unknown",
                 sheetVpnNote: "(Due to VPN, location and IP may be inaccurate)",
-                sheetWarning: "If this wasn't you, end the session immediately.",
+                sheetWarning: "If this wasn't you, end that device's session immediately.",
                 sheetEndBtn: "End session",
                 sheetEndingBtn: "Ending session...",
                 unknownDevice: "Unknown device"
@@ -618,7 +618,7 @@
                 sheetLocationUnknown: "Не определено",
                 sheetIpUnknown: "Неизвестен",
                 sheetVpnNote: "(Из-за VPN Местоположение и IP могут быть неточным)",
-                sheetWarning: "Если это были не вы, немедленно завершите сеанс.",
+                sheetWarning: "Если это были не вы, немедленно завершите тот сеанс.",
                 sheetEndBtn: "Завершить сеанс",
                 sheetEndingBtn: "Завершение сеанса...",
                 unknownDevice: "Неизвестное устройство"
@@ -667,7 +667,7 @@
                 sheetLocationUnknown: "Unbekannt",
                 sheetIpUnknown: "Unbekannt",
                 sheetVpnNote: "(Durch VPN können Standort und IP ungenau sein)",
-                sheetWarning: "Wenn du das nicht warst, beende die Sitzung sofort.",
+                sheetWarning: "Wenn du das nicht warst, beende diese Sitzung sofort.",
                 sheetEndBtn: "Sitzung beenden",
                 sheetEndingBtn: "Sitzung wird beendet...",
                 unknownDevice: "Unbekanntes Gerät"
@@ -820,11 +820,24 @@
 
         let onEndSessionCallback = null;
 
+        function closeSuspiciousSessionSheet() {
+            const backdrop = document.getElementById("ks-session-backdrop");
+            const endBtn = document.getElementById("ks-btn-end-session");
+            backdrop.classList.remove("is-open");
+            document.body.style.overflow = "";
+            endBtn.disabled = false;
+            endBtn.textContent = tProf.sheetEndBtn;
+        }
+
         async function openSuspiciousSessionSheet(options = {}) {
             const backdrop = document.getElementById("ks-session-backdrop");
             const deviceEl = document.getElementById("ks-session-device");
             const locationEl = document.getElementById("ks-session-location");
             const ipEl = document.getElementById("ks-session-ip");
+            const endBtn = document.getElementById("ks-btn-end-session");
+
+            endBtn.disabled = false;
+            endBtn.textContent = tProf.sheetEndBtn;
 
             deviceEl.textContent = options.device || detectExactDevice();
             locationEl.textContent = options.location || tProf.sheetLocationDetecting;
@@ -847,6 +860,8 @@
             this.textContent = tProf.sheetEndingBtn;
             if (onEndSessionCallback) {
                 await onEndSessionCallback();
+            } else {
+                closeSuspiciousSessionSheet();
             }
         });
     </script>
@@ -856,7 +871,7 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { initializeFirestore, doc, getDoc, deleteDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        const firebaseConfig = {
+                const firebaseConfig = {
             apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
             authDomain: "kinship-1a33b.firebaseapp.com",
             projectId: "kinship-1a33b",
@@ -875,7 +890,7 @@
         const REGION_CACHE_TTL = 10 * 60 * 1000;
         const DEVICE_ID_KEY = 'ks_device_id';
 
-                function getOrCreateDeviceId() {
+        function getOrCreateDeviceId() {
             try {
                 let id = localStorage.getItem(DEVICE_ID_KEY);
                 if (!id) {
@@ -1120,6 +1135,16 @@
                 }
 
                 savedUserData = userSnap.data();
+
+                const currentDeviceId = getOrCreateDeviceId();
+                const remoteDeviceId = savedUserData.activeDeviceId || savedUserData.sessionDeviceId || "";
+                const revokedDeviceId = savedUserData.revokedDeviceId || "";
+
+                if (revokedDeviceId && revokedDeviceId === currentDeviceId && remoteDeviceId !== currentDeviceId) {
+                    await handleLogout();
+                    return;
+                }
+
                 const nickname = savedUserData.nickname || user.displayName || tProf.userFallback;
                 const role = savedUserData.role || (OWNER_EMAILS.includes(user.email) ? 'owner' : 'user');
 
@@ -1154,9 +1179,11 @@
                     badgeContainer.innerHTML = `<span style="display:inline-block; background:rgba(59,130,246,0.1); color:#3b82f6; font-size:11px; font-weight:bold; padding:4px 10px; border-radius:8px; margin-bottom:8px;">🛡️ Admin</span>`;
                 }
 
-                const currentDeviceId = getOrCreateDeviceId();
-                const remoteDeviceId = savedUserData.activeDeviceId || savedUserData.sessionDeviceId || "";
-                const isOtherDevice = Boolean(remoteDeviceId && remoteDeviceId !== currentDeviceId);
+                const isOtherDevice = Boolean(
+                    remoteDeviceId &&
+                    remoteDeviceId !== currentDeviceId &&
+                    revokedDeviceId !== remoteDeviceId
+                );
 
                 if (!remoteDeviceId) {
                     try {
@@ -1178,7 +1205,22 @@
                 if (isOtherDevice) {
                     openSuspiciousSessionSheet({
                         device: savedUserData.lastLoginDeviceName || savedUserData.lastDeviceName || detectExactDevice(),
-                        onEndSession: handleLogout
+                        onEndSession: async () => {
+                            try {
+                                const myDeviceName = detectExactDevice();
+                                await setDoc(userRef, {
+                                    revokedDeviceId: remoteDeviceId,
+                                    activeDeviceId: currentDeviceId,
+                                    sessionDeviceId: currentDeviceId,
+                                    lastDeviceName: myDeviceName,
+                                    lastLogin: serverTimestamp()
+                                }, { merge: true });
+                                savedUserData.revokedDeviceId = remoteDeviceId;
+                                savedUserData.activeDeviceId = currentDeviceId;
+                                savedUserData.sessionDeviceId = currentDeviceId;
+                            } catch (_) {}
+                            closeSuspiciousSessionSheet();
+                        }
                     });
                 }
             } catch (e) {
