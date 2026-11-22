@@ -118,6 +118,33 @@
             word-break: break-all;
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         }
+        .info-box {
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 14px;
+            text-align: left;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .info-label {
+            color: var(--muted);
+            font-weight: 600;
+        }
+        .info-val {
+            color: var(--text);
+            font-weight: 700;
+            text-align: right;
+            word-break: break-word;
+        }
         .primary-btn {
             width: 100%;
             background-color: var(--btn-bg);
@@ -214,11 +241,12 @@
         <p id="qr-loading-text" class="subtitle">Preparing unique QR code...</p>
     </div>
 
+    <!-- Экран 1: Показ уникального QR-кода аккаунта и сканер -->
     <div id="qr-main" class="container card hidden">
         <p class="brand notranslate">Kinship</p>
         <h2 id="qr-title">Account QR Sign-In</h2>
         <p id="qr-subtitle" class="subtitle">
-            Each account has its own unique QR code. Scan it on another device using the built-in scanner or a QR code scanner to sign back in.
+            Scan this QR code on another device to open sign-in on auth.html and confirm it from this device.
         </p>
 
         <div class="qr-frame">
@@ -228,16 +256,44 @@
         <div id="qr-token-display" class="qr-code-tag"></div>
 
         <button id="btn-toggle-scanner" type="button" class="primary-btn">Scan QR Code on Site</button>
-        <button id="btn-confirm-qr-login" type="button" class="secondary-btn">Complete Sign-In Now</button>
         <button id="btn-back-profile" type="button" class="secondary-btn">Back to Profile</button>
 
         <div id="scanner-panel" class="scanner-box hidden">
             <video id="qr-video" playsinline muted></video>
             <input id="qr-manual-input" type="text" placeholder="Or paste scanned QR code / link here">
-            <button id="btn-apply-manual-qr" type="button" class="primary-btn" style="padding: 10px; font-size: 12px;">Verify Scanned Code</button>
+            <button id="btn-apply-manual-qr" type="button" class="primary-btn" style="padding: 10px; font-size: 12px;">Open Auth with Scanned Code</button>
         </div>
 
         <p id="qr-status-msg" class="hidden"></p>
+    </div>
+
+    <!-- Экран 2: Подтверждение входа другого устройства с основного устройства -->
+    <div id="qr-approve-screen" class="container card hidden">
+        <p class="brand notranslate">Kinship</p>
+        <h2 id="approve-title">Confirm Sign-In Attempt</h2>
+        <p id="approve-subtitle" class="subtitle">
+            Another device scanned your QR code and wants to sign in to this account. Confirm if it is you.
+        </p>
+
+        <div class="info-box">
+            <div class="info-row">
+                <span id="lbl-req-nick" class="info-label">Nickname</span>
+                <span id="val-req-nick" class="info-val">—</span>
+            </div>
+            <div class="info-row">
+                <span id="lbl-req-device" class="info-label">Device</span>
+                <span id="val-req-device" class="info-val">—</span>
+            </div>
+            <div class="info-row">
+                <span id="lbl-req-ip" class="info-label">IP</span>
+                <span id="val-req-ip" class="info-val">—</span>
+            </div>
+        </div>
+
+        <button id="btn-approve-login" type="button" class="primary-btn">Confirm</button>
+        <button id="btn-decline-login" type="button" class="secondary-btn">Decline</button>
+
+        <p id="approve-status-msg" class="hidden"></p>
     </div>
 
     <footer>
@@ -250,49 +306,76 @@
                 lang: "en",
                 loading: "Preparing unique QR code...",
                 title: "Account QR Sign-In",
-                subtitle: "Each account has its own unique QR code. Scan it on another device using the built-in scanner or a QR code scanner to sign back in.",
+                subtitle: "Scan this QR code on another device to open sign-in on auth.html and confirm it from this device.",
                 toggleScan: "Scan QR Code on Site",
                 stopScan: "Stop Scanner",
-                confirmBtn: "Complete Sign-In Now",
                 backBtn: "Back to Profile",
                 manualPh: "Or paste scanned QR code / link here",
-                verifyBtn: "Verify Scanned Code",
-                verifiedOk: "QR verified! Signing you back into the account...",
+                verifyBtn: "Open Auth with Scanned Code",
+                verifiedOk: "QR scanned! Opening auth.html...",
                 verifiedErr: "Invalid or mismatched QR code for this account.",
-                cameraErr: "Camera unavailable. You can paste or enter the QR code manually below.",
-                unknownDevice: "Unknown device"
+                cameraErr: "Camera unavailable. You can paste or enter the QR link manually below.",
+                approveTitle: "Confirm Sign-In Attempt",
+                approveSub: "Another device scanned your QR code and is trying to sign in. Confirm if this is you.",
+                lblNick: "Nickname",
+                lblDevice: "Device",
+                lblIp: "IP",
+                ipUnknown: "Unknown",
+                deviceUnknown: "Unknown device",
+                confirmBtn: "Confirm",
+                declineBtn: "Decline",
+                approvedOk: "Confirmed! The other device can now enter the account.",
+                declinedOk: "Sign-in request declined."
             },
             ru: {
                 lang: "ru",
                 loading: "Готовим уникальный QR-код...",
                 title: "Вход в аккаунт по QR-коду",
-                subtitle: "У каждого аккаунта свой уникальный QR-код. Отсканируйте его на другом устройстве через сканер на сайте или сканер QR-кодов, чтобы снова войти в аккаунт.",
+                subtitle: "Отсканируйте этот QR-код на другом устройстве, чтобы перейти на auth.html и подтвердить вход с этого устройства.",
                 toggleScan: "Сканировать QR на сайте",
                 stopScan: "Остановить сканер",
-                confirmBtn: "Завершить вход сейчас",
                 backBtn: "Назад в профиль",
                 manualPh: "Или вставьте отсканированный QR-код / ссылку",
-                verifyBtn: "Проверить отсканированный код",
-                verifiedOk: "QR подтверждён! Возвращаем вас в аккаунт...",
+                verifyBtn: "Открыть auth.html по коду",
+                verifiedOk: "QR считан! Переходим на auth.html...",
                 verifiedErr: "QR-код не подходит для этого аккаунта или повреждён.",
-                cameraErr: "Камера недоступна. Вставьте или введите код вручную ниже.",
-                unknownDevice: "Неизвестное устройство"
+                cameraErr: "Камера недоступна. Вставьте ссылку или код вручную ниже.",
+                approveTitle: "Подтверждение входа с устройства",
+                approveSub: "Другое устройство отсканировало QR-код и пытается войти в аккаунт. Подтвердите, если это вы.",
+                lblNick: "Никнейм",
+                lblDevice: "Устройство",
+                lblIp: "IP",
+                ipUnknown: "Неизвестен",
+                deviceUnknown: "Неизвестное устройство",
+                confirmBtn: "Подтвердить",
+                declineBtn: "Отклонить",
+                approvedOk: "Подтверждено! Другое устройство теперь войдёт в аккаунт.",
+                declinedOk: "Запрос на вход отклонён."
             },
             de: {
                 lang: "de",
                 loading: "Eindeutiger QR-Code wird erstellt...",
                 title: "Konto-Login per QR-Code",
-                subtitle: "Jedes Konto hat einen eigenen eindeutigen QR-Code. Scanne ihn auf einem anderen Gerät mit dem Scanner auf der Website oder einem QR-Scanner, um dich wieder anzumelden.",
+                subtitle: "Scanne diesen QR-Code auf einem anderen Gerät, um auth.html zu öffnen und die Anmeldung von diesem Gerät zu bestätigen.",
                 toggleScan: "QR auf der Website scannen",
                 stopScan: "Scanner stoppen",
-                confirmBtn: "Anmeldung jetzt abschließen",
                 backBtn: "Zurück zum Profil",
                 manualPh: "Oder gescannten QR-Code / Link hier einfügen",
-                verifyBtn: "Code prüfen",
-                verifiedOk: "QR bestätigt! Du wirst wieder angemeldet...",
+                verifyBtn: "auth.html mit Code öffnen",
+                verifiedOk: "QR erkannt! Öffne auth.html...",
                 verifiedErr: "Ungültiger oder unpassender QR-Code für dieses Konto.",
-                cameraErr: "Kamera nicht verfügbar. Füge den Code unten manuell ein.",
-                unknownDevice: "Unbekanntes Gerät"
+                cameraErr: "Kamera nicht verfügbar. Füge den Link oder Code unten manuell ein.",
+                approveTitle: "Anmeldeversuch bestätigen",
+                approveSub: "Ein anderes Gerät hat deinen QR-Code gescannt und möchte sich anmelden. Bestätige, wenn du das bist.",
+                lblNick: "Spitzname",
+                lblDevice: "Gerät",
+                lblIp: "IP",
+                ipUnknown: "Unbekannt",
+                deviceUnknown: "Unbekanntes Gerät",
+                confirmBtn: "Bestätigen",
+                declineBtn: "Ablehnen",
+                approvedOk: "Bestätigt! Das andere Gerät kann sich jetzt anmelden.",
+                declinedOk: "Anmeldeanfrage abgelehnt."
             }
         };
 
@@ -311,12 +394,18 @@
         document.getElementById("qr-title").textContent = tQr.title;
         document.getElementById("qr-subtitle").textContent = tQr.subtitle;
         document.getElementById("btn-toggle-scanner").textContent = tQr.toggleScan;
-        document.getElementById("btn-confirm-qr-login").textContent = tQr.confirmBtn;
         document.getElementById("btn-back-profile").textContent = tQr.backBtn;
         document.getElementById("qr-manual-input").placeholder = tQr.manualPh;
         document.getElementById("btn-apply-manual-qr").textContent = tQr.verifyBtn;
 
-        // Генерирует настоящий считываемый QR-код (ISO/IEC 18004) с уникальным содержимым аккаунта
+        document.getElementById("approve-title").textContent = tQr.approveTitle;
+        document.getElementById("approve-subtitle").textContent = tQr.approveSub;
+        document.getElementById("lbl-req-nick").textContent = tQr.lblNick;
+        document.getElementById("lbl-req-device").textContent = tQr.lblDevice;
+        document.getElementById("lbl-req-ip").textContent = tQr.lblIp;
+        document.getElementById("btn-approve-login").textContent = tQr.confirmBtn;
+        document.getElementById("btn-decline-login").textContent = tQr.declineBtn;
+
         function drawRealScannableQr(canvas, encodedValue) {
             const ctx = canvas.getContext("2d");
             const size = canvas.width;
@@ -354,7 +443,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { initializeFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { initializeFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
@@ -368,20 +457,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = initializeFirestore(app, { experimentalForceLongPolling: true });
-        const DEVICE_ID_KEY = "ks_device_id";
-
-        function getOrCreateDeviceId() {
-            try {
-                let id = localStorage.getItem(DEVICE_ID_KEY);
-                if (!id) {
-                    id = "dev_" + Math.random().toString(36).slice(2, 12) + "_" + Date.now().toString(36);
-                    localStorage.setItem(DEVICE_ID_KEY, id);
-                }
-                return id;
-            } catch (_) {
-                return "dev_volatile_" + Date.now().toString(36);
-            }
-        }
 
         function getOrCreateAccountQrSecret(uid, savedSecret) {
             if (savedSecret) return savedSecret;
@@ -398,8 +473,8 @@
             }
         }
 
-        function setStatusMessage(text, isError = false) {
-            const el = document.getElementById("qr-status-msg");
+        function setStatusMessage(id, text, isError = false) {
+            const el = document.getElementById(id);
             el.textContent = text;
             el.className = isError ? "msg-err" : "msg-ok";
             el.classList.remove("hidden");
@@ -408,9 +483,10 @@
         let currentUser = null;
         let userRef = null;
         let accountQrToken = "";
-        let qrEncodedPayload = "";
+        let qrAuthUrl = "";
         let scanStream = null;
         let scanTimer = null;
+        let pendingRequest = null;
 
         function stopCameraScanner() {
             if (scanTimer) {
@@ -424,60 +500,41 @@
             document.getElementById("btn-toggle-scanner").textContent = tQr.toggleScan;
         }
 
-        async function completeQrSignIn() {
-            if (!currentUser || !userRef) return;
-            const deviceId = getOrCreateDeviceId();
-            const payload = {
-                activeDeviceId: deviceId,
-                sessionDeviceId: deviceId,
-                qrLoginToken: accountQrToken,
-                lastLogin: serverTimestamp()
-            };
-
-            const snap = await getDoc(userRef);
-            const data = snap.exists() ? snap.data() : {};
-            if (data.revokedDeviceId === deviceId) {
-                payload.revokedDeviceId = "";
-            }
-
-            await setDoc(userRef, payload, { merge: true });
-            localStorage.setItem("kinship_unlocked", currentUser.uid);
-            setStatusMessage(tQr.verifiedOk, false);
-            stopCameraScanner();
-            setTimeout(() => {
-                window.location.href = "profile.html";
-            }, 600);
-        }
-
-        function verifyQrValue(rawValue) {
+                function redirectToAuthWithQr(rawValue) {
             const trimmed = String(rawValue || "").trim();
-            if (!trimmed || !accountQrToken) return false;
-            return trimmed === qrEncodedPayload || trimmed === accountQrToken || trimmed.includes(accountQrToken);
-        }
+            if (!trimmed) return false;
 
-        document.getElementById("btn-confirm-qr-login").addEventListener("click", async () => {
             try {
-                await completeQrSignIn();
-            } catch (e) {
-                setStatusMessage(e.message || tQr.verifiedErr, true);
+                if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+                    const parsed = new URL(trimmed);
+                    const uidParam = parsed.searchParams.get("qrUid") || parsed.searchParams.get("uid") || currentUser?.uid || "";
+                    const tokenParam = parsed.searchParams.get("qrToken") || parsed.searchParams.get("token") || "";
+                    if (uidParam && tokenParam) {
+                        stopCameraScanner();
+                        window.location.href = `auth.html?qrUid=${encodeURIComponent(uidParam)}&qrToken=${encodeURIComponent(tokenParam)}`;
+                        return true;
+                    }
+                }
+            } catch (_) {}
+
+            if (accountQrToken && trimmed.includes(accountQrToken) && currentUser) {
+                stopCameraScanner();
+                window.location.href = `auth.html?qrUid=${encodeURIComponent(currentUser.uid)}&qrToken=${encodeURIComponent(accountQrToken)}`;
+                return true;
             }
-        });
+
+            return false;
+        }
 
         document.getElementById("btn-back-profile").addEventListener("click", () => {
             stopCameraScanner();
             window.location.href = "profile.html";
         });
 
-        document.getElementById("btn-apply-manual-qr").addEventListener("click", async () => {
+        document.getElementById("btn-apply-manual-qr").addEventListener("click", () => {
             const val = document.getElementById("qr-manual-input").value;
-            if (!verifyQrValue(val)) {
-                setStatusMessage(tQr.verifiedErr, true);
-                return;
-            }
-            try {
-                await completeQrSignIn();
-            } catch (e) {
-                setStatusMessage(e.message || tQr.verifiedErr, true);
+            if (!redirectToAuthWithQr(val)) {
+                setStatusMessage("qr-status-msg", tQr.verifiedErr, true);
             }
         });
 
@@ -494,7 +551,7 @@
             panel.classList.remove("hidden");
 
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                setStatusMessage(tQr.cameraErr, true);
+                setStatusMessage("qr-status-msg", tQr.cameraErr, true);
                 return;
             }
 
@@ -505,7 +562,7 @@
                 await video.play();
                 btn.textContent = tQr.stopScan;
 
-                                if ("BarcodeDetector" in window) {
+                if ("BarcodeDetector" in window) {
                     const detector = new BarcodeDetector({ formats: ["qr_code"] });
                     scanTimer = setInterval(async () => {
                         try {
@@ -513,19 +570,59 @@
                             if (codes && codes.length > 0) {
                                 const raw = codes[0].rawValue || "";
                                 document.getElementById("qr-manual-input").value = raw;
-                                if (verifyQrValue(raw)) {
-                                    await completeQrSignIn();
-                                } else {
-                                    setStatusMessage(tQr.verifiedErr, true);
+                                setStatusMessage("qr-status-msg", tQr.verifiedOk, false);
+                                if (!redirectToAuthWithQr(raw)) {
+                                    setStatusMessage("qr-status-msg", tQr.verifiedErr, true);
                                 }
                             }
                         } catch (_) {}
                     }, 450);
                 } else {
-                    setStatusMessage(tQr.cameraErr, true);
+                    setStatusMessage("qr-status-msg", tQr.cameraErr, true);
                 }
             } catch (_) {
-                setStatusMessage(tQr.cameraErr, true);
+                setStatusMessage("qr-status-msg", tQr.cameraErr, true);
+            }
+        });
+
+        document.getElementById("btn-approve-login").addEventListener("click", async () => {
+            if (!userRef || !pendingRequest) return;
+            const btn = document.getElementById("btn-approve-login");
+            btn.disabled = true;
+            try {
+                await setDoc(userRef, {
+                    revokedDeviceId: "",
+                    qrLoginRequest: {
+                        ...pendingRequest,
+                        status: "approved",
+                        approvedAt: Date.now()
+                    },
+                    lastLogin: serverTimestamp()
+                }, { merge: true });
+                setStatusMessage("approve-status-msg", tQr.approvedOk, false);
+            } catch (e) {
+                btn.disabled = false;
+                setStatusMessage("approve-status-msg", e.message, true);
+            }
+        });
+
+        document.getElementById("btn-decline-login").addEventListener("click", async () => {
+            if (!userRef || !pendingRequest) return;
+            try {
+                await setDoc(userRef, {
+                    qrLoginRequest: {
+                        ...pendingRequest,
+                        status: "declined",
+                        declinedAt: Date.now()
+                    }
+                }, { merge: true });
+                setStatusMessage("approve-status-msg", tQr.declinedOk, true);
+                setTimeout(() => {
+                    document.getElementById("qr-approve-screen").classList.add("hidden");
+                    document.getElementById("qr-main").classList.remove("hidden");
+                }, 700);
+            } catch (e) {
+                setStatusMessage("approve-status-msg", e.message, true);
             }
         });
 
@@ -546,19 +643,38 @@
                     await setDoc(userRef, { qrLoginToken: accountQrToken }, { merge: true });
                 }
 
-                qrEncodedPayload = `KINSHIP-QR|uid=${user.uid}|token=${accountQrToken}`;
+                const baseUrl = new URL("auth.html", window.location.href);
+                baseUrl.searchParams.set("qrUid", user.uid);
+                baseUrl.searchParams.set("qrToken", accountQrToken);
+                qrAuthUrl = baseUrl.toString();
+
                 const canvas = document.getElementById("qr-canvas");
-                const rendered = drawRealScannableQr(canvas, qrEncodedPayload);
+                const rendered = drawRealScannableQr(canvas, qrAuthUrl);
                 document.getElementById("qr-token-display").textContent = accountQrToken;
 
                 if (!rendered) {
-                    setStatusMessage("QR library failed to load. Check internet connection or enter token manually.", true);
+                    setStatusMessage("qr-status-msg", "QR library failed to load.", true);
                 }
 
                 document.getElementById("qr-loading").classList.add("hidden");
                 document.getElementById("qr-main").classList.remove("hidden");
+
+                onSnapshot(userRef, (docSnap) => {
+                    if (!docSnap.exists()) return;
+                    const latest = docSnap.data();
+                    const req = latest.qrLoginRequest;
+                    if (req && req.status === "pending" && req.token === accountQrToken) {
+                        pendingRequest = req;
+                        document.getElementById("val-req-nick").textContent = latest.nickname || user.displayName || "—";
+                        document.getElementById("val-req-device").textContent = req.deviceName || tQr.deviceUnknown;
+                        document.getElementById("val-req-ip").textContent = req.ip || tQr.ipUnknown;
+                        document.getElementById("btn-approve-login").disabled = false;
+                        document.getElementById("qr-main").classList.add("hidden");
+                        document.getElementById("qr-approve-screen").classList.remove("hidden");
+                    }
+                });
             } catch (e) {
-                setStatusMessage(e.message, true);
+                setStatusMessage("qr-status-msg", e.message, true);
                 document.getElementById("qr-loading").classList.add("hidden");
                 document.getElementById("qr-main").classList.remove("hidden");
             }
