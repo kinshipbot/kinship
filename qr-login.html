@@ -19,7 +19,6 @@
             --btn-text: #ffffff;
             --danger-bg: #fee2e2;
             --danger-text: #b91c1c;
-            --ok-text: #15803d;
         }
         @media (prefers-color-scheme: dark) {
             :root {
@@ -33,7 +32,6 @@
                 --btn-text: #000000;
                 --danger-bg: #3f1515;
                 --danger-text: #fca5a5;
-                --ok-text: #86efac;
             }
         }
         * {
@@ -190,11 +188,10 @@
             <span class="badge">Kinship QR</span>
         </div>
 
-        <!-- Экран 1: Показ QR-кода и секретного кода -->
         <div id="qr-stage">
             <h1>Вход по QR-коду</h1>
             <p class="desc">
-                Отсканируйте QR-код на другом устройстве в <span class="notranslate">qr-scaner.html</span> или введите секретный код ниже.
+                Отсканируйте QR-код на другом устройстве в <span class="notranslate">qr-scan.html</span> или введите секретный код ниже.
             </p>
 
             <div class="qr-wrapper">
@@ -208,11 +205,10 @@
             <button id="refresh-btn" class="btn btn-secondary" type="button">Сгенерировать новый код</button>
         </div>
 
-        <!-- Экран 2: Автоматически появляется после сканирования/ввода кода на другом устройстве -->
         <div id="decision-stage" class="decision-box">
             <h2>Запрос на вход</h2>
             <p id="decision-desc">
-                Код был сканирован/введён. Подтвердите вход или отклоните его на этом устройстве.
+                Код отсканирован/введён с другого устройства. Принять или отклонить вход?
             </p>
             <button id="accept-btn" class="btn btn-accept" type="button">Принять вход</button>
             <button id="reject-btn" class="btn btn-reject" type="button">Отклонить</button>
@@ -296,7 +292,6 @@
                 const data = snap.val();
                 if (!data) return;
 
-                // Когда код отсканировали или ввели на другом устройстве — меняем экран на принятие/отказ
                 if (data.status === "scanned") {
                     qrStage.style.display = "none";
                     decisionStage.style.display = "block";
