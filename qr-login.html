@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
     <style>
         :root {
             --bg: #f9fafb;
@@ -221,7 +222,7 @@
         </p>
 
         <div class="qr-frame">
-            <canvas id="qr-canvas" width="200" height="200"></canvas>
+            <canvas id="qr-canvas" width="210" height="210"></canvas>
         </div>
 
         <div id="qr-token-display" class="qr-code-tag"></div>
@@ -315,67 +316,44 @@
         document.getElementById("qr-manual-input").placeholder = tQr.manualPh;
         document.getElementById("btn-apply-manual-qr").textContent = tQr.verifyBtn;
 
-        // Детерминированная матрица QR-подобного кода на canvas, уникальная для каждого аккаунта
-        function drawUniqueAccountQr(canvas, seedText) {
+        // Генерирует настоящий считываемый QR-код (ISO/IEC 18004) с уникальным содержимым аккаунта
+        function drawRealScannableQr(canvas, encodedValue) {
             const ctx = canvas.getContext("2d");
             const size = canvas.width;
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, size, size);
 
-            const grid = 25;
-            const pad = 14;
-            const cell = Math.floor((size - pad * 2) / grid);
-            const offset = Math.floor((size - cell * grid) / 2);
+            if (typeof window.qrcode === "function") {
+                const qr = window.qrcode(0, "M");
+                qr.addData(encodedValue);
+                qr.make();
 
-            let hash = 2166136261;
-            for (let i = 0; i < seedText.length; i++) {
-                hash ^= seedText.charCodeAt(i);
-                hash = Math.imul(hash, 16777619);
-            }
+                const count = qr.getModuleCount();
+                const quietZone = 4;
+                const totalModules = count + quietZone * 2;
+                const cell = size / totalModules;
 
-            function nextBit() {
-                hash ^= hash << 13;
-                hash ^= hash >>> 17;
-                hash ^= hash << 5;
-                return (hash >>> 0) % 2 === 1;
-            }
-
-            function drawFinder(gx, gy) {
-                for (let y = 0; y < 7; y++) {
-                    for (let x = 0; x < 7; x++) {
-                        const border = x === 0 || x === 6 || y === 0 || y === 6;
-                        const center = x >= 2 && x <= 4 && y >= 2 && y <= 4;
-                        if (border || center) {
-                            ctx.fillStyle = "#030712";
-                            ctx.fillRect(offset + (gx + x) * cell, offset + (gy + y) * cell, cell, cell);
+                ctx.fillStyle = "#000000";
+                for (let r = 0; r < count; r++) {
+                    for (let c = 0; c < count; c++) {
+                        if (qr.isDark(r, c)) {
+                            const x = Math.floor((c + quietZone) * cell);
+                            const y = Math.floor((r + quietZone) * cell);
+                            const w = Math.ceil((c + quietZone + 1) * cell) - x;
+                            const h = Math.ceil((r + quietZone + 1) * cell) - y;
+                            ctx.fillRect(x, y, w, h);
                         }
                     }
                 }
+                return true;
             }
-
-            function isFinder(gx, gy) {
-                return (gx < 8 && gy < 8) || (gx >= grid - 8 && gy < 8) || (gx < 8 && gy >= grid - 8);
-            }
-
-            ctx.fillStyle = "#030712";
-            for (let y = 0; y < grid; y++) {
-                for (let x = 0; x < grid; x++) {
-                    if (isFinder(x, y)) continue;
-                    if (nextBit()) {
-                        ctx.fillRect(offset + x * cell, offset + y * cell, cell, cell);
-                    }
-                }
-            }
-
-            drawFinder(0, 0);
-            drawFinder(grid - 7, 0);
-            drawFinder(0, grid - 7);
+            return false;
         }
     </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { initializeFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -430,6 +408,7 @@
         let currentUser = null;
         let userRef = null;
         let accountQrToken = "";
+        let qrEncodedPayload = "";
         let scanStream = null;
         let scanTimer = null;
 
@@ -472,8 +451,8 @@
 
         function verifyQrValue(rawValue) {
             const trimmed = String(rawValue || "").trim();
-            if (!trimmed) return false;
-            return trimmed === accountQrToken || trimmed.includes(accountQrToken) || trimmed.includes(currentUser.uid);
+            if (!trimmed || !accountQrToken) return false;
+            return trimmed === qrEncodedPayload || trimmed === accountQrToken || trimmed.includes(accountQrToken);
         }
 
         document.getElementById("btn-confirm-qr-login").addEventListener("click", async () => {
@@ -514,7 +493,7 @@
 
             panel.classList.remove("hidden");
 
-                        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 setStatusMessage(tQr.cameraErr, true);
                 return;
             }
@@ -526,7 +505,7 @@
                 await video.play();
                 btn.textContent = tQr.stopScan;
 
-                if ("BarcodeDetector" in window) {
+                                if ("BarcodeDetector" in window) {
                     const detector = new BarcodeDetector({ formats: ["qr_code"] });
                     scanTimer = setInterval(async () => {
                         try {
@@ -567,9 +546,14 @@
                     await setDoc(userRef, { qrLoginToken: accountQrToken }, { merge: true });
                 }
 
+                qrEncodedPayload = `KINSHIP-QR|uid=${user.uid}|token=${accountQrToken}`;
                 const canvas = document.getElementById("qr-canvas");
-                drawUniqueAccountQr(canvas, `${user.uid}:${accountQrToken}`);
+                const rendered = drawRealScannableQr(canvas, qrEncodedPayload);
                 document.getElementById("qr-token-display").textContent = accountQrToken;
+
+                if (!rendered) {
+                    setStatusMessage("QR library failed to load. Check internet connection or enter token manually.", true);
+                }
 
                 document.getElementById("qr-loading").classList.add("hidden");
                 document.getElementById("qr-main").classList.remove("hidden");
