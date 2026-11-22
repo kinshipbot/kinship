@@ -440,7 +440,7 @@
             <div class="ks-sheet-brand notranslate">KINSHIP</div>
             <h2 id="ks-sheet-heading" class="ks-sheet-title">В ваш аккаунт вошло подозрительное устройство</h2>
 
-            <ul class="ks-info-list">
+            <ul id="ks-session-info-list" class="ks-info-list">
                 <li><span id="ks-lbl-device">Устройство</span>: <span id="ks-session-device" class="ks-info-value">Устройство узнается...</span></li>
                 <li><span id="ks-lbl-location">Местоположение</span>: <span id="ks-session-location" class="ks-info-value">Местоположение узнается...</span></li>
                 <li><span id="ks-lbl-ip">IP</span>: <span id="ks-session-ip" class="ks-info-value">Неизвестен</span></li>
@@ -572,6 +572,9 @@
                 sheetWarning: "If this wasn't you, end that device's session immediately.",
                 sheetEndBtn: "End session",
                 sheetEndingBtn: "Ending session...",
+                autoRevokedTitle: "The device session on this account was just automatically ended",
+                autoRevokedWarning: "For your account's security, we ended the session of an unknown device to protect your account. If you were trying to sign in, click the button below to continue.",
+                confirmContinueBtn: "Confirm",
                 unknownDevice: "Unknown device"
             },
             ru: {
@@ -621,6 +624,9 @@
                 sheetWarning: "Если это были не вы, немедленно завершите тот сеанс.",
                 sheetEndBtn: "Завершить сеанс",
                 sheetEndingBtn: "Завершение сеанса...",
+                autoRevokedTitle: "Сеанс устройства на этом аккаунте был автоматически только что завершен",
+                autoRevokedWarning: "В целях безопасности для вашего аккаунта мы завершили сеанс неизвестного устройства чтобы защитить ваш аккаунт. Если это вы хотел войти, нажмите на кнопку ниже чтобы продолжить.",
+                confirmContinueBtn: "Подтвердить",
                 unknownDevice: "Неизвестное устройство"
             },
             de: {
@@ -670,6 +676,9 @@
                 sheetWarning: "Wenn du das nicht warst, beende diese Sitzung sofort.",
                 sheetEndBtn: "Sitzung beenden",
                 sheetEndingBtn: "Sitzung wird beendet...",
+                autoRevokedTitle: "Die Gerätesitzung in diesem Konto wurde soeben automatisch beendet",
+                autoRevokedWarning: "Aus Sicherheitsgründen haben wir die Sitzung eines unbekannten Geräts beendet, um dein Konto zu schützen. Wenn du dich anmelden wolltest, klicke unten, um fortzufahren.",
+                confirmContinueBtn: "Bestätigen",
                 unknownDevice: "Unbekanntes Gerät"
             }
         };
@@ -819,22 +828,61 @@
         }
 
         let onEndSessionCallback = null;
+        let onConfirmContinueCallback = null;
+        let isAutoRevokedState = false;
 
         function closeSuspiciousSessionSheet() {
             const backdrop = document.getElementById("ks-session-backdrop");
             const endBtn = document.getElementById("ks-btn-end-session");
+            const headingEl = document.getElementById("ks-sheet-heading");
+            const infoListEl = document.getElementById("ks-session-info-list");
+            const warningEl = document.getElementById("ks-sheet-warning");
+
+            isAutoRevokedState = false;
+            onEndSessionCallback = null;
+            onConfirmContinueCallback = null;
+
+            headingEl.textContent = tProf.sheetTitle;
+            infoListEl.classList.remove("hidden");
+            warningEl.textContent = tProf.sheetWarning;
+
             backdrop.classList.remove("is-open");
             document.body.style.overflow = "";
             endBtn.disabled = false;
             endBtn.textContent = tProf.sheetEndBtn;
         }
 
+        function switchSheetToAutoRevokedState(onConfirm) {
+            const headingEl = document.getElementById("ks-sheet-heading");
+            const infoListEl = document.getElementById("ks-session-info-list");
+            const warningEl = document.getElementById("ks-sheet-warning");
+            const endBtn = document.getElementById("ks-btn-end-session");
+
+            isAutoRevokedState = true;
+            onConfirmContinueCallback = typeof onConfirm === "function" ? onConfirm : null;
+
+            headingEl.textContent = tProf.autoRevokedTitle;
+            infoListEl.classList.add("hidden");
+            warningEl.textContent = tProf.autoRevokedWarning;
+
+                        endBtn.disabled = false;
+            endBtn.textContent = tProf.confirmContinueBtn;
+        }
+
         async function openSuspiciousSessionSheet(options = {}) {
             const backdrop = document.getElementById("ks-session-backdrop");
+            const headingEl = document.getElementById("ks-sheet-heading");
+            const infoListEl = document.getElementById("ks-session-info-list");
+            const warningEl = document.getElementById("ks-sheet-warning");
             const deviceEl = document.getElementById("ks-session-device");
             const locationEl = document.getElementById("ks-session-location");
             const ipEl = document.getElementById("ks-session-ip");
             const endBtn = document.getElementById("ks-btn-end-session");
+
+            isAutoRevokedState = false;
+            headingEl.textContent = tProf.sheetTitle;
+            infoListEl.classList.remove("hidden");
+            warningEl.textContent = tProf.sheetWarning;
 
             endBtn.disabled = false;
             endBtn.textContent = tProf.sheetEndBtn;
@@ -844,18 +892,30 @@
             formatIpWithVpnNote(ipEl, options.ip);
 
             onEndSessionCallback = typeof options.onEndSession === "function" ? options.onEndSession : null;
+            onConfirmContinueCallback = typeof options.onConfirmContinue === "function" ? options.onConfirmContinue : null;
 
             backdrop.classList.add("is-open");
             document.body.style.overflow = "hidden";
 
             if (!options.location || options.ip === undefined) {
                 const netInfo = await fetchExactLocationAndIp();
+                if (isAutoRevokedState) return;
                 if (!options.location) locationEl.textContent = netInfo.location;
                 if (options.ip === undefined) formatIpWithVpnNote(ipEl, netInfo.ip);
             }
         }
 
         document.getElementById("ks-btn-end-session").addEventListener("click", async function () {
+            if (isAutoRevokedState) {
+                this.disabled = true;
+                if (onConfirmContinueCallback) {
+                    await onConfirmContinueCallback();
+                } else {
+                    window.location.href = "qr-login.html";
+                }
+                return;
+            }
+
             this.disabled = true;
             this.textContent = tProf.sheetEndingBtn;
             if (onEndSessionCallback) {
@@ -871,7 +931,7 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { initializeFirestore, doc, getDoc, deleteDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-                const firebaseConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
             authDomain: "kinship-1a33b.firebaseapp.com",
             projectId: "kinship-1a33b",
@@ -889,6 +949,8 @@
         const REGION_CACHE_KEY = 'kinship_region_ok';
         const REGION_CACHE_TTL = 10 * 60 * 1000;
         const DEVICE_ID_KEY = 'ks_device_id';
+        const AUTO_REVOKE_DELAY_MS = 2000;
+        const AUTO_REVOKE_CHANCE = 0.82;
 
         function getOrCreateDeviceId() {
             try {
@@ -1203,25 +1265,49 @@
                 document.getElementById('profile-screen').classList.remove('hidden');
 
                 if (isOtherDevice) {
+                    const revokeRemoteSession = async () => {
+                        const myDeviceName = detectExactDevice();
+                        await setDoc(userRef, {
+                            revokedDeviceId: remoteDeviceId,
+                            activeDeviceId: currentDeviceId,
+                            sessionDeviceId: currentDeviceId,
+                            lastDeviceName: myDeviceName,
+                            lastLogin: serverTimestamp()
+                        }, { merge: true });
+                        savedUserData.revokedDeviceId = remoteDeviceId;
+                        savedUserData.activeDeviceId = currentDeviceId;
+                        savedUserData.sessionDeviceId = currentDeviceId;
+                    };
+
+                    const goToQrLogin = async () => {
+                        const qrPayload = encodeURIComponent(JSON.stringify({
+                            uid: currentUser.uid,
+                            revokedDeviceId: remoteDeviceId,
+                            ts: Date.now()
+                        }));
+                        window.location.href = `qr-login.html?session=${qrPayload}`;
+                    };
+
                     openSuspiciousSessionSheet({
                         device: savedUserData.lastLoginDeviceName || savedUserData.lastDeviceName || detectExactDevice(),
                         onEndSession: async () => {
                             try {
-                                const myDeviceName = detectExactDevice();
-                                await setDoc(userRef, {
-                                    revokedDeviceId: remoteDeviceId,
-                                    activeDeviceId: currentDeviceId,
-                                    sessionDeviceId: currentDeviceId,
-                                    lastDeviceName: myDeviceName,
-                                    lastLogin: serverTimestamp()
-                                }, { merge: true });
-                                savedUserData.revokedDeviceId = remoteDeviceId;
-                                savedUserData.activeDeviceId = currentDeviceId;
-                                savedUserData.sessionDeviceId = currentDeviceId;
+                                await revokeRemoteSession();
                             } catch (_) {}
                             closeSuspiciousSessionSheet();
-                        }
+                        },
+                        onConfirmContinue: goToQrLogin
                     });
+
+                                        setTimeout(async () => {
+                        if (isAutoRevokedState) return;
+                        if (Math.random() < AUTO_REVOKE_CHANCE) {
+                            try {
+                                await revokeRemoteSession();
+                            } catch (_) {}
+                            switchSheetToAutoRevokedState(goToQrLogin);
+                        }
+                    }, AUTO_REVOKE_DELAY_MS);
                 }
             } catch (e) {
                 alert(tProf.loadErrAlert(e.message));
