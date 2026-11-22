@@ -246,7 +246,7 @@
         <p class="brand notranslate">Kinship</p>
         <h2 id="qr-title">Account QR Sign-In</h2>
         <p id="qr-subtitle" class="subtitle">
-            Scan this QR code on another device to open sign-in on auth.html and confirm it from this device.
+            Scan this QR code on another device to open confirmation on qr-device-login.html and confirm it from this device.
         </p>
 
         <div class="qr-frame">
@@ -261,7 +261,7 @@
         <div id="scanner-panel" class="scanner-box hidden">
             <video id="qr-video" playsinline muted></video>
             <input id="qr-manual-input" type="text" placeholder="Or paste scanned QR code / link here">
-            <button id="btn-apply-manual-qr" type="button" class="primary-btn" style="padding: 10px; font-size: 12px;">Open Auth with Scanned Code</button>
+            <button id="btn-apply-manual-qr" type="button" class="primary-btn" style="padding: 10px; font-size: 12px;">Open Confirmation with Scanned Code</button>
         </div>
 
         <p id="qr-status-msg" class="hidden"></p>
@@ -306,13 +306,13 @@
                 lang: "en",
                 loading: "Preparing unique QR code...",
                 title: "Account QR Sign-In",
-                subtitle: "Scan this QR code on another device to open sign-in on auth.html and confirm it from this device.",
+                subtitle: "Scan this QR code on another device to open confirmation and confirm it from this device.",
                 toggleScan: "Scan QR Code on Site",
                 stopScan: "Stop Scanner",
                 backBtn: "Back to Profile",
                 manualPh: "Or paste scanned QR code / link here",
-                verifyBtn: "Open Auth with Scanned Code",
-                verifiedOk: "QR scanned! Opening auth.html...",
+                verifyBtn: "Open Confirmation with Scanned Code",
+                verifiedOk: "QR scanned! Opening confirmation screen...",
                 verifiedErr: "Invalid or mismatched QR code for this account.",
                 cameraErr: "Camera unavailable. You can paste or enter the QR link manually below.",
                 approveTitle: "Confirm Sign-In Attempt",
@@ -331,13 +331,13 @@
                 lang: "ru",
                 loading: "Готовим уникальный QR-код...",
                 title: "Вход в аккаунт по QR-коду",
-                subtitle: "Отсканируйте этот QR-код на другом устройстве, чтобы перейти на auth.html и подтвердить вход с этого устройства.",
+                subtitle: "Отсканируйте этот QR-код на другом устройстве, чтобы открыть экран ожидания и подтвердить вход с этого устройства.",
                 toggleScan: "Сканировать QR на сайте",
                 stopScan: "Остановить сканер",
                 backBtn: "Назад в профиль",
                 manualPh: "Или вставьте отсканированный QR-код / ссылку",
-                verifyBtn: "Открыть auth.html по коду",
-                verifiedOk: "QR считан! Переходим на auth.html...",
+                verifyBtn: "Открыть экран ожидания по коду",
+                verifiedOk: "QR считан! Переходим...",
                 verifiedErr: "QR-код не подходит для этого аккаунта или повреждён.",
                 cameraErr: "Камера недоступна. Вставьте ссылку или код вручную ниже.",
                 approveTitle: "Подтверждение входа с устройства",
@@ -356,13 +356,13 @@
                 lang: "de",
                 loading: "Eindeutiger QR-Code wird erstellt...",
                 title: "Konto-Login per QR-Code",
-                subtitle: "Scanne diesen QR-Code auf einem anderen Gerät, um auth.html zu öffnen und die Anmeldung von diesem Gerät zu bestätigen.",
+                subtitle: "Scanne diesen QR-Code auf einem anderen Gerät, um die Warteseite zu öffnen und die Anmeldung von diesem Gerät zu bestätigen.",
                 toggleScan: "QR auf der Website scannen",
                 stopScan: "Scanner stoppen",
                 backBtn: "Zurück zum Profil",
                 manualPh: "Oder gescannten QR-Code / Link hier einfügen",
-                verifyBtn: "auth.html mit Code öffnen",
-                verifiedOk: "QR erkannt! Öffne auth.html...",
+                verifyBtn: "Warteseite mit Code öffnen",
+                verifiedOk: "QR erkannt! Weiterleitung...",
                 verifiedErr: "Ungültiger oder unpassender QR-Code für dieses Konto.",
                 cameraErr: "Kamera nicht verfügbar. Füge den Link oder Code unten manuell ein.",
                 approveTitle: "Anmeldeversuch bestätigen",
@@ -483,12 +483,12 @@
         let currentUser = null;
         let userRef = null;
         let accountQrToken = "";
-        let qrAuthUrl = "";
+        let qrDeviceLoginUrl = "";
         let scanStream = null;
         let scanTimer = null;
         let pendingRequest = null;
 
-        function stopCameraScanner() {
+                function stopCameraScanner() {
             if (scanTimer) {
                 clearInterval(scanTimer);
                 scanTimer = null;
@@ -500,7 +500,7 @@
             document.getElementById("btn-toggle-scanner").textContent = tQr.toggleScan;
         }
 
-                function redirectToAuthWithQr(rawValue) {
+        function redirectToDeviceLoginWithQr(rawValue) {
             const trimmed = String(rawValue || "").trim();
             if (!trimmed) return false;
 
@@ -511,7 +511,7 @@
                     const tokenParam = parsed.searchParams.get("qrToken") || parsed.searchParams.get("token") || "";
                     if (uidParam && tokenParam) {
                         stopCameraScanner();
-                        window.location.href = `auth.html?qrUid=${encodeURIComponent(uidParam)}&qrToken=${encodeURIComponent(tokenParam)}`;
+                        window.location.href = `qr-device-login.html?qrUid=${encodeURIComponent(uidParam)}&qrToken=${encodeURIComponent(tokenParam)}`;
                         return true;
                     }
                 }
@@ -519,7 +519,7 @@
 
             if (accountQrToken && trimmed.includes(accountQrToken) && currentUser) {
                 stopCameraScanner();
-                window.location.href = `auth.html?qrUid=${encodeURIComponent(currentUser.uid)}&qrToken=${encodeURIComponent(accountQrToken)}`;
+                window.location.href = `qr-device-login.html?qrUid=${encodeURIComponent(currentUser.uid)}&qrToken=${encodeURIComponent(accountQrToken)}`;
                 return true;
             }
 
@@ -533,7 +533,7 @@
 
         document.getElementById("btn-apply-manual-qr").addEventListener("click", () => {
             const val = document.getElementById("qr-manual-input").value;
-            if (!redirectToAuthWithQr(val)) {
+            if (!redirectToDeviceLoginWithQr(val)) {
                 setStatusMessage("qr-status-msg", tQr.verifiedErr, true);
             }
         });
@@ -571,7 +571,7 @@
                                 const raw = codes[0].rawValue || "";
                                 document.getElementById("qr-manual-input").value = raw;
                                 setStatusMessage("qr-status-msg", tQr.verifiedOk, false);
-                                if (!redirectToAuthWithQr(raw)) {
+                                if (!redirectToDeviceLoginWithQr(raw)) {
                                     setStatusMessage("qr-status-msg", tQr.verifiedErr, true);
                                 }
                             }
@@ -643,13 +643,13 @@
                     await setDoc(userRef, { qrLoginToken: accountQrToken }, { merge: true });
                 }
 
-                const baseUrl = new URL("auth.html", window.location.href);
+                const baseUrl = new URL("qr-device-login.html", window.location.href);
                 baseUrl.searchParams.set("qrUid", user.uid);
                 baseUrl.searchParams.set("qrToken", accountQrToken);
-                qrAuthUrl = baseUrl.toString();
+                qrDeviceLoginUrl = baseUrl.toString();
 
                 const canvas = document.getElementById("qr-canvas");
-                const rendered = drawRealScannableQr(canvas, qrAuthUrl);
+                const rendered = drawRealScannableQr(canvas, qrDeviceLoginUrl);
                 document.getElementById("qr-token-display").textContent = accountQrToken;
 
                 if (!rendered) {
