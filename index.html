@@ -290,7 +290,6 @@
             window.location.href = "profile.html";
         }
 
-        // Проверяем результат редиректа (если использовался signInWithRedirect)
         getRedirectResult(auth)
             .then((result) => {
                 if (result && result.user) {
