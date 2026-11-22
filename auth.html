@@ -1108,6 +1108,7 @@
                 sessionDeviceId: deviceId,
                 lastLoginDeviceName: deviceName,
                 lastDeviceName: deviceName,
+                revokedDeviceId: "",
                 lastLogin: serverTimestamp()
             }, { merge: true });
         }
@@ -1132,6 +1133,7 @@
                     sessionDeviceId: deviceId,
                     lastLoginDeviceName: deviceName,
                     lastDeviceName: deviceName,
+                    revokedDeviceId: "",
                     lastLogin: serverTimestamp()
                 });
 
@@ -1222,6 +1224,15 @@
                     showScreen('step1');
                 } else {
                     savedUserData = userSnap.data();
+
+                    const currentDeviceId = getOrCreateDeviceId();
+                    const remoteDeviceId = savedUserData.activeDeviceId || savedUserData.sessionDeviceId || "";
+                    const revokedDeviceId = savedUserData.revokedDeviceId || "";
+
+                    if (revokedDeviceId && revokedDeviceId === currentDeviceId && remoteDeviceId !== currentDeviceId) {
+                        await handleLogout();
+                        return;
+                    }
 
                     if (OWNER_EMAILS.includes(user.email) && savedUserData.role !== 'owner') {
                         savedUserData.role = 'owner';
