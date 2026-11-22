@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title class="notranslate">Kinship — Сканер QR и кода</title>
+    <title class="notranslate">Kinship — Сканирование QR-кода</title>
     <link rel="icon" type="image/png" href="icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Кроссбраузерный декодер QR с камеры (работает на всех Android и iOS) -->
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
         :root {
@@ -58,6 +57,7 @@
             border-radius: 24px;
             padding: 24px 20px;
             text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
         }
         .top-row {
             display: flex;
@@ -161,13 +161,13 @@
 <body>
     <div class="card">
         <div class="top-row">
-            <a href="setting-kinship.html" class="back-link">← Назад</a>
-            <span style="font-size:11px;font-weight:700;color:var(--muted);">Сканер устройства</span>
+            <a href="index.html" class="back-link">← Назад</a>
+            <span style="font-size:11px;font-weight:700;color:var(--muted);">Сканер QR</span>
         </div>
 
-        <h1>Подключить устройство</h1>
+        <h1>Сканирование QR-кода</h1>
         <p class="desc">
-            Наведите камеру на QR-код, который отображается на другом устройстве, или введите его секретный код вручную.
+            Отсканируйте QR-код через камеру или введите код, который показывается на другом устройстве.
         </p>
 
         <div class="camera-box">
@@ -178,7 +178,7 @@
 
         <button id="start-cam-btn" class="btn btn-secondary" type="button">Включить камеру</button>
 
-        <div class="divider">или введите код с экрана</div>
+        <div class="divider">или введите код с другого устройства</div>
 
         <input id="code-input" class="code-input" type="text" placeholder="KSP-XXXXXX" maxlength="12">
         <button id="submit-code-btn" class="btn btn-primary" type="button">Продолжить</button>
@@ -190,6 +190,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+        // ВСТАВЬ СВОЙ FIREBASE CONFIG ИЗ ПРОЕКТА KINSHIP
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "bib-chat-64027.firebaseapp.com",
@@ -226,14 +227,13 @@
             return cleaned.toUpperCase();
         }
 
-        // Строгая проверка кода по Firebase Realtime Database
         async function validateAndProceed(rawValue) {
             if (isChecking) return;
             errorBox.style.display = "none";
 
             const code = extractCode(rawValue);
             if (!code || !/^KSP-[A-Z0-9]{6}$/.test(code)) {
-                showError("Неверный формат кода. Введите действующий код вида KSP-XXXXXX.");
+                showError("Неверный код! Введите действующий код с другого устройства.");
                 return;
             }
 
@@ -243,14 +243,14 @@
                 const snap = await get(sessionRef);
 
                 if (!snap.exists()) {
-                    showError("Код не найден в облаке! Нельзя войти по случайному коду.");
+                    showError("Код не найден в облаке! Вход по случайному коду запрещён.");
                     isChecking = false;
                     return;
                 }
 
                 const data = snap.val();
                 if (data.expiresAt && Date.now() > data.expiresAt) {
-                    showError("Срок действия этого QR-кода истёк. Обновите код на другом устройстве.");
+                    showError("Срок действия кода истёк. Обновите код на другом устройстве.");
                     isChecking = false;
                     return;
                 }
@@ -261,7 +261,6 @@
                     return;
                 }
 
-                // Помечаем в облаке, что код отсканирован, и переходим на страницу подтверждения
                 await update(sessionRef, { status: "scanned" });
                 if (stream) stream.getTracks().forEach(t => t.stop());
 
@@ -272,7 +271,6 @@
             }
         }
 
-        // Запуск камеры и сканирование через jsQR
         document.getElementById("start-cam-btn").addEventListener("click", async () => {
             errorBox.style.display = "none";
             try {
@@ -283,7 +281,7 @@
                 await video.play();
                 requestAnimationFrame(tickScan);
             } catch (e) {
-                showError("Не удалось открыть камеру. Разрешите доступ или введите код вручную ниже.");
+                showError("Не удалось открыть камеру. Разрешите доступ или введите код вручную.");
             }
         });
 
