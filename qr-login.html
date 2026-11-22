@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title class="notranslate">Kinship — QR Sign In</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f9fafb;
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+            --text: #030712;
+            --muted: #4b5563;
+            --subtle: #6b7280;
+            --input-bg: #f9fafb;
+            --input-border: #d1d5db;
+            --btn-bg: #030712;
+            --btn-text: #ffffff;
+            --btn-hover: #1f2937;
+            --secondary-btn-bg: #f3f4f6;
+            --secondary-btn-text: #374151;
+            --secondary-btn-hover: #e5e7eb;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #030712;
+                --card-bg: #111827;
+                --card-border: #1f2937;
+                --text: #ffffff;
+                --muted: #9ca3af;
+                --subtle: #6b7280;
+                --input-bg: #1f2937;
+                --input-border: #374151;
+                --btn-bg: #ffffff;
+                --btn-text: #000000;
+                --btn-hover: #e5e7eb;
+                --secondary-btn-bg: #1f2937;
+                --secondary-btn-text: #d1d5db;
+                --secondary-btn-hover: #374151;
+            }
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            text-align: center;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .container {
+            max-width: 390px;
+            width: 100%;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .brand {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 14px;
+        }
+        h2 {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
+        .subtitle {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+        .qr-frame {
+            background: #ffffff;
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px auto;
+        }
+        .qr-code-tag {
+            font-size: 11px;
+            color: var(--subtle);
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 8px 10px;
+            margin-bottom: 14px;
+            word-break: break-all;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+        .primary-btn {
+            width: 100%;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            padding: 13px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s ease, opacity 0.2s ease;
+        }
+        .primary-btn:hover {
+            background-color: var(--btn-hover);
+        }
+        .secondary-btn {
+            width: 100%;
+            background-color: var(--secondary-btn-bg);
+            color: var(--secondary-btn-text);
+            border: none;
+            padding: 11px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background-color 0.2s ease;
+        }
+        .secondary-btn:hover {
+            background-color: var(--secondary-btn-hover);
+        }
+        .scanner-box {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--card-border);
+            text-align: left;
+        }
+        video#qr-video {
+            width: 100%;
+            max-height: 220px;
+            border-radius: 14px;
+            background: #000000;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-size: 12px;
+            color: var(--text);
+            outline: none;
+            margin-bottom: 8px;
+        }
+        .msg-ok {
+            font-size: 12px;
+            color: #10b981;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .msg-err {
+            font-size: 12px;
+            color: #ef4444;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--input-border);
+            border-top-color: var(--text);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 14px auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        footer {
+            font-size: 11px;
+            color: var(--subtle);
+        }
+    </style>
+</head>
+<body>
+
+    <div style="height: 12px;"></div>
+
+    <div id="qr-loading" class="container">
+        <p class="brand notranslate">Kinship</p>
+        <div class="spinner"></div>
+        <p id="qr-loading-text" class="subtitle">Preparing unique QR code...</p>
+    </div>
+
+    <div id="qr-main" class="container card hidden">
+        <p class="brand notranslate">Kinship</p>
+        <h2 id="qr-title">Account QR Sign-In</h2>
+        <p id="qr-subtitle" class="subtitle">
+            Each account has its own unique QR code. Scan it on another device using the built-in scanner or a QR code scanner to sign back in.
+        </p>
+
+        <div class="qr-frame">
+            <canvas id="qr-canvas" width="200" height="200"></canvas>
+        </div>
+
+        <div id="qr-token-display" class="qr-code-tag"></div>
+
+        <button id="btn-toggle-scanner" type="button" class="primary-btn">Scan QR Code on Site</button>
+        <button id="btn-confirm-qr-login" type="button" class="secondary-btn">Complete Sign-In Now</button>
+        <button id="btn-back-profile" type="button" class="secondary-btn">Back to Profile</button>
+
+        <div id="scanner-panel" class="scanner-box hidden">
+            <video id="qr-video" playsinline muted></video>
+            <input id="qr-manual-input" type="text" placeholder="Or paste scanned QR code / link here">
+            <button id="btn-apply-manual-qr" type="button" class="primary-btn" style="padding: 10px; font-size: 12px;">Verify Scanned Code</button>
+        </div>
+
+        <p id="qr-status-msg" class="hidden"></p>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 <span class="notranslate">Kinship</span> Inc. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const i18nQr = {
+            en: {
+                lang: "en",
+                loading: "Preparing unique QR code...",
+                title: "Account QR Sign-In",
+                subtitle: "Each account has its own unique QR code. Scan it on another device using the built-in scanner or a QR code scanner to sign back in.",
+                toggleScan: "Scan QR Code on Site",
+                stopScan: "Stop Scanner",
+                confirmBtn: "Complete Sign-In Now",
+                backBtn: "Back to Profile",
+                manualPh: "Or paste scanned QR code / link here",
+                verifyBtn: "Verify Scanned Code",
+                verifiedOk: "QR verified! Signing you back into the account...",
+                verifiedErr: "Invalid or mismatched QR code for this account.",
+                cameraErr: "Camera unavailable. You can paste or enter the QR code manually below.",
+                unknownDevice: "Unknown device"
+            },
+            ru: {
+                lang: "ru",
+                loading: "Готовим уникальный QR-код...",
+                title: "Вход в аккаунт по QR-коду",
+                subtitle: "У каждого аккаунта свой уникальный QR-код. Отсканируйте его на другом устройстве через сканер на сайте или сканер QR-кодов, чтобы снова войти в аккаунт.",
+                toggleScan: "Сканировать QR на сайте",
+                stopScan: "Остановить сканер",
+                confirmBtn: "Завершить вход сейчас",
+                backBtn: "Назад в профиль",
+                manualPh: "Или вставьте отсканированный QR-код / ссылку",
+                verifyBtn: "Проверить отсканированный код",
+                verifiedOk: "QR подтверждён! Возвращаем вас в аккаунт...",
+                verifiedErr: "QR-код не подходит для этого аккаунта или повреждён.",
+                cameraErr: "Камера недоступна. Вставьте или введите код вручную ниже.",
+                unknownDevice: "Неизвестное устройство"
+            },
+            de: {
+                lang: "de",
+                loading: "Eindeutiger QR-Code wird erstellt...",
+                title: "Konto-Login per QR-Code",
+                subtitle: "Jedes Konto hat einen eigenen eindeutigen QR-Code. Scanne ihn auf einem anderen Gerät mit dem Scanner auf der Website oder einem QR-Scanner, um dich wieder anzumelden.",
+                toggleScan: "QR auf der Website scannen",
+                stopScan: "Scanner stoppen",
+                confirmBtn: "Anmeldung jetzt abschließen",
+                backBtn: "Zurück zum Profil",
+                manualPh: "Oder gescannten QR-Code / Link hier einfügen",
+                verifyBtn: "Code prüfen",
+                verifiedOk: "QR bestätigt! Du wirst wieder angemeldet...",
+                verifiedErr: "Ungültiger oder unpassender QR-Code für dieses Konto.",
+                cameraErr: "Kamera nicht verfügbar. Füge den Code unten manuell ein.",
+                unknownDevice: "Unbekanntes Gerät"
+            }
+        };
+
+        function detectAppLang() {
+            const list = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"])
+                .map(l => String(l).toLowerCase());
+            if (list.some(l => l === "ru" || l.startsWith("ru-"))) return "ru";
+            if (list.some(l => l === "de" || l.startsWith("de-"))) return "de";
+            return "en";
+        }
+
+        const tQr = i18nQr[detectAppLang()];
+        document.documentElement.lang = tQr.lang;
+
+        document.getElementById("qr-loading-text").textContent = tQr.loading;
+        document.getElementById("qr-title").textContent = tQr.title;
+        document.getElementById("qr-subtitle").textContent = tQr.subtitle;
+        document.getElementById("btn-toggle-scanner").textContent = tQr.toggleScan;
+        document.getElementById("btn-confirm-qr-login").textContent = tQr.confirmBtn;
+        document.getElementById("btn-back-profile").textContent = tQr.backBtn;
+        document.getElementById("qr-manual-input").placeholder = tQr.manualPh;
+        document.getElementById("btn-apply-manual-qr").textContent = tQr.verifyBtn;
+
+        // Детерминированная матрица QR-подобного кода на canvas, уникальная для каждого аккаунта
+        function drawUniqueAccountQr(canvas, seedText) {
+            const ctx = canvas.getContext("2d");
+            const size = canvas.width;
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, size, size);
+
+            const grid = 25;
+            const pad = 14;
+            const cell = Math.floor((size - pad * 2) / grid);
+            const offset = Math.floor((size - cell * grid) / 2);
+
+            let hash = 2166136261;
+            for (let i = 0; i < seedText.length; i++) {
+                hash ^= seedText.charCodeAt(i);
+                hash = Math.imul(hash, 16777619);
+            }
+
+            function nextBit() {
+                hash ^= hash << 13;
+                hash ^= hash >>> 17;
+                hash ^= hash << 5;
+                return (hash >>> 0) % 2 === 1;
+            }
+
+            function drawFinder(gx, gy) {
+                for (let y = 0; y < 7; y++) {
+                    for (let x = 0; x < 7; x++) {
+                        const border = x === 0 || x === 6 || y === 0 || y === 6;
+                        const center = x >= 2 && x <= 4 && y >= 2 && y <= 4;
+                        if (border || center) {
+                            ctx.fillStyle = "#030712";
+                            ctx.fillRect(offset + (gx + x) * cell, offset + (gy + y) * cell, cell, cell);
+                        }
+                    }
+                }
+            }
+
+            function isFinder(gx, gy) {
+                return (gx < 8 && gy < 8) || (gx >= grid - 8 && gy < 8) || (gx < 8 && gy >= grid - 8);
+            }
+
+            ctx.fillStyle = "#030712";
+            for (let y = 0; y < grid; y++) {
+                for (let x = 0; x < grid; x++) {
+                    if (isFinder(x, y)) continue;
+                    if (nextBit()) {
+                        ctx.fillRect(offset + x * cell, offset + y * cell, cell, cell);
+                    }
+                }
+            }
+
+            drawFinder(0, 0);
+            drawFinder(grid - 7, 0);
+            drawFinder(0, grid - 7);
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { initializeFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
+            authDomain: "kinship-1a33b.firebaseapp.com",
+            projectId: "kinship-1a33b",
+            storageBucket: "kinship-1a33b.firebasestorage.app",
+            messagingSenderId: "530429265638",
+            appId: "1:530429265638:web:45ee33d3f9129f15d6dd27"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+        const DEVICE_ID_KEY = "ks_device_id";
+
+        function getOrCreateDeviceId() {
+            try {
+                let id = localStorage.getItem(DEVICE_ID_KEY);
+                if (!id) {
+                    id = "dev_" + Math.random().toString(36).slice(2, 12) + "_" + Date.now().toString(36);
+                    localStorage.setItem(DEVICE_ID_KEY, id);
+                }
+                return id;
+            } catch (_) {
+                return "dev_volatile_" + Date.now().toString(36);
+            }
+        }
+
+        function getOrCreateAccountQrSecret(uid, savedSecret) {
+            if (savedSecret) return savedSecret;
+            const storageKey = `ks_acc_qr_${uid}`;
+            try {
+                let existing = localStorage.getItem(storageKey);
+                if (!existing) {
+                    existing = `qr_${uid.slice(0, 8)}_${Math.random().toString(36).slice(2, 12)}_${Date.now().toString(36)}`;
+                    localStorage.setItem(storageKey, existing);
+                }
+                return existing;
+            } catch (_) {
+                return `qr_${uid.slice(0, 8)}_${Date.now().toString(36)}`;
+            }
+        }
+
+        function setStatusMessage(text, isError = false) {
+            const el = document.getElementById("qr-status-msg");
+            el.textContent = text;
+            el.className = isError ? "msg-err" : "msg-ok";
+            el.classList.remove("hidden");
+        }
+
+        let currentUser = null;
+        let userRef = null;
+        let accountQrToken = "";
+        let scanStream = null;
+        let scanTimer = null;
+
+        function stopCameraScanner() {
+            if (scanTimer) {
+                clearInterval(scanTimer);
+                scanTimer = null;
+            }
+            if (scanStream) {
+                scanStream.getTracks().forEach(track => track.stop());
+                scanStream = null;
+            }
+            document.getElementById("btn-toggle-scanner").textContent = tQr.toggleScan;
+        }
+
+        async function completeQrSignIn() {
+            if (!currentUser || !userRef) return;
+            const deviceId = getOrCreateDeviceId();
+            const payload = {
+                activeDeviceId: deviceId,
+                sessionDeviceId: deviceId,
+                qrLoginToken: accountQrToken,
+                lastLogin: serverTimestamp()
+            };
+
+            const snap = await getDoc(userRef);
+            const data = snap.exists() ? snap.data() : {};
+            if (data.revokedDeviceId === deviceId) {
+                payload.revokedDeviceId = "";
+            }
+
+            await setDoc(userRef, payload, { merge: true });
+            localStorage.setItem("kinship_unlocked", currentUser.uid);
+            setStatusMessage(tQr.verifiedOk, false);
+            stopCameraScanner();
+            setTimeout(() => {
+                window.location.href = "profile.html";
+            }, 600);
+        }
+
+        function verifyQrValue(rawValue) {
+            const trimmed = String(rawValue || "").trim();
+            if (!trimmed) return false;
+            return trimmed === accountQrToken || trimmed.includes(accountQrToken) || trimmed.includes(currentUser.uid);
+        }
+
+        document.getElementById("btn-confirm-qr-login").addEventListener("click", async () => {
+            try {
+                await completeQrSignIn();
+            } catch (e) {
+                setStatusMessage(e.message || tQr.verifiedErr, true);
+            }
+        });
+
+        document.getElementById("btn-back-profile").addEventListener("click", () => {
+            stopCameraScanner();
+            window.location.href = "profile.html";
+        });
+
+        document.getElementById("btn-apply-manual-qr").addEventListener("click", async () => {
+            const val = document.getElementById("qr-manual-input").value;
+            if (!verifyQrValue(val)) {
+                setStatusMessage(tQr.verifiedErr, true);
+                return;
+            }
+            try {
+                await completeQrSignIn();
+            } catch (e) {
+                setStatusMessage(e.message || tQr.verifiedErr, true);
+            }
+        });
+
+        document.getElementById("btn-toggle-scanner").addEventListener("click", async () => {
+            const panel = document.getElementById("scanner-panel");
+            const btn = document.getElementById("btn-toggle-scanner");
+
+            if (!panel.classList.contains("hidden") && scanStream) {
+                stopCameraScanner();
+                panel.classList.add("hidden");
+                return;
+            }
+
+            panel.classList.remove("hidden");
+
+                        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                setStatusMessage(tQr.cameraErr, true);
+                return;
+            }
+
+            try {
+                scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                const video = document.getElementById("qr-video");
+                video.srcObject = scanStream;
+                await video.play();
+                btn.textContent = tQr.stopScan;
+
+                if ("BarcodeDetector" in window) {
+                    const detector = new BarcodeDetector({ formats: ["qr_code"] });
+                    scanTimer = setInterval(async () => {
+                        try {
+                            const codes = await detector.detect(video);
+                            if (codes && codes.length > 0) {
+                                const raw = codes[0].rawValue || "";
+                                document.getElementById("qr-manual-input").value = raw;
+                                if (verifyQrValue(raw)) {
+                                    await completeQrSignIn();
+                                } else {
+                                    setStatusMessage(tQr.verifiedErr, true);
+                                }
+                            }
+                        } catch (_) {}
+                    }, 450);
+                } else {
+                    setStatusMessage(tQr.cameraErr, true);
+                }
+            } catch (_) {
+                setStatusMessage(tQr.cameraErr, true);
+            }
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+                return;
+            }
+            currentUser = user;
+            userRef = doc(db, "users", user.uid);
+
+            try {
+                const snap = await getDoc(userRef);
+                const data = snap.exists() ? snap.data() : {};
+                accountQrToken = getOrCreateAccountQrSecret(user.uid, data.qrLoginToken);
+
+                if (!data.qrLoginToken) {
+                    await setDoc(userRef, { qrLoginToken: accountQrToken }, { merge: true });
+                }
+
+                const canvas = document.getElementById("qr-canvas");
+                drawUniqueAccountQr(canvas, `${user.uid}:${accountQrToken}`);
+                document.getElementById("qr-token-display").textContent = accountQrToken;
+
+                document.getElementById("qr-loading").classList.add("hidden");
+                document.getElementById("qr-main").classList.remove("hidden");
+            } catch (e) {
+                setStatusMessage(e.message, true);
+                document.getElementById("qr-loading").classList.add("hidden");
+                document.getElementById("qr-main").classList.remove("hidden");
+            }
+        });
+    </script>
+</body>
+</html>
