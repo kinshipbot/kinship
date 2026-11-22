@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title class="notranslate">Kinship — Вход по QR-коду</title>
+    <title class="notranslate">Kinship — QR-код входа</title>
     <link rel="icon" type="image/png" href="icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Библиотека генерации настоящего сканируемого QR-кода -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
@@ -15,12 +14,12 @@
             --card-border: #e5e7eb;
             --text: #030712;
             --muted: #4b5563;
-            --subtle: #6b7280;
             --secondary-bg: #f3f4f6;
             --btn-bg: #030712;
             --btn-text: #ffffff;
-            --warn: #f59e0b;
-            --ok: #10b981;
+            --danger-bg: #fee2e2;
+            --danger-text: #b91c1c;
+            --ok-text: #15803d;
         }
         @media (prefers-color-scheme: dark) {
             :root {
@@ -29,10 +28,12 @@
                 --card-border: #1f2937;
                 --text: #ffffff;
                 --muted: #9ca3af;
-                --subtle: #6b7280;
                 --secondary-bg: #1f2937;
                 --btn-bg: #ffffff;
                 --btn-text: #000000;
+                --danger-bg: #3f1515;
+                --danger-text: #fca5a5;
+                --ok-text: #86efac;
             }
         }
         * {
@@ -92,7 +93,7 @@
             font-size: 13px;
             color: var(--muted);
             line-height: 1.5;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
         .qr-wrapper {
             background: #ffffff;
@@ -102,19 +103,19 @@
             display: inline-flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
         #qrcode {
-            width: 200px;
-            height: 200px;
+            width: 196px;
+            height: 196px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .code-label {
-            margin-top: 12px;
+            margin-top: 10px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             color: #6b7280;
             text-transform: uppercase;
             letter-spacing: 0.06em;
@@ -131,10 +132,6 @@
             user-select: all;
         }
         .status-box {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
             background: var(--secondary-bg);
             padding: 12px 14px;
             border-radius: 14px;
@@ -143,73 +140,97 @@
             color: var(--muted);
             margin-bottom: 12px;
         }
-        .dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: var(--warn);
-            animation: pulse 1.2s infinite;
-        }
-        .dot.ok {
-            background: var(--ok);
-            animation: none;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.25; }
-        }
-        .btn-refresh {
+        .btn {
             width: 100%;
             border: none;
             border-radius: 13px;
-            padding: 13px 16px;
-            background: var(--secondary-bg);
-            color: var(--text);
-            font-size: 13px;
+            padding: 14px 16px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
+            margin-top: 8px;
+        }
+        .btn-secondary {
+            background: var(--secondary-bg);
+            color: var(--text);
+        }
+        .btn-accept {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+        }
+        .btn-reject {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+        }
+        .decision-box {
+            display: none;
+            background: var(--secondary-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            padding: 18px 16px;
+            margin-top: 8px;
+        }
+        .decision-box h2 {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .decision-box p {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.45;
+            margin-bottom: 14px;
         }
     </style>
 </head>
 <body>
     <div class="card">
         <div class="top-row">
-            <a id="back-btn" href="index.html" class="back-link">← Назад</a>
-            <span class="badge">Cloud QR Auth</span>
+            <a id="back-link" href="index.html" class="back-link">← Назад</a>
+            <span class="badge">Kinship QR</span>
         </div>
 
-        <h1>Вход по QR-коду</h1>
-        <p class="desc">
-            Откройте на другом устройстве страницу сканирования Kinship, отсканируйте этот QR-код или введите секретный код ниже.
-        </p>
+        <!-- Экран 1: Показ QR-кода и секретного кода -->
+        <div id="qr-stage">
+            <h1>Вход по QR-коду</h1>
+            <p class="desc">
+                Отсканируйте QR-код на другом устройстве в <span class="notranslate">qr-scaner.html</span> или введите секретный код ниже.
+            </p>
 
-        <div class="qr-wrapper">
-            <div id="qrcode"></div>
-            <div class="code-label">Секретный код входа</div>
-            <div id="secret-code" class="secret-code">------</div>
+            <div class="qr-wrapper">
+                <div id="qrcode"></div>
+                <div class="code-label">Секретный код</div>
+                <div id="secret-code" class="secret-code">------</div>
+            </div>
+
+            <div id="waiting-status" class="status-box">Ожидание сканирования или ввода кода...</div>
+
+            <button id="refresh-btn" class="btn btn-secondary" type="button">Сгенерировать новый код</button>
         </div>
 
-        <div class="status-box">
-            <span id="status-dot" class="dot"></span>
-            <span id="status-text">Создание облачной сессии...</span>
+        <!-- Экран 2: Автоматически появляется после сканирования/ввода кода на другом устройстве -->
+        <div id="decision-stage" class="decision-box">
+            <h2>Запрос на вход</h2>
+            <p id="decision-desc">
+                Код был сканирован/введён. Подтвердите вход или отклоните его на этом устройстве.
+            </p>
+            <button id="accept-btn" class="btn btn-accept" type="button">Принять вход</button>
+            <button id="reject-btn" class="btn btn-reject" type="button">Отклонить</button>
         </div>
-
-        <button id="refresh-btn" class="btn-refresh" type="button">Сгенерировать новый QR и код</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, set, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getDatabase, ref, set, update, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-        // ВСТАВЬ СВОЙ FIREBASE CONFIG ИЗ ПРОЕКТА KINSHIP
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "bib-chat-64027.firebaseapp.com",
-            databaseURL: "https://bib-chat-64027-default-rtdb.firebaseio.com",
-            projectId: "bib-chat-64027",
-            storageBucket: "bib-chat-64027.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
+            authDomain: "kinship-1a33b.firebaseapp.com",
+            databaseURL: "https://kinship-1a33b-default-rtdb.firebaseio.com",
+            projectId: "kinship-1a33b",
+            storageBucket: "kinship-1a33b.firebasestorage.app",
+            messagingSenderId: "530429265638",
+            appId: "1:530429265638:web:45ee33d3f9129f15d6dd27"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -217,20 +238,19 @@
 
         const params = new URLSearchParams(window.location.search);
         if (params.get("from") === "settings") {
-            document.getElementById("back-btn").href = "setting-kinship.html";
+            document.getElementById("back-link").href = "setting-kinship.html";
         }
 
+        const qrStage = document.getElementById("qr-stage");
+        const decisionStage = document.getElementById("decision-stage");
+        const waitingStatus = document.getElementById("waiting-status");
+        const acceptBtn = document.getElementById("accept-btn");
+        const rejectBtn = document.getElementById("reject-btn");
+
+        let currentCode = "";
         let currentRef = null;
 
-        function getDeviceDescription() {
-            const ua = navigator.userAgent;
-            if (/Android/i.test(ua)) return "Android Смартфон";
-            if (/iPhone|iPad/i.test(ua)) return "iPhone / iPad";
-            if (/Windows/i.test(ua)) return "ПК (Windows)";
-            return "Веб-браузер";
-        }
-
-        function generateSecretCode() {
+        function generateCode() {
             const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
             let code = "KSP-";
             for (let i = 0; i < 6; i++) {
@@ -239,70 +259,97 @@
             return code;
         }
 
-        async function createCloudSession() {
+        async function startNewSession() {
             if (currentRef) {
                 off(currentRef);
             }
 
-            const code = generateSecretCode();
-            const qrContainer = document.getElementById("qrcode");
-            const codeEl = document.getElementById("secret-code");
-            const statusText = document.getElementById("status-text");
-            const statusDot = document.getElementById("status-dot");
+            currentCode = generateCode();
+            qrStage.style.display = "block";
+            decisionStage.style.display = "none";
+            acceptBtn.disabled = false;
+            rejectBtn.disabled = false;
+            waitingStatus.textContent = "Ожидание сканирования или ввода кода...";
 
-            statusDot.classList.remove("ok");
-            statusText.textContent = "Ожидание сканирования и подтверждения...";
-            codeEl.textContent = code;
-            qrContainer.innerHTML = "";
+            document.getElementById("secret-code").textContent = currentCode;
+            const qrEl = document.getElementById("qrcode");
+            qrEl.innerHTML = "";
 
-            // В QR-код зашиваем ссылку сразу на страницу подтверждения с этим кодом
-            const scanPayload = `${window.location.origin}${window.location.pathname.replace("qr-login.html", "qr-device-login.html")}?code=${code}`;
-
-            new QRCode(qrContainer, {
-                text: scanPayload,
-                width: 200,
-                height: 200,
+            new QRCode(qrEl, {
+                text: currentCode,
+                width: 196,
+                height: 196,
                 colorDark: "#030712",
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.M
             });
 
-            currentRef = ref(db, "qr_sessions/" + code);
-
+            currentRef = ref(db, "qr_sessions/" + currentCode);
             await set(currentRef, {
-                code: code,
+                code: currentCode,
                 status: "pending",
-                deviceName: getDeviceDescription(),
                 createdAt: Date.now(),
-                expiresAt: Date.now() + 5 * 60 * 1000 // 5 минут жизни кода
+                expiresAt: Date.now() + 5 * 60 * 1000
             });
 
-            // Слушаем изменения в реальном времени из облака
-            onValue(currentRef, (snapshot) => {
-                const data = snapshot.val();
+            onValue(currentRef, (snap) => {
+                const data = snap.val();
                 if (!data) return;
 
+                // Когда код отсканировали или ввели на другом устройстве — меняем экран на принятие/отказ
                 if (data.status === "scanned") {
-                    statusText.textContent = "Код отсканирован! Подтвердите вход на другом устройстве...";
-                } else if (data.status === "approved") {
-                    statusDot.classList.add("ok");
-                    statusText.textContent = "Вход подтверждён! Переход в профиль...";
+                    qrStage.style.display = "none";
+                    decisionStage.style.display = "block";
+                    document.getElementById("decision-desc").textContent =
+                        `Код ${currentCode} отсканирован/введён с другого устройства. Принять или отклонить вход?`;
+                }
 
+                if (data.status === "approved") {
                     if (data.uid) localStorage.setItem("kinship_uid", data.uid);
                     if (data.userName) localStorage.setItem("kinship_user_name", data.userName);
                     if (data.userHandle) localStorage.setItem("kinship_user_handle", data.userHandle);
+                    window.location.href = "profile.html";
+                }
 
-                    setTimeout(() => {
-                        window.location.href = "profile.html";
-                    }, 800);
-                } else if (data.status === "rejected") {
-                    statusText.textContent = "Вход отклонён с другого устройства.";
+                if (data.status === "rejected") {
+                    decisionStage.style.display = "none";
+                    qrStage.style.display = "block";
+                    waitingStatus.textContent = "Вход отклонён. Сгенерируйте новый код при необходимости.";
                 }
             });
         }
 
-        document.getElementById("refresh-btn").addEventListener("click", createCloudSession);
-        createCloudSession();
+        acceptBtn.addEventListener("click", async () => {
+            if (!currentCode) return;
+            acceptBtn.disabled = true;
+            rejectBtn.disabled = true;
+
+            const uid = localStorage.getItem("kinship_uid") || "kinship_user_" + currentCode;
+            const userName = localStorage.getItem("kinship_user_name") || "Пользователь Kinship";
+            const userHandle = localStorage.getItem("kinship_user_handle") || "@kinship_user";
+
+            await update(ref(db, "qr_sessions/" + currentCode), {
+                status: "approved",
+                uid: uid,
+                userName: userName,
+                userHandle: userHandle,
+                approvedAt: Date.now()
+            });
+        });
+
+        rejectBtn.addEventListener("click", async () => {
+            if (!currentCode) return;
+            acceptBtn.disabled = true;
+            rejectBtn.disabled = true;
+
+            await update(ref(db, "qr_sessions/" + currentCode), {
+                status: "rejected",
+                rejectedAt: Date.now()
+            });
+        });
+
+        document.getElementById("refresh-btn").addEventListener("click", startNewSession);
+        startNewSession();
     </script>
 </body>
 </html>
