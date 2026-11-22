@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,8 +21,9 @@
             --btn-text: #ffffff;
             --btn-hover: #1f2937;
             --secondary-btn-bg: #f3f4f6;
-            --secondary-btn-text: #374151;
+            --secondary-btn-text: #111827;
             --secondary-btn-hover: #e5e7eb;
+            --badge-bg: #f3f4f6;
         }
         @media (prefers-color-scheme: dark) {
             :root {
@@ -36,8 +37,9 @@
                 --btn-text: #000000;
                 --btn-hover: #e5e7eb;
                 --secondary-btn-bg: #1f2937;
-                --secondary-btn-text: #d1d5db;
+                --secondary-btn-text: #f3f4f6;
                 --secondary-btn-hover: #374151;
+                --badge-bg: #1f2937;
             }
         }
         * {
@@ -59,87 +61,83 @@
             text-align: center;
         }
         .container {
-            max-width: 390px;
+            max-width: 420px;
             width: 100%;
         }
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 28px 24px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
             animation: fadeIn 0.25s ease-out;
         }
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .brand {
-            font-size: 12px;
-            font-weight: 700;
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 800;
             color: var(--subtle);
+            background: var(--badge-bg);
+            padding: 5px 12px;
+            border-radius: 999px;
             text-transform: uppercase;
-            letter-spacing: 0.12em;
-            margin-bottom: 14px;
+            letter-spacing: 0.14em;
+            margin-bottom: 16px;
         }
         h1 {
-            font-size: 22px;
+            font-size: 26px;
             font-weight: 800;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             letter-spacing: -0.02em;
+            line-height: 1.2;
         }
         .subtitle {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--muted);
-            line-height: 1.5;
-            margin-bottom: 22px;
+            line-height: 1.55;
+            margin-bottom: 24px;
         }
-        .primary-btn {
-            display: block;
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .primary-btn, .secondary-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             width: 100%;
             text-decoration: none;
-            background-color: var(--btn-bg);
-            color: var(--btn-text);
             border: none;
-            padding: 13px;
-            border-radius: 12px;
+            padding: 14px 16px;
+            border-radius: 14px;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.12s ease;
         }
-        .primary-btn:hover {
-            background-color: var(--btn-hover);
+        .primary-btn {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
         }
-        .primary-btn:active {
-            transform: scale(0.98);
-        }
+        .primary-btn:hover { background-color: var(--btn-hover); }
         .secondary-btn {
-            display: block;
-            width: 100%;
-            text-decoration: none;
             background-color: var(--secondary-btn-bg);
             color: var(--secondary-btn-text);
-            border: none;
-            padding: 11px;
-            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+        .secondary-btn:hover { background-color: var(--secondary-btn-hover); }
+        .primary-btn:active, .secondary-btn:active { transform: scale(0.98); }
+        .qr-hint {
+            margin-top: 14px;
             font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: background-color 0.2s ease, transform 0.12s ease;
-        }
-        .secondary-btn:hover {
-            background-color: var(--secondary-btn-hover);
-        }
-        .secondary-btn:active {
-            transform: scale(0.98);
+            color: var(--subtle);
+            line-height: 1.45;
         }
         footer {
             font-size: 11px;
@@ -148,16 +146,40 @@
     </style>
 </head>
 <body>
-    <div style="height: 12px;"></div>
+    <div style="height: 8px;"></div>
 
     <div class="container card">
-        <p class="brand notranslate">Kinship</p>
-        <h1 class="notranslate">Kinship</h1>
-        <p id="index-subtitle" class="subtitle">
-            Sign in or continue to your account.
+        <span class="brand notranslate">Kinship</span>
+        <h1 id="welcome-title">Добро пожаловать</h1>
+        <p id="welcome-desc" class="subtitle">
+            Здесь вы можете найти друзей легче, чем кажется, пролайкать видео, комментировать, общаться и создавать моменты.
         </p>
-        <a id="btn-go-auth" href="auth.html" class="primary-btn">Continue</a>
-        <a id="btn-go-qr" href="qr-login.html" class="secondary-btn">QR Sign In</a>
+
+        <div class="btn-group">
+            <a id="btn-google-login" href="auth.html?provider=google" class="primary-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
+                </svg>
+                <span id="google-btn-text">Войти с Google</span>
+            </a>
+
+            <a id="btn-qr-login" href="qr-login.html?mode=login" class="secondary-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <path d="M14 14h3v3h-3zM20 14v3h-3M14 20h7"/>
+                </svg>
+                <span id="qr-btn-text">Войти по QR-коду</span>
+            </a>
+        </div>
+
+        <p id="qr-hint-text" class="qr-hint">
+            Отсканируйте QR-код через камеру или в приложении Kinship на основном устройстве и подтвердите вход.
+        </p>
     </div>
 
     <footer>
@@ -166,39 +188,47 @@
 
     <script>
         const i18nIndex = {
-            en: {
-                lang: "en",
-                subtitle: "Sign in or continue to your account.",
-                continueBtn: "Continue",
-                qrBtn: "QR Sign In"
-            },
             ru: {
                 lang: "ru",
-                subtitle: "Войдите или перейдите в свой аккаунт.",
-                continueBtn: "Продолжить",
-                qrBtn: "Вход по QR-коду"
+                title: "Добро пожаловать",
+                desc: "Здесь вы можете найти друзей легче, чем кажется, пролайкать видео, комментировать, общаться и создавать моменты.",
+                googleBtn: "Войти с Google",
+                qrBtn: "Войти по QR-коду",
+                qrHint: "Отсканируйте QR-код через камеру или в приложении Kinship на основном устройстве и подтвердите вход."
+            },
+            en: {
+                lang: "en",
+                title: "Welcome",
+                desc: "Here you can find friends easier than it seems, like videos, comment, chat, and create moments.",
+                googleBtn: "Sign in with Google",
+                qrBtn: "Sign in with QR Code",
+                qrHint: "Scan the QR code with your camera or inside the Kinship app on your main device and approve the sign-in."
             },
             de: {
                 lang: "de",
-                subtitle: "Melde dich an oder fahre mit deinem Konto fort.",
-                continueBtn: "Weiter",
-                qrBtn: "QR-Login"
+                title: "Willkommen",
+                desc: "Hier kannst du leichter als gedacht Freunde finden, Videos liken, kommentieren, chatten und Momente erstellen.",
+                googleBtn: "Mit Google anmelden",
+                qrBtn: "Mit QR-Code anmelden",
+                qrHint: "Scanne den QR-Code mit der Kamera oder in der Kinship-App auf deinem Hauptgerät und bestätige die Anmeldung."
             }
         };
 
-        function detectAppLang() {
-            const list = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"])
+        function detectLang() {
+            const langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "ru"])
                 .map(l => String(l).toLowerCase());
-            if (list.some(l => l === "ru" || l.startsWith("ru-"))) return "ru";
-            if (list.some(l => l === "de" || l.startsWith("de-"))) return "de";
+            if (langs.some(l => l === "ru" || l.startsWith("ru-"))) return "ru";
+            if (langs.some(l => l === "de" || l.startsWith("de-"))) return "de";
             return "en";
         }
 
-        const tIdx = i18nIndex[detectAppLang()];
-        document.documentElement.lang = tIdx.lang;
-        document.getElementById("index-subtitle").textContent = tIdx.subtitle;
-        document.getElementById("btn-go-auth").textContent = tIdx.continueBtn;
-        document.getElementById("btn-go-qr").textContent = tIdx.qrBtn;
+        const t = i18nIndex[detectLang()];
+        document.documentElement.lang = t.lang;
+        document.getElementById("welcome-title").textContent = t.title;
+        document.getElementById("welcome-desc").textContent = t.desc;
+        document.getElementById("google-btn-text").textContent = t.googleBtn;
+        document.getElementById("qr-btn-text").textContent = t.qrBtn;
+        document.getElementById("qr-hint-text").textContent = t.qrHint;
     </script>
 </body>
 </html>
