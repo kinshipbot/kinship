@@ -191,7 +191,7 @@
         <div id="qr-stage">
             <h1>Вход по QR-коду</h1>
             <p class="desc">
-                Отсканируйте QR-код на другом устройстве в <span class="notranslate">qr-scan.html</span> или введите секретный код ниже.
+                Наведите камеру на QR-код для перехода по ссылке или отсканируйте его в <span class="notranslate">qr-scan.html</span> / введите код ниже.
             </p>
 
             <div class="qr-wrapper">
@@ -271,8 +271,11 @@
             const qrEl = document.getElementById("qrcode");
             qrEl.innerHTML = "";
 
+            const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf("/") + 1);
+            const qrLink = `${baseUrl}qr-device-login.html?code=${encodeURIComponent(currentCode)}`;
+
             new QRCode(qrEl, {
-                text: currentCode,
+                text: qrLink,
                 width: 196,
                 height: 196,
                 colorDark: "#030712",
