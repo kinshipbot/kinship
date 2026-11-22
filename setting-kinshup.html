@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title class="notranslate">Kinship — Настройки</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f9fafb;
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+            --text: #030712;
+            --muted: #4b5563;
+            --subtle: #6b7280;
+            --secondary-bg: #f3f4f6;
+            --btn-bg: #030712;
+            --btn-text: #ffffff;
+            --danger-bg: #fee2e2;
+            --danger-text: #b91c1c;
+            --ok-bg: #dcfce7;
+            --ok-text: #15803d;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #030712;
+                --card-bg: #111827;
+                --card-border: #1f2937;
+                --text: #ffffff;
+                --muted: #9ca3af;
+                --subtle: #6b7280;
+                --secondary-bg: #1f2937;
+                --btn-bg: #ffffff;
+                --btn-text: #000000;
+                --danger-bg: #3f1515;
+                --danger-text: #fca5a5;
+                --ok-bg: #123524;
+                --ok-text: #86efac;
+            }
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+        }
+        .shell {
+            width: 100%;
+            max-width: 440px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            padding: 12px 16px;
+            margin-bottom: 14px;
+        }
+        .back-btn {
+            text-decoration: none;
+            color: var(--text);
+            background: var(--secondary-bg);
+            padding: 8px 12px;
+            border-radius: 11px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .header h1 {
+            font-size: 17px;
+            font-weight: 800;
+        }
+        .menu-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 18px;
+            color: var(--text);
+            cursor: pointer;
+            text-align: left;
+            margin-bottom: 14px;
+        }
+        .menu-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            background: var(--secondary-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .menu-title {
+            font-size: 15px;
+            font-weight: 800;
+        }
+        .menu-sub {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+        .security-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 18px;
+        }
+        .card h2 {
+            font-size: 15px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .card p.hint {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.45;
+            margin-bottom: 14px;
+        }
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            margin-bottom: 12px;
+        }
+        .badge.no-pass {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+        }
+        .badge.has-pass {
+            background: var(--ok-bg);
+            color: var(--ok-text);
+        }
+        .input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 13px;
+            padding: 13px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+        }
+        .btn-secondary {
+            background: var(--secondary-bg);
+            color: var(--text);
+            margin-top: 8px;
+        }
+        .session-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .session-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 14px;
+            background: var(--secondary-bg);
+        }
+        .session-name {
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .session-meta {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+        .end-btn {
+            border: none;
+            background: var(--danger-bg);
+            color: var(--danger-text);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 10px;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+        .msg {
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+            color: var(--ok-text);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <header class="header">
+            <a href="profile.html" class="back-btn">← Профиль</a>
+            <h1>Настройки Kinship</h1>
+        </header>
+
+        <!-- Кнопка раздела «Защита и конфиденциальность» -->
+        <button id="toggle-security" class="menu-btn" type="button">
+            <div class="menu-left">
+                <div class="icon-box">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <div class="menu-title">Защита и конфиденциальность</div>
+                    <div class="menu-sub">Сессии устройств, пароль и привязка по QR-коду</div>
+                </div>
+            </div>
+            <span id="arrow-indicator">▾</span>
+        </button>
+
+        <div id="security-panel" class="security-panel">
+            <!-- Блок 1: Сессии устройств и добавление устройства -->
+            <div class="card">
+                <h2>Сессии устройств</h2>
+                <p class="hint">
+                    Здесь отображаются устройства, с которых выполнен вход в ваш аккаунт Kinship. Вы можете добавить новое устройство через QR-код и подтвердить вход.
+                </p>
+
+                <div id="session-list" class="session-list"></div>
+
+                <a href="qr-login.html?mode=link" class="btn btn-primary">
+                    + Добавить устройство (QR-код)
+                </a>
+            </div>
+
+            <!-- Блок 2: Установка / изменение пароля -->
+            <div class="card">
+                <h2>Пароль аккаунта</h2>
+                <span id="pass-badge" class="badge no-pass">Пароль не установлен</span>
+                <p class="hint">
+                    Если вы входили только через Google или QR-код, задайте резервный пароль для защиты аккаунта.
+                </p>
+
+                <input id="new-password" class="input" type="password" placeholder="Новый пароль (минимум 6 символов)">
+                <input id="confirm-password" class="input" type="password" placeholder="Повторите новый пароль">
+                <button id="save-password-btn" class="btn btn-primary" type="button">Установить пароль</button>
+                <div id="pass-msg" class="msg">Пароль успешно сохранён!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Раскрытие/сворачивание раздела «Защита и конфиденциальность»
+        const toggleBtn = document.getElementById("toggle-security");
+        const securityPanel = document.getElementById("security-panel");
+        const arrowIndicator = document.getElementById("arrow-indicator");
+
+        toggleBtn.addEventListener("click", () => {
+            const isHidden = securityPanel.style.display === "none";
+            securityPanel.style.display = isHidden ? "flex" : "none";
+            arrowIndicator.textContent = isHidden ? "▾" : "▸";
+        });
+
+        // Инициализация и рендер сессий устройств
+        function getSessions() {
+            let sessions = JSON.parse(localStorage.getItem("kinship_sessions") || "[]");
+            if (sessions.length === 0) {
+                const ua = navigator.userAgent.includes("Android") ? "Текущий смартфон (Android)" : "Текущее устройство (Браузер)";
+                sessions = [{
+                    id: "current_dev",
+                    name: ua,
+                    method: "Активная сессия",
+                    time: new Date().toLocaleString("ru-RU"),
+                    current: true
+                }];
+                localStorage.setItem("kinship_sessions", JSON.stringify(sessions));
+            }
+            return sessions;
+        }
+
+        function renderSessions() {
+            const list = document.getElementById("session-list");
+            const sessions = getSessions();
+            list.innerHTML = "";
+
+            sessions.forEach((s) => {
+                const item = document.createElement("div");
+                item.className = "session-item";
+                item.innerHTML = `
+                    <div>
+                        <div class="session-name">${s.name}</div>
+                        <div class="session-meta">${s.method} • ${s.time}</div>
+                    </div>
+                    ${s.current ? '<span style="font-size:11px;font-weight:700;color:var(--ok-text);">Это устройство</span>' : `<button class="end-btn" data-id="${s.id}">Завершить</button>`}
+                `;
+                list.appendChild(item);
+            });
+
+            list.querySelectorAll(".end-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const id = btn.getAttribute("data-id");
+                    const updated = getSessions().filter(item => item.id !== id);
+                    localStorage.setItem("kinship_sessions", JSON.stringify(updated));
+                    renderSessions();
+                });
+            });
+        }
+
+        // Управление паролем
+        const passBadge = document.getElementById("pass-badge");
+        const savePassBtn = document.getElementById("save-password-btn");
+        const passMsg = document.getElementById("pass-msg");
+
+        function refreshPasswordState() {
+            const existingPass = localStorage.getItem("kinship_account_password");
+            if (existingPass) {
+                passBadge.textContent = "Пароль установлен";
+                passBadge.className = "badge has-pass";
+                savePassBtn.textContent = "Обновить пароль";
+            } else {
+                passBadge.textContent = "Пароль не установлен";
+                passBadge.className = "badge no-pass";
+                savePassBtn.textContent = "Установить пароль";
+            }
+        }
+
+        savePassBtn.addEventListener("click", () => {
+            const p1 = document.getElementById("new-password").value.trim();
+            const p2 = document.getElementById("confirm-password").value.trim();
+
+            if (p1.length < 6) {
+                alert("Пароль должен содержать минимум 6 символов.");
+                return;
+            }
+            if (p1 !== p2) {
+                alert("Пароли не совпадают.");
+                return;
+            }
+
+            localStorage.setItem("kinship_account_password", p1);
+            document.getElementById("new-password").value = "";
+            document.getElementById("confirm-password").value = "";
+            refreshPasswordState();
+            passMsg.style.display = "block";
+            setTimeout(() => { passMsg.style.display = "none"; }, 2500);
+        });
+
+        renderSessions();
+        refreshPasswordState();
+    </script>
+</body>
+</html>
+              
