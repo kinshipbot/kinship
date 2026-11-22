@@ -590,8 +590,16 @@
             const btn = document.getElementById("btn-approve-login");
             btn.disabled = true;
             try {
+                const snap = await getDoc(userRef);
+                const existing = snap.exists() ? snap.data() : {};
+                const currentTrusted = Array.isArray(existing.trustedDeviceIds) ? existing.trustedDeviceIds : [];
+                const nextTrusted = pendingRequest.deviceId
+                    ? Array.from(new Set([...currentTrusted, pendingRequest.deviceId]))
+                    : currentTrusted;
+
                 await setDoc(userRef, {
                     revokedDeviceId: "",
+                    trustedDeviceIds: nextTrusted,
                     qrLoginRequest: {
                         ...pendingRequest,
                         status: "approved",
