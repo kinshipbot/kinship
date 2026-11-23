@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title class="notranslate">Kinship — Сканер QR-кода</title>
+    <title class="notranslate">Kinship — QR Scan</title>
     <link rel="icon" type="image/png" href="icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
@@ -17,6 +19,7 @@
             --secondary-bg: #f3f4f6;
             --btn-bg: #030712;
             --btn-text: #ffffff;
+            --btn-hover: #1f2937;
             --error-bg: #fee2e2;
             --error-text: #b91c1c;
         }
@@ -30,6 +33,7 @@
                 --secondary-bg: #1f2937;
                 --btn-bg: #ffffff;
                 --btn-text: #000000;
+                --btn-hover: #e5e7eb;
                 --error-bg: #3f1515;
                 --error-text: #fca5a5;
             }
@@ -38,10 +42,11 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         body {
-            background: var(--bg);
+            background-color: var(--bg);
             color: var(--text);
             min-height: 100vh;
             display: flex;
@@ -51,13 +56,18 @@
         }
         .card {
             width: 100%;
-            max-width: 410px;
-            background: var(--card-bg);
+            max-width: 420px;
+            background-color: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 24px;
             padding: 24px 20px;
             text-align: center;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.25s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .top-row {
             display: flex;
@@ -74,10 +84,19 @@
             font-size: 13px;
             font-weight: 700;
         }
+        .badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            background: var(--secondary-bg);
+            padding: 5px 10px;
+            border-radius: 999px;
+        }
         h1 {
-            font-size: 20px;
+            font-size: 21px;
             font-weight: 800;
             margin-bottom: 6px;
+            letter-spacing: -0.02em;
         }
         .desc {
             font-size: 13px;
@@ -116,11 +135,14 @@
             font-weight: 700;
             cursor: pointer;
             margin-bottom: 12px;
+            transition: background-color 0.2s ease, transform 0.12s ease;
         }
+        .btn:active { transform: scale(0.98); }
         .btn-primary {
             background: var(--btn-bg);
             color: var(--btn-text);
         }
+        .btn-primary:hover { background: var(--btn-hover); }
         .btn-primary:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -128,13 +150,14 @@
         .btn-secondary {
             background: var(--secondary-bg);
             color: var(--text);
+            border: 1px solid var(--card-border);
         }
         .divider {
             font-size: 11px;
             color: var(--muted);
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            margin: 6px 0 12px;
+            margin: 4px 0 12px;
         }
         .code-input {
             width: 100%;
@@ -176,12 +199,12 @@
 <body>
     <div class="card">
         <div class="top-row">
-            <a href="index.html" class="back-link">← Назад</a>
-            <span style="font-size:11px;font-weight:700;color:var(--muted);">Сканер QR</span>
+            <a id="back-link" href="index.html" class="back-link">← Назад</a>
+            <span id="badge-text" class="badge">Сканер QR</span>
         </div>
 
-        <h1>Сканирование QR-кода</h1>
-        <p class="desc">
+        <h1 id="scan-title">Сканирование QR-кода</h1>
+        <p id="scan-desc" class="desc">
             Отсканируйте QR-код с другого устройства или введите код, который отображается там.
         </p>
 
@@ -193,7 +216,7 @@
 
         <button id="start-cam-btn" class="btn btn-secondary" type="button">Включить камеру</button>
 
-        <div class="divider">или введите код с другого устройства</div>
+        <div id="divider-text" class="divider">или введите код с другого устройства</div>
 
         <input id="code-input" class="code-input" type="text" placeholder="KSP-XXXXXX" maxlength="200">
         <div id="status-msg" class="status-msg"></div>
@@ -202,11 +225,90 @@
         <div id="error-box" class="error-box"></div>
     </div>
 
+    <script>
+        const i18nScan = {
+            ru: {
+                lang: "ru",
+                back: "← Назад",
+                badge: "Сканер QR",
+                title: "Сканирование QR-кода",
+                desc: "Отсканируйте QR-код с другого устройства или введите код, который отображается там.",
+                startCam: "Включить камеру",
+                divider: "или введите код с другого устройства",
+                submit: "Продолжить",
+                camStarted: "Камера включена, наведите на QR-код...",
+                camError: "Не удалось открыть камеру. Разрешите доступ или введите код вручную ниже.",
+                badFormat: "Неверный формат кода. Введите действующий код вида KSP-XXXXXX.",
+                checking: (code) => `Проверяю код ${code} в базе...`,
+                notFound: (code) => `Код ${code} не найден в базе. Убедитесь, что он создан на другом устройстве.`,
+                expired: "Срок действия кода истёк. Сгенерируйте новый код.",
+                used: "Этот код уже был использован.",
+                redirecting: "Код подтверждён, перехожу на страницу ожидания...",
+                dbError: (msg) => `Ошибка при обращении к базе: ${msg}`
+            },
+            en: {
+                lang: "en",
+                back: "← Back",
+                badge: "QR Scanner",
+                title: "Scan QR Code",
+                desc: "Scan the QR code from another device or enter the code shown there.",
+                startCam: "Turn on camera",
+                divider: "or enter the code from another device",
+                submit: "Continue",
+                camStarted: "Camera enabled, point it at the QR code...",
+                camError: "Could not access camera. Allow permission or enter the code manually below.",
+                badFormat: "Invalid code format. Enter a valid code like KSP-XXXXXX.",
+                checking: (code) => `Checking code ${code} in database...`,
+                notFound: (code) => `Code ${code} was not found in the database.`,
+                expired: "This code has expired. Generate a new code.",
+                used: "This code has already been used.",
+                redirecting: "Code verified, redirecting to waiting screen...",
+                dbError: (msg) => `Database error: ${msg}`
+            },
+            de: {
+                lang: "de",
+                back: "← Zurück",
+                badge: "QR-Scanner",
+                title: "QR-Code scannen",
+                desc: "Scanne den QR-Code von einem anderen Gerät oder gib den dort angezeigten Code ein.",
+                startCam: "Kamera aktivieren",
+                divider: "oder Code von einem anderen Gerät eingeben",
+                submit: "Weiter",
+                camStarted: "Kamera aktiv, richte sie auf den QR-Code...",
+                camError: "Kamera konnte nicht geöffnet werden. Erlaube den Zugriff oder gib den Code unten ein.",
+                badFormat: "Ungültiges Code-Format. Gib einen gültigen Code wie KSP-XXXXXX ein.",
+                checking: (code) => `Prüfe Code ${code} in der Datenbank...`,
+                notFound: (code) => `Code ${code} wurde in der Datenbank nicht gefunden.`,
+                expired: "Der Code ist abgelaufen. Erstelle einen neuen Code.",
+                used: "Dieser Code wurde bereits verwendet.",
+                redirecting: "Code bestätigt, leite zur Warteseite weiter...",
+                dbError: (msg) => `Datenbankfehler: ${msg}`
+            }
+        };
+
+        function detectLang() {
+            const langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "ru"])
+                .map(l => String(l).toLowerCase());
+            if (langs.some(l => l === "ru" || l.startsWith("ru-"))) return "ru";
+            if (langs.some(l => l === "de" || l.startsWith("de-"))) return "de";
+            return "en";
+        }
+
+        const tScan = i18nScan[detectLang()];
+        document.documentElement.lang = tScan.lang;
+        document.getElementById("back-link").textContent = tScan.back;
+        document.getElementById("badge-text").textContent = tScan.badge;
+        document.getElementById("scan-title").textContent = tScan.title;
+        document.getElementById("scan-desc").textContent = tScan.desc;
+        document.getElementById("start-cam-btn").textContent = tScan.startCam;
+        document.getElementById("divider-text").textContent = tScan.divider;
+        document.getElementById("submit-code-btn").textContent = tScan.submit;
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-        // Убедись, что databaseURL совпадает с URL твоей Realtime Database в Firebase Console
         const firebaseConfig = {
             apiKey: "AIzaSyAH4hOp3efR-Is4mFnT9jDxmCrKty_6dJ0",
             authDomain: "kinship-1a33b.firebaseapp.com",
@@ -270,20 +372,20 @@
 
             const code = extractCode(rawValue);
             if (!code || !/^KSP-[A-Z0-9]{6}$/.test(code)) {
-                showError("Неверный формат кода. Введите действующий код вида KSP-XXXXXX.");
+                showError(tScan.badFormat);
                 return;
             }
 
             isChecking = true;
             submitBtn.disabled = true;
-            showStatus(`Проверяю код ${code} в базе...`);
+            showStatus(tScan.checking(code));
 
             try {
                 const sessionRef = ref(db, "qr_sessions/" + code);
                 const snap = await get(sessionRef);
 
                 if (!snap.exists()) {
-                    showError(`Код ${code} не найден в базе. Убедитесь, что он создан в qr-login.html и databaseURL верный.`);
+                    showError(tScan.notFound(code));
                     isChecking = false;
                     submitBtn.disabled = false;
                     return;
@@ -291,20 +393,20 @@
 
                 const data = snap.val();
                 if (data.expiresAt && Date.now() > data.expiresAt) {
-                    showError("Срок действия кода истёк. Сгенерируйте новый код.");
+                    showError(tScan.expired);
                     isChecking = false;
                     submitBtn.disabled = false;
                     return;
                 }
 
                 if (data.status === "approved" || data.status === "rejected") {
-                    showError("Этот код уже был использован.");
+                    showError(tScan.used);
                     isChecking = false;
                     submitBtn.disabled = false;
                     return;
                 }
 
-                showStatus("Код подтверждён, перехожу на страницу подтверждения...");
+                showStatus(tScan.redirecting);
                 await update(sessionRef, {
                     status: "scanned",
                     scannedAt: Date.now()
@@ -316,7 +418,7 @@
 
                 window.location.href = `qr-device-login.html?code=${encodeURIComponent(code)}`;
             } catch (err) {
-                showError("Ошибка при обращении к базе: " + (err.message || err));
+                showError(tScan.dbError(err.message || err));
                 isChecking = false;
                 submitBtn.disabled = false;
             }
@@ -330,10 +432,10 @@
                 });
                 video.srcObject = stream;
                 await video.play();
-                showStatus("Камера включена, наведите на QR-код...");
+                showStatus(tScan.camStarted);
                 requestAnimationFrame(scanFrame);
             } catch (_) {
-                showError("Не удалось открыть камеру. Разрешите доступ или введите код вручную ниже.");
+                showError(tScan.camError);
             }
         });
 
@@ -368,4 +470,3 @@
     </script>
 </body>
 </html>
-    
